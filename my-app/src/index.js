@@ -10,7 +10,6 @@ import ReactDOM from 'react-dom';
         }
     }
 
-    // get请求
     componentDidMount () {
         fetch('http://localhost:8000/search_movie/world')
             .then(data => {
