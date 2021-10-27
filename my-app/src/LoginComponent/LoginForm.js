@@ -10,11 +10,11 @@ class LoginForm extends React.Component {
             login_status : "",
 
         }
-        this.handlePasswordChange = this.handleChangeEvents.bind(this);
+        this.handlePasswordChange = this.handleEmailChange.bind(this);
         this.handleSubmitevents = this.handleSubmitevents.bind(this);
-        this.handleChangeEvents = this.handleChangeEvents.bind(this);
+        this.handleEmailChange = this.handleEmailChange.bind(this);
     }
-    handleChangeEvents(event) {
+    handleEmailChange(event) {
         this.setState({
             email: event.target.value
         })
@@ -52,11 +52,9 @@ class LoginForm extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmitevents}>
-
                 <label>User Name</label>
-                <input type="text" data-test="username" value={this.state.username} onChange={this.handleChangeEvents} />
+                <input type="text" data-test="username" value={this.state.username} onChange={this.handleEmailChange} />
                 <label>Password</label>
-
                 <input type="password" data-test="password" value={this.state.password} onChange={this.handlePasswordChange } />
                 <input type="submit" value="Log In" data-test="submit" />
             </form> 
