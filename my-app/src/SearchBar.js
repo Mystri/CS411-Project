@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 // import axios from 'axios';
 
 // class searchbar extends React.Component {
@@ -310,7 +310,9 @@ class ProductTable extends React.Component{
 //         )
 //     }
 // }
-ReactDOM.render(
-    <FilterableProductTable/>,
-    document.getElementById('root')
-);
+// ReactDOM.render(
+//     <FilterableProductTable/>,
+//     document.getElementById('root')
+// );
+
+export default FilterableProductTable;
