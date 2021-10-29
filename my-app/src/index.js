@@ -1,58 +1,35 @@
-import React from 'react';
+import React from "react";
 import ReactDOM from 'react-dom';
-// import axios from 'axios';
+import FilterableProductTable from './SearchBar.js'
+import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
 
-class Game extends React.Component {
-    constructor(){
-        super();
+class Test extends React.Component {
+    constructor(props) {
+        super(props);
+        /**
+         * 0 : Main page.
+         * ...
+         */
+
         this.state = {
-            banners: ['']
+            page: 0
         }
     }
 
-    componentDidMount () {
-        fetch('http://localhost:8000/search_movie/world')
-            .then(data => {
-                console.log('parsed json', data);
-                return data.json()})
-            .then(data => {
-                this.setState({
-                    banners: data.rec
-                });
-                console.log('parsed json', data.rec);            
-            }, (ex) => {
-                this.setState({
-                    requestError : true
-                });
-                console.log('parsing failed', ex)
-            })
-    }   
+    render() {
+        if (this.state.page == 0) {
+            return(
+                <div>
+                    <PopupLoginForm/>
+                    <FilterableProductTable/>
+                </div>
+            )
+        }
+        return (<div></div>);
 
-
-    render(){
-        return(
-            <div>
-                <hr/>
-                <h1>Get </h1>
-                
-               {
-                   this.state.banners.map((photo,index) =>{
-                       return(
-                           <ul key = {index}>
-                               <h3>{index}:{photo}</h3>
-                           </ul>
-                       )
-                   })
-               }
-            </div>
-        )
     }
-    
-  }
-  
-  // ========================================
-  
-  ReactDOM.render(<Game />, document.getElementById("root"));
-//   ReactDOM.render(<Board />, document.getElementById("root"));
-  
-  
+}
+
+
+
+ReactDOM.render(<Test />, document.getElementById("root"));
