@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 // import axios from 'axios';
 
-  class Game extends React.Component {
+class Game extends React.Component {
     constructor(){
         super();
         this.state = {
