@@ -44,12 +44,14 @@ def search_movie(name):
 
     return {'rec':result}
 
-@app.route("/register", methods=["POST", "GET"])
+@app.route("/register", methods=["POST"])
 def register():
+
     data = request.get_json(force=True)
+    print(data, file=sys.stderr)
+
     email = data['email']
 
-    print(email, file=sys.stderr)
     
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
