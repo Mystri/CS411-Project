@@ -6,6 +6,7 @@ from flask import Flask,render_template,request,send_from_directory
 import json
 import sqlite3
 import requests
+import sys
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
@@ -43,10 +44,12 @@ def search_movie(name):
 
     return {'rec':result}
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["POST", "GET"])
 def register():
     data = request.get_json(force=True)
     email = data['email']
+
+    print(email, file=sys.stderr)
     
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 

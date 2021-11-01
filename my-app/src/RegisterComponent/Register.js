@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-class Userregister extends Component {
+class UserRegister extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -47,7 +46,7 @@ class Userregister extends Component {
             headers: {'Content-type':'application/json'},
             body: JSON.stringify({username:this.state.username, email:this.state.email, password:this.state.password })
         };
-        fetch('http://localhost:8000/register/', request)
+        fetch('http://localhost:8000/register', request)
             // if backend receive and response
             .then(response => {console.log('parsed json',response);
                                }) 
@@ -91,7 +90,4 @@ class Userregister extends Component {
         )
     }
 }
-ReactDOM.render(
-    <Userregister/>,
-    document.getElementById('root')
-);
+export default UserRegister;
