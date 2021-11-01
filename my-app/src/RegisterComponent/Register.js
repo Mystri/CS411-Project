@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-class UserRegister extends Component {
+import React from 'react';
+import ReactDOM from 'react-dom';
+class URegister extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -39,16 +40,16 @@ class UserRegister extends Component {
         });
     }
     handleSubmit(e) {
-        alert('info ' + this.state.username+','+this.state.email+','+this.state.password);
+        alert('info ' + this.state.username+','+this.state.email+','+this.state.password+','+this.state.succeed);
         e.preventDefault();
         const request ={
             method: 'POST',
             headers: {'Content-type':'application/json'},
-            body: JSON.stringify({username:this.state.username, email:this.state.email, password:this.state.password })
+            body: {'username':this.state.username, 'email':this.state.email, 'password':this.state.password }
         };
         fetch('http://localhost:8000/register', request)
             // if backend receive and response
-            .then(response => {console.log('parsed json',response);
+            .then(response => {console.log('parsed json',response.json());
                                }) 
             .then(response => {
                 this.setState({succeed: response.rec});
@@ -90,4 +91,4 @@ class UserRegister extends Component {
         )
     }
 }
-export default UserRegister;
+export default URegister;
