@@ -8,7 +8,7 @@ class URegister extends React.Component {
             username: "",
             email: "",
             password: "",
-            succeed: ""
+            succeed: 0
 
         };
         this.handleEmailRegistration = this.handleEmailRegistration.bind(this);
@@ -55,8 +55,8 @@ class URegister extends React.Component {
                 return response.json();
             }) 
             .then(response => {
-                this.setState({succeed: response.res});
-                console.log('parsed json', response.res)
+                this.setState({succeed: response.rec});
+                console.log('parsed json', response.rec)
             },(e)=>{
                 this.setState({requestError: true});
                 console.log('parsing failed', e)
