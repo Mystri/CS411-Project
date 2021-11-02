@@ -107,6 +107,7 @@ def delete_list():
     count = cursor.fetchall()[0][0]
 
     return {"rec": count}
+    
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
