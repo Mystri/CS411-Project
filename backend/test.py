@@ -74,5 +74,39 @@ def login():
 
     return {"rec": count}
 
+
+@app.route("/update_user", methods=["POST", "GET"])
+def update_user():
+
+    data = request.get_json(force=True)
+    email = data['email']
+
+    cursor.execute(
+        "UPDATE user SET username='{}', password='{}', gender='{}', date_of_birth='{}', avatar='{}' where email='{}'".format(
+            data['username'], data['password'], data['gender'], data['date_of_birth'], data['avatar'], email))
+    conn.commit()
+
+    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+
+    count = cursor.fetchall()[0][0]
+
+    return {"rec": count}
+
+
+@app.route("/delete_list", methods=["POST", "GET"])
+def delete_list():
+
+    data = request.get_json(force=True)
+    name = data['name']
+
+    cursor.execute("DELETE FROM List WHERE name='{}'".format(name))
+    conn.commit()
+
+    cursor.execute("SELECT count(*) from List where name='{}'".format(name))
+
+    count = cursor.fetchall()[0][0]
+
+    return {"rec": count}
+
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
