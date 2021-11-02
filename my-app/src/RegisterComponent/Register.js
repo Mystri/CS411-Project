@@ -45,7 +45,7 @@ class URegister extends React.Component {
         const request ={
             method: 'POST',
             headers: {'Content-type':'application/json'},
-            body:JSON.stringify({'username':this.state.username, 'email':this.state.email, 'password':this.state.password })
+            body: {'username':this.state.username, 'email':this.state.email, 'password':this.state.password }
         };
         fetch('http://localhost:8000/register', request)
             // if backend receive and response

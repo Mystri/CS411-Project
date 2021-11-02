@@ -7,8 +7,7 @@ class LoginForm extends React.Component {
         this.state = {
             email : "",
             password : "",
-            login_status : "",
-
+            login_status : 0
         }
         this.handlePasswordChange = this.handleEmailChange.bind(this);
         this.handleSubmitevents = this.handleSubmitevents.bind(this);
@@ -20,10 +19,18 @@ class LoginForm extends React.Component {
         })
         event.preventDefault();
     }
-    handleSubmitevents(event) {
+
+    handleSubmit(event) {
 
     alert('A name was submitted: ' + this.state.email);
-    fetch('http://localhost:8000/login/', )
+
+    const login_request = {
+        method : "POST",
+        headers: {'Content-type':'application/json'},
+        body: {'username':this.state.username, 'email':this.state.email, 'password':this.state.password }
+    }
+
+    fetch('http://localhost:8000/login', login_request)
         .then(data => {
             console.log('parsed json', data);
             return data.json()})
@@ -44,7 +51,6 @@ class LoginForm extends React.Component {
     
 
     handlePasswordChange(event){
-        alert('1')
         this.setState({
             password: event.target.password
         })

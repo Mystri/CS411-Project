@@ -48,21 +48,31 @@ def search_movie(name):
 def register():
 
     data = request.get_json(force=True)
-    print(data, file=sys.stderr)
-
     email = data['email']
-
     
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
     count = cursor.fetchall()[0][0]
 
     if count > 0:
-        return {"rec": False}
+        return {"rec": 0}
     else:
         cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
         conn.commit()
-        return {"rec": True}
+        return {"rec": 1}
+
+
+@app.route("/login", methods=["POST"])
+def login():
+
+    data = request.get_json(force=True)
+    email = data['email']
+    
+    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+
+    count = cursor.fetchall()[0][0]
+
+    return {"rec": count}
 
 
 
