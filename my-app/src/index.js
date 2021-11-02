@@ -2,8 +2,9 @@ import React from "react";
 import ReactDOM from 'react-dom';
 import FilterableProductTable from './SearchBar.js'
 import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
-
+import URegister from "./RegisterComponent/Register.js";
 class Test extends React.Component {
+   
     constructor(props) {
         super(props);
         /**
@@ -17,9 +18,10 @@ class Test extends React.Component {
     }
 
     render() {
-        if (this.state.page == 0) {
+        if (this.state.page === 0) {
             return(
                 <div>
+                    <URegister/>
                     <PopupLoginForm/>
                     <FilterableProductTable/>
                 </div>
@@ -29,7 +31,5 @@ class Test extends React.Component {
 
     }
 }
-
-
 
 ReactDOM.render(<Test />, document.getElementById("root"));

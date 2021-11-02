@@ -23,7 +23,7 @@ class LoginForm extends React.Component {
     handleSubmitevents(event) {
 
     alert('A name was submitted: ' + this.state.email);
-            fetch('http://localhost:8000/login/' + this.state.email + '/' + this.state.password)
+    fetch('http://localhost:8000/login/', )
         .then(data => {
             console.log('parsed json', data);
             return data.json()})
@@ -62,4 +62,4 @@ class LoginForm extends React.Component {
     }
 }
 
-export default LoginForm
+export default LoginForm 

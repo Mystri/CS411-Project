@@ -6,6 +6,7 @@ from flask import Flask,render_template,request,send_from_directory
 import json
 import sqlite3
 import requests
+import sys
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
@@ -43,23 +44,25 @@ def search_movie(name):
 
     return {'rec':result}
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["POST", "GET"])
 def register():
-    data = request.get_json(force=True)
-    email = data['email']
-    
-    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
-    count = cursor.fetchall()[0][0]
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        email = data['email']
+        
+        print(email, file=sys.stderr)
+        
+        cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
-    if count > 0:
-        return {"rec": 0}
-    else:
-        cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
-        conn.commit()
-        return {"rec": 1}
-
-
+        count = cursor.fetchall()[0][0]
+        
+        if count > 0:
+            return {"rec": 0}
+        else:
+            cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
+            conn.commit()
+            return {"rec": 1}
 
 
 if __name__ == '__main__':
