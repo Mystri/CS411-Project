@@ -44,23 +44,25 @@ def search_movie(name):
 
     return {'rec':result}
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["POST", "GET"])
 def register():
-    data = request.get_json(force=True)
-    email = data['email']
 
-    print(email, file=sys.stderr)
-    
-    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        email = data['email']
+        
+        print(email, file=sys.stderr)
+        
+        cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
-    count = cursor.fetchall()[0][0]
+        count = cursor.fetchall()[0][0]
+        
+        if count == 0:
+            cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
+            conn.commit()
+   
+        return {'res':count}
 
-    if count > 0:
-        return {"rec": False}
-    else:
-        cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
-        conn.commit()
-        return {"rec": True}
 
 
 

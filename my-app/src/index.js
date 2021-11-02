@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import FilterableProductTable from './SearchBar.js'
 import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
-
 class Test extends React.Component {
+   
     constructor(props) {
         super(props);
         /**
@@ -31,7 +31,5 @@ class Test extends React.Component {
 
     }
 }
-
-
 
 ReactDOM.render(<Test />, document.getElementById("root"));

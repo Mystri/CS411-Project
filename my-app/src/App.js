@@ -2,6 +2,10 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  var express = require('express');
+  var cors = require('cors');
+  var app = express();
+  app.use(cors());
   return (
     <div className="App">
       <header className="App-header">
