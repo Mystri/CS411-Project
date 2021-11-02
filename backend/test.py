@@ -53,11 +53,11 @@ def register():
     count = cursor.fetchall()[0][0]
 
     if count > 0:
-        return {"rec": False}
+        return {"rec": 0}
     else:
         cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
         conn.commit()
-        return {"rec": True}
+        return {"rec": 1}
 
 
 
