@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 class URegister extends React.Component {
     constructor(props) {
         super(props);
@@ -8,7 +7,7 @@ class URegister extends React.Component {
             username: "",
             email: "",
             password: "",
-            succeed: ""
+            succeed: 0
 
         };
         this.handleEmailRegistration = this.handleEmailRegistration.bind(this);
@@ -44,13 +43,16 @@ class URegister extends React.Component {
         e.preventDefault();
         const request ={
             method: 'POST',
-            headers: {'Content-type':'application/json'},
-            body: {'username':this.state.username, 'email':this.state.email, 'password':this.state.password }
+            mode: 'cors',
+            credentials: 'omit',
+            headers: {'Content-type':'text/plain'},
+            body:JSON.stringify({'username':this.state.username, 'email':this.state.email, 'password':this.state.password })
         };
         fetch('http://localhost:8000/register', request)
             // if backend receive and response
-            .then(response => {console.log('parsed json',response.json());
-                               }) 
+            .then(response => {
+                return response.json();
+            }) 
             .then(response => {
                 this.setState({succeed: response.rec});
                 console.log('parsed json', response.rec)
@@ -58,6 +60,7 @@ class URegister extends React.Component {
                 this.setState({requestError: true});
                 console.log('parsing failed', e)
             })
+
     }
     
     // myclick(e) {
@@ -70,14 +73,14 @@ class URegister extends React.Component {
                 <div>
                     <h1>Create Your Account</h1>
                 
-                    <label for = 'username'>Username
+                    <label htmlFor = 'username'>Username
                     </label> 
                     <input type="text"  placeholder="New Username" value={this.state.username} onChange = {this.handleUsernameRegistration} name="username" id="username" required/><br/>
 
-                    <label for = 'email'>Email
+                    <label htmlFor = 'email'>Email
                     </label> 
                     <input type="email" placeholder="Email" value={this.state.email} onChange = {this.handleEmailRegistration} name="Email" id="Email" required/><br/>
-                    <label for = 'password'>Password
+                    <label htmlFor = 'password'>Password
                     </label> 
                     <input type="text" placeholder="Password" value={this.state.password} onChange = {this.handlePasswordRegistration} name="Password" id="Password" required/>
                     <h2>Succeed: {this.state.succeed}</h2>

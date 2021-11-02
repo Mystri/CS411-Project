@@ -44,7 +44,7 @@ def search_movie(name):
 
     return {'rec':result}
 
-@app.route("/register", methods=["POST"])
+@app.route("/register", methods=["POST", "GET"])
 def register():
 
     data = request.get_json(force=True)

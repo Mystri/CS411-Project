@@ -1,10 +1,20 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import FilterableProductTable from './SearchBar.js'
-import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
-import Userregister from "./RegisterComponent/Register.js";
+// import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
+import LoginForm from "./LoginComponent/LoginForm.js";
+import URegister from "./RegisterComponent/Register.js";
+import LLL from "./test_page/test.js";
+
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
 
 class Test extends React.Component {
+   
     constructor(props) {
         super(props);
         /**
@@ -21,8 +31,8 @@ class Test extends React.Component {
         if (this.state.page === 0) {
             return(
                 <div>
-                    <UserRegister/>
-                    <PopupLoginForm/>
+                    <URegister/>
+                    <LoginForm/>
                     <FilterableProductTable/>
                 </div>
             )
@@ -32,6 +42,20 @@ class Test extends React.Component {
     }
 }
 
+ReactDOM.render(
+    
+    <Router>
+        <Switch>
 
+            <Route path="/lol">
+                <LLL />
+            </Route>
+            <Route path = "">
 
-ReactDOM.render(<Test />, document.getElementById("root"));
+                <Test />
+            </Route>
+
+        </Switch>
+    </Router>
+
+    , document.getElementById("root"));
