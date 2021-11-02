@@ -55,7 +55,11 @@ class URegister extends React.Component {
             }) 
             .then(response => {
                 this.setState({succeed: response.rec});
-                console.log('parsed json', response.rec)
+                if (this.state.succeed) {
+                    this.props.history.push({
+                        pathname: '/lol'
+                    })
+                }
             },(e)=>{
                 this.setState({requestError: true});
                 console.log('parsing failed', e)

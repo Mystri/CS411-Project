@@ -10,7 +10,7 @@ class LoginForm extends React.Component {
             password : "",
             login_status : 0
         }
-        this.handlePasswordChange = this.handleEmailChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
     }
@@ -22,41 +22,46 @@ class LoginForm extends React.Component {
     }
     
     handlePasswordChange(event){
-        event.preventDefault();
         this.setState({
             password: event.target.password
         })
+        event.preventDefault();
     }
 
     handleSubmit(event) {
         event.preventDefault();
 
+
         const login_request = {
             method : "POST",
-            headers: {'Content-type':'application/json'},
-            body: {'username':this.state.username, 'email':this.state.email, 'password':this.state.password }
+            mode: "cors",
+            credentials: "omit",
+            headers: {'Content-type':'text/plain'},
+            body: JSON.stringify({'username':this.state.username, 'email':this.state.email, 'password':this.state.password })
         }
 
         fetch('http://localhost:8000/login', login_request)
             .then(response => {
-                console.log('parsed json', response);
                 return response.json()})
             .then(response => {
                 this.setState({
                     login_status: response.rec
                 });
-                console.log('parsed json', response.rec);            
+                console.log('parsed json', response.rec);
+                if (this.state.login_status) {
+                    this.props.history.push({
+                        pathname: '/lol'
+                    })
+                }     
             }, (ex) => {
                 this.setState({
                     requestError : true
                 });
                 console.log('parsing failed', ex)
             })
-
         
-        this.props.history.push({
-            pathname: '/lol'
-        })
+        
+
 
     }
     
