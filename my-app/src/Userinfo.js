@@ -13,9 +13,7 @@ class Userinfo extends React.Component {
             username: "",
             email: "",
             birthday: "",
-            succeed: 0,
-            gender: document.getElementById('gender').value
-
+            succeed: 0
         };
         this.handleEmailRegistration = this.handleEmailRegistration.bind(this);
         this.handleUsernameRegistration = this.handleUsernameRegistration.bind(this);
@@ -135,4 +133,4 @@ class Userinfo extends React.Component {
         )
     }
 }
-export default Userinfo
+export default Userinfo;

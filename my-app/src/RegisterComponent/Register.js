@@ -108,7 +108,8 @@ class URegister extends React.Component {
                     <input type="text" placeholder="Password" value={this.state.password} onChange = {this.handlePasswordRegistration} name="Password" id="Password" required/>
                     {/* <h2>Succeed: {this.state.succeed}</h2> */}
            
-                <Link to = '/userinfo'><button>
+                <Link to = '/userinfo'>
+                <button>
                 Create Account
                 </button>
                 </Link>
