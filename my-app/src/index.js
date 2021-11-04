@@ -5,6 +5,7 @@ import FilterableProductTable from './SearchBar.js'
 import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
+import Userinfo from "./Userinfo.js";
 
 import {
     BrowserRouter as Router,
@@ -50,8 +51,9 @@ ReactDOM.render(
             <Route path="/lol">
                 <LLL />
             </Route>
+            <Route path ="/userinfo"><Userinfo/></Route>
             <Route path = "">
-
+            
                 <Test />
             </Route>
 
