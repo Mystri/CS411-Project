@@ -5,7 +5,7 @@ import {
     Route,
     Link
 } from "react-router-dom";
-class Userinfo extends React.Component {
+class Updateinfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,14 +13,15 @@ class Userinfo extends React.Component {
             username: "",
             email: "",
             birthday: "",
+            gender: '',
             succeed: 0
         };
         this.handleEmailRegistration = this.handleEmailRegistration.bind(this);
         this.handleUsernameRegistration = this.handleUsernameRegistration.bind(this);
-        this.handleBirthdayRegistration = this.handleBirthdayRegistration.bind(this);
+        this.handleBirthday = this.handleBirthday.bind(this);
+        this.handleGender = this.handleGender.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    let 
     handleUsernameRegistration(e) {
         this.setState({
             username: e.target.value
@@ -32,20 +33,19 @@ class Userinfo extends React.Component {
             email: e.target.value
         });
     }
-    handleBirthdayRegistration(e){
+    handleBirthday(e){
         this.setState({
             birthday: e.target.value
         });
     }
-    handlBirthdayRegistration(e) {
+    handleGender(e){
         this.setState({
-            username: e.target.value
-            
+            gender: e.target.value
         });
     }
     handleSubmit(e) {
         // alert('info ' + this.state.username+','+this.state.email+','+this.state.password+','+this.state.succeed);
-        alert(this.state.gender);
+        alert('Birthday: '+this.state.birthday+"; "+"Gender: "+this.state.gender);
         e.preventDefault();
         const request ={
             method: 'POST',
@@ -82,7 +82,8 @@ class Userinfo extends React.Component {
                 username: '',
                 email: '',
                 password: '',
-                gender: ''
+                gender: '',
+                birthday: document.getElementById("birthday").value = ""
                         })
         
 
@@ -109,7 +110,7 @@ class Userinfo extends React.Component {
                     </label> 
                     <input type="text"  placeholder="New Username" value={this.state.username} onChange = {this.handleUsernameRegistration} name="username" id="username" required/><br/>
                     <label htmlFor = 'gender'> Update your gender: </label>
-                    <select id = 'gender'>
+                    <select id = 'gender' value={this.state.gender} onChange = {this.handleGender}>
                         <option value="" disabled selected>Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -119,13 +120,15 @@ class Userinfo extends React.Component {
                     <label htmlFor = 'email'>Email
                     </label> 
                     <input type="email" placeholder="Email" value={this.state.email} onChange = {this.handleEmailRegistration} name="Email" id="Email" required/><br/>
-                    <label for="birthday">Birthday:</label>
-                    <input type="date"  value={this.state.birthday} onChange = {this.handlBirthdayRegistration} id="birthday" name="birthday"  /><br/>
+                    <label htmlFor="birthday">Birthday:</label>
+                    <input type="date"  onChange = {this.handleBirthday} id="birthday" name="birthday"  /><br/>
                     {/* <h2>Succeed: {this.state.succeed}</h2> */}
            
                 <button>
                 Save Changes
                 </button>
+                <div className='delete-button' onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) this.onCancel(item) } } />
+
 
                 </div>
             </form>
@@ -133,4 +136,4 @@ class Userinfo extends React.Component {
         )
     }
 }
-export default Userinfo;
+export default Updateinfo;
