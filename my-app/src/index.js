@@ -35,6 +35,7 @@ class Test extends React.Component {
                     <Link to="/newuser"><button>New User</button></Link>
                     <LoginForm/>
                     <FilterableProductTable/>
+                    
                 </div>
             )
         }
@@ -46,12 +47,13 @@ class Test extends React.Component {
 ReactDOM.render(
     
     <Router>
+        
         <Switch>
 
             <Route path="/lol">
                 <LLL />
             </Route>
-            <Route path = "/newuser"><URegister/></Route>
+            <Route path = "/newuser" ><URegister/></Route>
             <Route path ="/personal"><Updateinfo/></Route>
             <Route path = "">
             

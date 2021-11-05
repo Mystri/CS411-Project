@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     BrowserRouter as Router,
+    withRouter,
     Switch,
     Route,
     Link
@@ -59,7 +60,7 @@ class URegister extends React.Component {
     //     });
     // }
     handleSubmit(e) {
-        alert('info ' + this.state.username+','+this.state.email+','+this.state.password+','+this.state.birthday+','+this.state.gender);
+        // alert('info ' + this.state.username+','+this.state.email+','+this.state.password+','+this.state.birthday+','+this.state.gender);
         e.preventDefault();
         const request ={
             method: 'POST',
@@ -77,17 +78,11 @@ class URegister extends React.Component {
                 this.setState({succeed: response.rec});
                 if (this.state.succeed === 1) {
                     alert('Your account has been registered successfully!')
-                    this.props.history.push({
-                        pathname: '/userinfo'
-                    })
-                }
-                console.log('parsed json', response.rec); 
-                if(this.state.succeed === 1){
-                    alert('Your account has been registered successfully!')
-                    
+                    this.props.history.push("");
                 }else{
                     alert('Username or Email already existed! Please use another usernames or Email address')
                 }  
+                console.log('parsed json', response.rec); 
             },(e)=>{
                 this.setState({requestError: true});
                 console.log('parsing failed', e)
@@ -108,11 +103,6 @@ class URegister extends React.Component {
     render() {
          
         return(
-            <div>
-            <Link to = ""><button>
-                Back to main page
-                </button>
-            </Link>
             <form onSubmit = {this.handleSubmit}>
                 <div>
                     <h1>Create Your Account</h1>
@@ -137,13 +127,14 @@ class URegister extends React.Component {
                     </select><br/>
                     <label for="birthday">Birthday</label>
                     <input type="date" onChange = {this.handleBirthdayRegistration} id="birthday" name="birthday"  /><br/>
-                <button>
+                <button type = "submit">
                 Create Account
                 </button>
                 </div>
             </form>
-            </div>
+
         )
     }
 }
-export default URegister;
+// export default URegister;
+export default withRouter(URegister);
