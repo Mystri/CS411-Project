@@ -44,6 +44,18 @@ def search_movie(name):
 
     return {'rec':result}
 
+@app.route("/advanced_search_movie/<string:tag>", methods=['GET'])
+def advanced_search_movie(tag):
+    
+    cursor.execute("SELECT title from movie where tag='{}'".format(tag))
+
+    # Fetch the results
+    result = cursor.fetchall()
+
+    result = [i[0] for i in result]
+
+    return {'rec':result}
+
 @app.route("/register", methods=["POST", "GET"])
 def register():
 
@@ -82,15 +94,41 @@ def update_user():
     email = data['email']
 
     cursor.execute(
-        "UPDATE user SET username='{}', password='{}', gender='{}', date_of_birth='{}', avatar='{}' where email='{}'".format(
-            data['username'], data['password'], data['gender'], data['date_of_birth'], data['avatar'], email))
+        "UPDATE user SET username='{}', password='{}', gender='{}', date_of_birth='{}' where email='{}'".format(
+            data['username'], data['password'], data['gender'], data['date_of_birth'], email))
     conn.commit()
 
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
     count = cursor.fetchall()[0][0]
 
-    return {"rec": count}
+    if count > 0:
+        return {"rec": 0}
+    else:
+        return {"rec": 1}
+
+    # return {"rec": count}
+
+
+@app.route("/delete_user", methods=["POST", "GET"])
+def delete_user():
+
+    data = request.get_json(force=True)
+    name = data['name']
+
+    cursor.execute("DELETE FROM user WHERE name='{}'".format(name))
+    conn.commit()
+
+    cursor.execute("SELECT count(*) from user where name='{}'".format(name))
+
+    count = cursor.fetchall()[0][0]
+
+    if count > 0:
+        return {"rec": 1}
+    else:
+        return {"rec": 0}
+
+    # return {"rec": count}
 
 
 @app.route("/delete_list", methods=["POST", "GET"])

@@ -16,7 +16,6 @@ export default () => {
 
     const handleInputChange = (e) => {
         setSelections(Array.isArray(e) ? e.map(x => x.value) : []);
-        
     };
 
     return (
@@ -31,7 +30,7 @@ export default () => {
         classNamePrefix="select"
         onChange={handleInputChange}
         />
-        {selections}
+        {JSON.stringify(selections)}
         </div>
     );
 };

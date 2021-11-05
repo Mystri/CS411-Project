@@ -1,6 +1,11 @@
 import React from "react";
 import { withRouter } from 'react-router-dom'  
-
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
@@ -70,10 +75,10 @@ class LoginForm extends React.Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <label>User Name</label>
-                <input type="text" response-test="username" value={this.state.username} onChange={this.handleEmailChange} />
+                <input type="text" response-test="username" value={this.state.username} onChange={this.handleEmailChange} required/>
                 <label>Password</label>
-                <input type="text" response-test="password" value={this.state.password} onChange={this.handlePasswordChange } />
-                <input type="submit" value="Log In" response-test="submit" />
+                <input type="text" response-test="password" value={this.state.password} onChange={this.handlePasswordChange } required/>
+                <Link to="/personal"><input type="submit" value="Log In" response-test="submit" /></Link>
                 Success: {this.state.login_status != 0}
             </form> 
         );

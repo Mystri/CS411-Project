@@ -5,7 +5,7 @@ import FilterableProductTable from './SearchBar/SearchBar.js'
 import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
-import Userinfo from "./Userinfo.js";
+import Updateinfo from "./Updateinfo.js"
 import TaggedSearchBar from "./SearchBar/TagSearch.js";
 
 import {
@@ -33,7 +33,7 @@ class Test extends React.Component {
         if (this.state.page === 0) {
             return(
                 <div>
-                    <URegister/>
+                    <Link to="/newuser"><button>New User</button></Link>
                     <LoginForm/>
                     <FilterableProductTable/>
                     <TaggedSearchBar/>
@@ -49,12 +49,14 @@ class Test extends React.Component {
 ReactDOM.render(
     
     <Router>
+        
         <Switch>
 
             <Route path="/lol">
                 <LLL />
             </Route>
-            <Route path ="/userinfo"><Userinfo/></Route>
+            <Route path = "/newuser" ><URegister/></Route>
+            <Route path ="/personal"><Updateinfo/></Route>
             <Route path = "">
 
                 <Test />

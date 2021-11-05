@@ -5,7 +5,7 @@ import {
     Route,
     Link
 } from "react-router-dom";
-class Userinfo extends React.Component {
+class User_delete extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -133,4 +133,4 @@ class Userinfo extends React.Component {
         )
     }
 }
-export default Userinfo;
+export default Userdeletion;
