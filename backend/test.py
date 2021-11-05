@@ -57,7 +57,7 @@ def register():
     if count > 0:
         return {"rec": 0}
     else:
-        cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','','1970-6-22','')".format(data['username'],email,data['password']))
+        cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','{}','{}','')".format(data['username'],email,data['password'],data['gender'], data['birthday']))
         conn.commit()
         return {"rec": 1}
 
