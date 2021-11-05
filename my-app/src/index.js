@@ -6,7 +6,7 @@ import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
 import Userinfo from "./Userinfo.js";
-import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
+import TaggedSearchBar from "./SearchBar/TagSearch.js";
 
 import {
     BrowserRouter as Router,
