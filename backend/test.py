@@ -44,6 +44,18 @@ def search_movie(name):
 
     return {'rec':result}
 
+@app.route("/advanced_search_movie/<string:tag>", methods=['GET'])
+def advanced_search_movie(tag):
+    
+    cursor.execute("SELECT title from movie where tag='{}'".format(tag))
+
+    # Fetch the results
+    result = cursor.fetchall()
+
+    result = [i[0] for i in result]
+
+    return {'rec':result}
+
 @app.route("/register", methods=["POST", "GET"])
 def register():
 
