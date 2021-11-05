@@ -1,11 +1,12 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import FilterableProductTable from './SearchBar.js'
+import FilterableProductTable from './SearchBar/SearchBar.js'
 // import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
 import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
 import Userinfo from "./Userinfo.js";
+import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
 
 import {
     BrowserRouter as Router,
@@ -35,6 +36,8 @@ class Test extends React.Component {
                     <URegister/>
                     <LoginForm/>
                     <FilterableProductTable/>
+                    <TaggedSearchBar/>
+                    
                 </div>
             )
         }
@@ -53,7 +56,7 @@ ReactDOM.render(
             </Route>
             <Route path ="/userinfo"><Userinfo/></Route>
             <Route path = "">
-            
+
                 <Test />
             </Route>
 

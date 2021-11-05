@@ -5,7 +5,8 @@ class FilterableProductTable extends React.Component{
         super(props);
         this.state = {
             filterText: '',
-            banners:[]
+            banners:[],
+            inputList:[]
         };
         this.handleSearch=this.handleSearch.bind(this);
     }
@@ -108,5 +109,8 @@ class ProductTable extends React.Component{
                     
                 )}
 }
+
+
+
 
 export default FilterableProductTable;

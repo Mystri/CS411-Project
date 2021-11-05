@@ -38,14 +38,8 @@ class URegister extends React.Component {
             password: e.target.value
         });
     }
-    // handlBirthdayRegistration(e) {
-    //     this.setState({
-    //         username: e.target.value
-            
-    //     });
-    // }
+
     handleSubmit(e) {
-        // alert('info ' + this.state.username+','+this.state.email+','+this.state.password+','+this.state.succeed);
         e.preventDefault();
         const request ={
             method: 'POST',
