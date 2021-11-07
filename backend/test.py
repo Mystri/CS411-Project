@@ -124,16 +124,16 @@ def update_user():
     # return {"rec": count}
 
 
-@app.route("/delete_user", methods=["POST", "GET"])
+@app.route("/delete_user", methods=["POST"])
 def delete_user():
 
     data = request.get_json(force=True)
-    name = data['name']
+    email = data['email']
 
-    cursor.execute("DELETE FROM user WHERE name='{}'".format(name))
+    cursor.execute("DELETE FROM user WHERE email='{}'".format(email))
     conn.commit()
 
-    cursor.execute("SELECT count(*) from user where name='{}'".format(name))
+    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
     count = cursor.fetchall()[0][0]
 
@@ -145,20 +145,20 @@ def delete_user():
     # return {"rec": count}
 
 
-@app.route("/delete_list", methods=["POST", "GET"])
-def delete_list():
+# @app.route("/delete_list", methods=["POST", "GET"])
+# def delete_list():
 
-    data = request.get_json(force=True)
-    name = data['name']
+#     data = request.get_json(force=True)
+#     name = data['name']
 
-    cursor.execute("DELETE FROM List WHERE name='{}'".format(name))
-    conn.commit()
+#     cursor.execute("DELETE FROM List WHERE name='{}'".format(name))
+#     conn.commit()
 
-    cursor.execute("SELECT count(*) from List where name='{}'".format(name))
+#     cursor.execute("SELECT count(*) from List where name='{}'".format(name))
 
-    count = cursor.fetchall()[0][0]
+#     count = cursor.fetchall()[0][0]
 
-    return {"rec": count}
+#     return {"rec": count}
     
 @app.route("/top_5_actor", methods=["GET"])
 def top_5_actor():
