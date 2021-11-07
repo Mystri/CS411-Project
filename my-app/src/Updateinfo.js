@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import {
     BrowserRouter as Router,
     withRouter,
@@ -6,18 +7,20 @@ import {
     Route,
     Link
 } from "react-router-dom";
-
+import{x} from "./LoginComponent/LoginForm.js";
+const gender = x[2]
+const username = x[4]
 class Updateinfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             // var/objs to use
-            new_username: "",
-            new_password: "",
-            new_birthday: "",
-            new_gender: '',
-            succeed: 0,
-            status: 0
+            new_username: x[4],
+            new_password: x[3],
+            new_birthday: moment(x[0]).format('YYYY-MM-DD'),
+            new_gender: x[2],
+            status: 0,
+            delete: 0
         };
         // this.handleEmailRegistration = this.handleEmailRegistration.bind(this);
         this.handleUsername = this.handleUsername.bind(this);
@@ -25,57 +28,73 @@ class Updateinfo extends React.Component {
         this.handleBirthday = this.handleBirthday.bind(this);
         this.handleGender = this.handleGender.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.DeleteUser = this.DeleteUser.bind(this);
     }
     handleUsername(e) {
-        this.setState({
-            new_username: e.target.value
-            
-        });
+        // if(e.target.value.length > 0){
+        //     this.setState({
+        //         new_username: e.target.value
+                
+        //     })
+        // }else{
+           { this.setState({
+                new_username: e.target.value
+                
+            }); 
+        }
     }
     handlePassword(e) {
-        this.setState({
-            new_password: e.target.value
-        });
+        // console.log(e.target.value.length)
+        
+            this.setState({
+                new_password: e.target.value
+                
+            })
+           
+                
     }
     handleBirthday(e){
-        this.setState({
-            new_birthday: e.target.value
-        });
+        
+                this.setState({
+                    new_birthday: e.target.value
+                    
+                })
     }
     handleGender(e){
-        this.setState({
-            new_gender: e.target.value
-        });
+        console.log(e.target.value.length);
+        
+                this.setState({
+                    new_gender: e.target.value
+                    
+                })
+            
     }
     handleSubmit(e) {
-        // alert('info ' + this.state.username+','+this.state.email+','+this.state.password+','+this.state.succeed);
-        // alert('Username'+this.state.new_username+',Birthday: '+this.state.new_birthday+"; "+"Gender: "+this.state.new_gender);
+        // alert(x[3])
+        alert('Username'+this.state.new_username+',Birthday: '+this.state.new_birthday+"; "+"Gender: "+this.state.new_gender+',password:'+this.state.new_password+'lll'+x[1]);
         e.preventDefault();
         const request ={
             method: 'POST',
             mode: 'cors',
             credentials: 'omit',
             headers: {'Content-type':'text/plain'},
-            body:JSON.stringify({'username':this.state.new_username, 'password':this.new_password, 'gender':this.state.new_gender, 'birthday':this.state.new_birthday})
+            body:JSON.stringify({'username':this.state.new_username, 'password':this.state.new_password, 'gender':this.state.new_gender, 'birthday':this.state.new_birthday, 'email':x[1]})
         };
         fetch('http://localhost:8000/update_user', request)
             // if backend receive and response
             .then(response => {
-                return response.json();
+                return response.json()
             }) 
             .then(response => {
-                this.setState({succeed: response.rec});
-                // if (this.state.succeed) {
-                //     this.props.history.push({
-                //         pathname: '/lol'
-                //     })
-                console.log('parsed json', response.rec); 
-                if(this.state.succeed === 1){
+                this.setState({status: response.rec});
+                
+                if(this.state.status === 0){
                     alert('Your personal information has been successfully updated.')
                     
                 }else{
                     alert('Username may already existed! Please use other usernames')
-                }  
+                }
+                console.log('parsed json', response.rec);   
             },(e)=>{
                 this.setState({requestError: true});
                 console.log('parsing failed', e)
@@ -88,29 +107,35 @@ class Updateinfo extends React.Component {
                 gender: '',
                 birthday: document.getElementById("birthday").value = ""
                         })
+            
         
 
     }
 
     DeleteUser(e){
         e.preventDefault();
-        // const request ={
-        //     method: 'DELETE',
-        //     mode: 'cors',
-        //     credentials: 'omit',
-        //     headers: {'Content-type':'text/plain'},
-        //     body:JSON.stringify({'username':this.state.new_username, 'password':this.new_password, 'gender':this.state.new_gender, 'birthday':this.state.new_birthday})
-        // };
-        fetch('http://localhost:8000/delete_user', {method:'DELETE'})
+        const request ={
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: {'Content-type':'text/plain'},
+            body:JSON.stringify({'email':x[1]})
+        };
+        fetch('http://localhost:8000/delete_user', request)
         .then(response => {
             return response.json();
         }) 
         .then(response => {
             // should be 1 if delete request received
-            this.setState({status: response.rec});
+            this.setState({delete: response.rec});
             console.log('parsed json', response.rec); 
-            alert('Your account has been deleted.')
-            this.props.history.push("");
+            if(this.state.delete === 1){
+                alert('Your account has been deleted.')
+                this.props.history.push("");
+            }else{
+                alert('something is wrong')
+            }
+            
         })
     }
     
@@ -122,6 +147,8 @@ class Updateinfo extends React.Component {
          
         return(
             <div>
+                <script type="text/javascript" src="LoginForm.js">
+                 </script>
             <Link to = ""><button>
                 Back to main page
                 </button>
@@ -130,13 +157,13 @@ class Updateinfo extends React.Component {
             <form onSubmit = {this.handleSubmit}>
                 <div>
                     <h1>Update personal information</h1>
-                
+
                     <label htmlFor = 'username'> New Username: </label> 
-                    <input type="text"  placeholder="New Username" value={this.state.new_username} onChange = {this.handleUsername} name="username" id="username" /><br/>
+                    <input type="text"  placeholder="New Username" value={this.state.new_username}onChange = {this.handleUsername} name="username" id="username" /><br/>
                     <label htmlFor = 'password'> New Password: </label> 
-                    <input type="text" placeholder="Password" value={this.state.new_spassword} onChange = {this.handlePassword} name="Password" id="Password"/><br/>
+                    <input type="text" placeholder="Password" value={this.state.new_password} onChange = {this.handlePassword} name="Password" id="Password"/><br/>
                     <label htmlFor = 'gender'> Update your gender: </label>
-                    <select id = 'gender' value={this.state.gender} onChange = {this.handleGender}>
+                    <select id = 'gender' value={this.state.new_gender} onChange = {this.handleGender}>
                         <option value="" disabled selected>Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -158,7 +185,7 @@ class Updateinfo extends React.Component {
 
                 </div>
             </form>
-            <button onChange = {this.DeleteUser}>Delete Account</button>
+            <button onClick = {this.DeleteUser}>Delete Account</button>
             </div>
         )
     }

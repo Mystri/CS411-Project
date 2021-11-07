@@ -105,6 +105,10 @@ class URegister extends React.Component {
         return(
             <form onSubmit = {this.handleSubmit}>
                 <div>
+                <Link to = ""><button>
+                Back to main page
+                </button>
+                </Link>
                     <h1>Create Your Account</h1>
                 
                     <label htmlFor = 'username'>Username
@@ -125,7 +129,7 @@ class URegister extends React.Component {
                         <option value="Female">Female</option>
                         <option value="Non-binary">Non-Binary</option>
                     </select><br/>
-                    <label for="birthday">Birthday</label>
+                    <label htmlFor="birthday">Birthday</label>
                     <input type="date" onChange = {this.handleBirthdayRegistration} id="birthday" name="birthday"  /><br/>
                 <button type = "submit">
                 Create Account
