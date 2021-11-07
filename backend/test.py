@@ -33,17 +33,38 @@ def photo_url():
 
     return {'rec':result}
 
-@app.route("/search_movie/<string:name>", methods=['GET'])
-def search_movie(name):
+@app.route("/search_movie",methods=["POST", "GET"])
+def search_movie():
+    lan_sql_sent = ""
+    typ_sql_sent = ""
+    key_sql_sent = ""
+    data = request.get_json(force=True)
+    for tags in data:
+        if tags == "language":
+            for tag, state in data[tags].items():
+                if state:
+                    if lan_sql_sent:
+                        lan_sql_sent += " UNION "
+                    lan_sql_sent += "(SELECT title from movie where language = '{}')".format(tag)
+        if tags == "type":
+            for tag, state in data[tags].items():
+                if state:
+                    if typ_sql_sent:
+                        typ_sql_sent += " UNION "
+                    typ_sql_sent += "(SELECT title from movie where type = '{}')".format(tag)
+        if tags == "keyword":
+            key_sql_sent = "(SELECT title from movie where title LIKE '%{}%')".format(data[tags])
+    print(lan_sql_sent, typ_sql_sent, key_sql_sent)
+
     
-    cursor.execute("SELECT title from movie where title LIKE '%{}%'".format(name))
+    # cursor.execute((lan_sql_sent + typ_sql_sent + key_sql_sent))
 
-    # Fetch the results
-    result = cursor.fetchall()
+    # # Fetch the results
+    # result = cursor.fetchall()
 
-    result = [i[0] for i in result]
+    # result = [i[0] for i in result]
 
-    return {'rec':result}
+    return {'rec': 0}
 
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):
