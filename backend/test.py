@@ -159,6 +159,14 @@ def delete_list():
 
     return {"rec": count}
     
+@app.route("/top_5_actor", methods=["GET"])
+def top_5_actor():
+    cursor.execute("SELECT People.name FROM movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst GROUP BY People.peopleid ORDER BY COUNT(movie.movie_id) LIMIT 5")
+    result = cursor.fetchall()
+
+    result = [i[0] for i in result]
+
+    return {'rec':result}
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
