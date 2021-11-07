@@ -7,6 +7,7 @@ import json
 import sqlite3
 import requests
 import sys
+from datetime import datetime
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
@@ -96,7 +97,7 @@ def login():
         return {"rec": 0}
     else:
         result = result[0]
-        return {"rec": {"email":result[0], 'username':result[1], "password":result[2], "gender":result[3], "birthday":result[4]}}
+        return {"rec": {"email":result[0], 'username':result[1], "password":result[2], "gender":result[3], "birthday":datetime.strftime(result[4],'%Y-%m-%d')}}
 
 
 
