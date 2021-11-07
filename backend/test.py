@@ -138,9 +138,9 @@ def delete_user():
     count = cursor.fetchall()[0][0]
 
     if count > 0:
-        return {"rec": 1}
-    else:
         return {"rec": 0}
+    else:
+        return {"rec": 1}
 
     # return {"rec": count}
 
