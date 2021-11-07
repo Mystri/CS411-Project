@@ -88,14 +88,16 @@ def login():
     data = request.get_json(force=True)
     email = data['email']
     
-    cursor.execute("SELECT email, username, password, gender, birthday from user where email='{}'".format(email))
+    cursor.execute("SELECT email, username, password, gender, birthday from user where email='{}' and password='{}'".format(email,data['password']))
 
-    result = cursor.fetchall()[0]
+    result = cursor.fetchall()
 
     if len(result) == 0:
         return {"rec": 0}
     else:
+        result = result[0]
         return {"rec": {"email":result[0], 'username':result[1], "password":result[2], "gender":result[3], "birthday":result[4]}}
+
 
 
 @app.route("/update_user", methods=["POST", "GET"])
