@@ -44,9 +44,17 @@ def search_movie(name):
 
     return {'rec':result}
 
-@app.route("/advanced_search_movie/<string:tag>", methods=['GET'])
+@app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):
-    
+    data = request.get_json(force=True)
+    # The type of data {'request_query':[
+    # {
+    #  'language':xxx,
+    #  'max_runtime': xxx,
+    #  'type':xxx
+    # }]}
+
+
     cursor.execute("SELECT title from movie where tag='{}'".format(tag))
 
     # Fetch the results
@@ -56,7 +64,7 @@ def advanced_search_movie(tag):
 
     return {'rec':result}
 
-@app.route("/register", methods=["POST", "GET"])
+@app.route("/register", methods=["POST"])
 def register():
 
     data = request.get_json(force=True)
@@ -80,11 +88,14 @@ def login():
     data = request.get_json(force=True)
     email = data['email']
     
-    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+    cursor.execute("SELECT email, username, password, gender, birthday from user where email='{}'".format(email))
 
-    count = cursor.fetchall()[0][0]
+    result = cursor.fetchall()[0]
 
-    return {"rec": count}
+    if len(result) == 0:
+        return {"rec": 0}
+    else:
+        return {"rec": {"email":result[0], 'username':result[1], "password":result[2], "gender":result[3], "birthday":result[4]}}
 
 
 @app.route("/update_user", methods=["POST", "GET"])
@@ -94,8 +105,8 @@ def update_user():
     email = data['email']
 
     cursor.execute(
-        "UPDATE user SET username='{}', password='{}', gender='{}', date_of_birth='{}' where email='{}'".format(
-            data['username'], data['password'], data['gender'], data['date_of_birth'], email))
+        "UPDATE user SET username='{}', password='{}', gender='{}', birthday='{}' where email='{}'".format(
+            data['username'], data['password'], data['gender'], data['birthday'], email))
     conn.commit()
 
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
