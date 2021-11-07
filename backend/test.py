@@ -35,36 +35,50 @@ def photo_url():
 
 @app.route("/search_movie",methods=["POST", "GET"])
 def search_movie():
-    lan_sql_sent = ""
-    typ_sql_sent = ""
-    key_sql_sent = ""
     data = request.get_json(force=True)
-    for tags in data:
-        if tags == "language":
-            for tag, state in data[tags].items():
-                if state:
-                    if lan_sql_sent:
-                        lan_sql_sent += " UNION "
-                    lan_sql_sent += "(SELECT title from movie where language = '{}')".format(tag)
-        if tags == "type":
-            for tag, state in data[tags].items():
-                if state:
-                    if typ_sql_sent:
-                        typ_sql_sent += " UNION "
-                    typ_sql_sent += "(SELECT title from movie where type = '{}')".format(tag)
-        if tags == "keyword":
-            key_sql_sent = "(SELECT title from movie where title LIKE '%{}%')".format(data[tags])
-    print(lan_sql_sent, typ_sql_sent, key_sql_sent)
+    lan = data["language"]
+    typ = data["type"]
+    key = data["keyword"]
+    isa = data["isActor"]
 
+    if key:
+        key_sql = "SELECT title from movie where title LIKE '%{}%'".format(key)
+
+    typ_sql_sent = ""
+    for typ_key, typ_value in typ.items():
+        if typ_value:
+            if typ_sql_sent:
+                typ_sql_sent += " UNION "
+            if key_sql:
+                typ_sql_sent += "SELECT title from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
+            else:
+                typ_sql_sent += "SELECT title from movie where type = '{}'".format(typ_key)
+    if not typ_sql_sent:
+        typ_sql_sent = key_sql
+
+    lan_sql_sent = ""
+    for lan_key, lan_value in lan.items():
+        if lan_value:
+            if lan_sql_sent:
+                lan_sql_sent += " UNION "
+            if typ_sql_sent:
+                lan_sql_sent += "SELECT title from movie where language = '{}' and title in ({})".format(lan_key, typ_sql_sent)
+            else:
+                lan_sql_sent += "SELECT title from movie where language = '{}'".format(lan_key)
+    if not lan_sql_sent:
+        lan_sql_sent = typ_sql_sent
     
-    # cursor.execute((lan_sql_sent + typ_sql_sent + key_sql_sent))
+    cursor.execute(lan_sql_sent)
 
-    # # Fetch the results
-    # result = cursor.fetchall()
+    # Fetch the results
+    result = cursor.fetchall()
 
-    # result = [i[0] for i in result]
+    result = [i[0] for i in result]
 
-    return {'rec': 0}
+    if result:
+        return {'rec': result}
+    else:
+        return {'rec': False}
 
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):
