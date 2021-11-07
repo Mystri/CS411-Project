@@ -1,12 +1,10 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import FilterableProductTable from './SearchBar/SearchBar.js'
-// import PopupLoginForm from "./LoginComponent/PopupLoginForm.js";
 import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
 import Updateinfo from "./Updateinfo.js"
-import TaggedSearchBar from "./SearchBar/TagSearch.js";
+import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
 
 import {
     BrowserRouter as Router,
@@ -19,29 +17,18 @@ class Test extends React.Component {
    
     constructor(props) {
         super(props);
-        /**
-         * 0 : Main page.
-         * ...
-         */
 
-        this.state = {
-            page: 0
-        }
     }
 
     render() {
-        if (this.state.page === 0) {
-            return(
-                <div>
-                    <Link to="/newuser"><button>New User</button></Link>
-                    <LoginForm/>
-                    <FilterableProductTable/>
-                    <TaggedSearchBar/>
-                    
-                </div>
-            )
-        }
-        return (<div></div>);
+        return(
+            <div>
+                <Link to="/newuser"><button>New User</button></Link>
+                <LoginForm/>
+                <TaggedSearchBar/>
+                
+            </div>
+        )
 
     }
 }
