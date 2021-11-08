@@ -41,7 +41,7 @@ def search_movie():
     key = data["keyword"]
     isa = data["isActor"]
 
-    if key:
+    if key and not isa:
         key_sql = "SELECT title from movie where title LIKE '%{}%'".format(key)
     else:
         key_sql = "SELECT title from movie"
@@ -69,8 +69,14 @@ def search_movie():
                 lan_sql_sent += "SELECT title from movie where language = '{}'".format(lan_key)
     if not lan_sql_sent:
         lan_sql_sent = typ_sql_sent
+
+    isa_sql = ""
+    if isa:
+        isa_sql = "SELECT title from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%' and title in ({})".format(key, lan_sql_sent)
+    if not isa_sql:
+        isa_sql = lan_sql_sent
     
-    cursor.execute(lan_sql_sent)
+    cursor.execute(isa_sql)
 
     # Fetch the results
     result = cursor.fetchall()
