@@ -43,6 +43,8 @@ def search_movie():
 
     if key:
         key_sql = "SELECT title from movie where title LIKE '%{}%'".format(key)
+    else:
+        key_sql = "SELECT title from movie"
 
     typ_sql_sent = ""
     for typ_key, typ_value in typ.items():
@@ -78,7 +80,7 @@ def search_movie():
     if result:
         return {'rec': result}
     else:
-        return {'rec': False}
+        return {'rec': 0}
 
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):

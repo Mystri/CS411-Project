@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 
 
 export default () => {
-    const [banners, setBanners] = useState([]);
+    const [banners, setBanners] = useState(['']);
 
     const [language, setLanguage] = useState(
         new Map([
@@ -18,10 +18,10 @@ export default () => {
         new Map([
             ['Documentary', false],
             ['Comedy', false],
-            ['French', false],
-            ['Chinese', false],
-            ['Japanese', false],
-            ['Korean', false],
+            ['Drama', false],
+            ['Horror', false],
+            ['Thriller', false],
+            ['Action', false],
         ])
     );
 
@@ -85,7 +85,13 @@ export default () => {
                         console.log('parsed json', data);
                         return data.json()})
                     .then(data => {
-                        setBanners(data.rec);
+                        console.log(data.rec);
+                        if (!data.rec) {
+                            console.log('no results');
+                            setBanners(['No results!']);
+                        } else {
+                            setBanners(data.rec);
+                        }
                         console.log('parsed json', data.rec);            
                     }, (ex) => {
                         console.log('parsing failed', ex)
@@ -139,6 +145,11 @@ export default () => {
                     value={language["Spanish"]}
                     onChange={() => handleChangeLanguage("Spanish")}
                 /> 
+                <Checkbox
+                    label="French"
+                    value={language["French"]}
+                    onChange={() => handleChangeLanguage("French")}
+                />
             </div>
 
             {/* Genre Checkboxes */}
@@ -149,9 +160,34 @@ export default () => {
                         value={type["Documentary"]}
                         onChange={() => handleChangeType("Documentary")}
                     /> 
+                <Checkbox
+                        label="Comedy"
+                        value={type["Comedy"]}
+                        onChange={() => handleChangeType("Comedy")}
+                    /> 
+                <Checkbox
+                        label="Drama"
+                        value={type["Drama"]}
+                        onChange={() => handleChangeType("Drama")}
+                    /> 
+                <Checkbox
+                        label="Horror"
+                        value={type["Horror"]}
+                        onChange={() => handleChangeType("Horror")}
+                    /> 
+                <Checkbox
+                        label="Thriller"
+                        value={type["Thriller"]}
+                        onChange={() => handleChangeType("Thriller")}
+                    /> 
+                <Checkbox
+                        label="Action"
+                        value={type["Action"]}
+                        onChange={() => handleChangeType("Action")}
+                    /> 
             </div>
 
-
+            {/* Search Results */}
             <ProductTable banners={banners}/>
 
         </div>
