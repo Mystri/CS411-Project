@@ -14,19 +14,42 @@ import {
 } from "react-router-dom";
 
 class Test extends React.Component {
-   
+
     constructor(props) {
         super(props);
+        this.state = {
+            display: ""
+        }
+        this.componentDidMount = this.componentDidMount.bind(this);
 
     }
+    componentDidMount(e) {
+        fetch('http://localhost:8000/top_5_actor', { method: 'GET' })
+            .then(response => response.json())
+            .then(response => {
+                this.setState({ display: response.rec })
+                console.log(response.rec + "info");
+                console.log(this.state.display)
+            })
 
+
+    }
     render() {
-        return(
+        return (
             <div>
+                {/* <Link to="/newuser"><button>New User</button></Link> */}
+                <LoginForm />
                 <Link to="/newuser"><button>New User</button></Link>
-                <LoginForm/>
-                <TaggedSearchBar/>
-                
+                <h2>Top Five Actors</h2>
+                <ul>
+                    <li>{this.state.display[0]}</li>
+                    <li>{this.state.display[1]}</li>
+                    <li>{this.state.display[2]}</li>
+                    <li>{this.state.display[3]}</li>
+                    <li>{this.state.display[4]}</li>
+                </ul>
+                <TaggedSearchBar />
+
             </div>
         )
 
@@ -34,17 +57,17 @@ class Test extends React.Component {
 }
 
 ReactDOM.render(
-    
+
     <Router>
-        
+
         <Switch>
 
             <Route path="/lol">
                 <LLL />
             </Route>
-            <Route path = "/newuser" ><URegister/></Route>
-            <Route path ="/personal"><Updateinfo/></Route>
-            <Route path = "">
+            <Route path="/newuser" ><URegister /></Route>
+            <Route path="/personal"><Updateinfo /></Route>
+            <Route path="">
 
                 <Test />
             </Route>
