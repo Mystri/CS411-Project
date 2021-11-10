@@ -60,8 +60,8 @@ class LoginForm extends React.Component {
                     
                 }else{
                     x = Object.values(this.state.login_status);
-                    // alert('Welcome! Log in successfully!')
-                    alert(x)
+                    alert('Welcome! Log in successfully!')
+                    // alert(x)
                     // const person_info = JSON.parse(this.state.login_status)
                     // console.log('person_info', Object.values(this.state.login_status))
                     
