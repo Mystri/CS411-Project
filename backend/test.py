@@ -42,11 +42,11 @@ def search_movie():
     isa = data["isActor"]
 
     if key and not isa:
-        key_sql = "SELECT title from movie where title LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT title from movie where title LIKE '%{}%'".format(key)
     elif key and isa:
-        key_sql = "SELECT title from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT title from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
     else:
-        key_sql = "SELECT title from movie"
+        key_sql = "SELECT DISTINCT title from movie"
 
     typ_sql_sent = ""
     for typ_key, typ_value in typ.items():
@@ -54,36 +54,53 @@ def search_movie():
             if typ_sql_sent:
                 typ_sql_sent += " UNION "
             if key_sql:
-                typ_sql_sent += "SELECT title from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
+                typ_sql_sent += "SELECT DISTINCT title from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
             else:
-                typ_sql_sent += "SELECT title from movie where type = '{}'".format(typ_key)
+                typ_sql_sent += "SELECT DISTINCT title from movie where type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
+
+    cursor.execute(typ_sql_sent)
+    result_type = cursor.fetchall()
+    result_type = set([i[0] for i in result_type])
 
     lan_sql_sent = ""
     for lan_key, lan_value in lan.items():
         if lan_value:
             if lan_sql_sent:
                 lan_sql_sent += " UNION "
-            if typ_sql_sent:
-                lan_sql_sent += "SELECT title from movie where language = '{}' and title in ({})".format(lan_key, typ_sql_sent)
+            if key_sql:
+                lan_sql_sent += "SELECT DISTINCT title from movie where language = '{}' and title in ({})".format(lan_key, key_sql)
             else:
-                lan_sql_sent += "SELECT title from movie where language = '{}'".format(lan_key)
+                lan_sql_sent += "SELECT DISTINCT title from movie where language = '{}'".format(lan_key)
     if not lan_sql_sent:
-        lan_sql_sent = typ_sql_sent
+        lan_sql_sent = key_sql
+
+    cursor.execute(lan_sql_sent)
+    result_lang = cursor.fetchall()
+    result_lang = set([i[0] for i in result_lang])
 
     # isa_sql = ""
     # if isa:
     #     isa_sql = "SELECT title from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%' and title in ({})".format(key, lan_sql_sent)
     # if not isa_sql:
     #     isa_sql = lan_sql_sent
+
+    # print(result_type)
+    # print(result_lang)
     
-    cursor.execute(lan_sql_sent)
+    # cursor.execute(lan_sql_sent)
 
-    # Fetch the results
-    result = cursor.fetchall()
-
-    result = [i[0] for i in result]
+    # # Fetch the results
+    # result = cursor.fetchall()
+    if result_lang and result_type:
+        result = list(result_type & result_lang)
+    elif result_lang:
+        result = list(result_lang)
+    elif result_type:
+        result = list(result_type)
+    else:
+        result = []
 
     if result:
         return {'rec': result}
