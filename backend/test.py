@@ -116,10 +116,18 @@ def get_all_movies():
                 i[4] = ""
             ret.append(i)
             # print(i[4])
-        # result = [i[4] for i in result]
+        # result = [i for i in result]
         return {'rec':ret}
     else:
-        pass
+        m_id = data["movie_id"]
+        cursor.execute("SELECT People.name, mp.job from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
+        result = cursor.fetchall()
+        ret = []
+        for i in result:
+            i = list(i)
+            ret.append(i[0] + ":" + i[1])
+        # result = [i for i in result]
+        return {'rec':ret}
 
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):
