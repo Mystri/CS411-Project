@@ -9,6 +9,7 @@ import requests
 import sys
 from datetime import datetime
 from flask_cors import CORS
+import re
 app = Flask(__name__)
 CORS(app)
 conn = connector.connect(
@@ -42,11 +43,11 @@ def search_movie():
     isa = data["isActor"]
 
     if key and not isa:
-        key_sql = "SELECT DISTINCT title from movie where title LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT title, movie_id from movie where title LIKE '%{}%'".format(key)
     elif key and isa:
-        key_sql = "SELECT DISTINCT title from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT title, movie_id from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
     else:
-        key_sql = "SELECT DISTINCT title from movie"
+        key_sql = "SELECT DISTINCT title, movie_id from movie"
 
     typ_sql_sent = ""
     for typ_key, typ_value in typ.items():
@@ -54,15 +55,15 @@ def search_movie():
             if typ_sql_sent:
                 typ_sql_sent += " UNION "
             if key_sql:
-                typ_sql_sent += "SELECT DISTINCT title from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
+                typ_sql_sent += "SELECT DISTINCT title, movie_id from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
             else:
-                typ_sql_sent += "SELECT DISTINCT title from movie where type = '{}'".format(typ_key)
+                typ_sql_sent += "SELECT DISTINCT title, movie_id from movie where type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
 
     cursor.execute(typ_sql_sent)
     result_type = cursor.fetchall()
-    result_type = set([i[0] for i in result_type])
+    result_type = set([i for i in result_type])
 
     lan_sql_sent = ""
     for lan_key, lan_value in lan.items():
@@ -70,15 +71,15 @@ def search_movie():
             if lan_sql_sent:
                 lan_sql_sent += " UNION "
             if key_sql:
-                lan_sql_sent += "SELECT DISTINCT title from movie where language = '{}' and title in ({})".format(lan_key, key_sql)
+                lan_sql_sent += "SELECT DISTINCT title, movie_id from movie where language = '{}' and title in ({})".format(lan_key, key_sql)
             else:
-                lan_sql_sent += "SELECT DISTINCT title from movie where language = '{}'".format(lan_key)
+                lan_sql_sent += "SELECT DISTINCT title, movie_id from movie where language = '{}'".format(lan_key)
     if not lan_sql_sent:
         lan_sql_sent = key_sql
 
     cursor.execute(lan_sql_sent)
     result_lang = cursor.fetchall()
-    result_lang = set([i[0] for i in result_lang])
+    result_lang = set([i for i in result_lang])
 
     # isa_sql = ""
     # if isa:
@@ -99,6 +100,26 @@ def search_movie():
         return {'rec': result}
     else:
         return {'rec': 0}
+
+@app.route("/get_all_movies",methods=["POST", "GET"])
+def get_all_movies():
+    data = request.get_json(force=True)
+    if not data:
+        cursor.execute("SELECT * from movie")
+        result = cursor.fetchall()
+        ret = []
+        for i in result:
+            i = list(i)
+            if i[8][0] == "s":
+                i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
+            if i[4] == "\\N":
+                i[4] = ""
+            ret.append(i)
+            # print(i[4])
+        # result = [i[4] for i in result]
+        return {'rec':ret}
+    else:
+        pass
 
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):

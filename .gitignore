@@ -1,2 +1,3 @@
 *.csv
 data/CSV.zip
+.DS_Store
