@@ -101,7 +101,7 @@ def search_movie():
     else:
         return {'rec': 0}
 
-@app.route("/get_all_movies",methods=["POST", "GET"])
+@app.route("/get_all_movies",methods=["POST"])
 def get_all_movies():
     data = request.get_json(force=True)
     if not data:
