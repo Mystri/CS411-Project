@@ -104,30 +104,47 @@ def search_movie():
 @app.route("/get_all_movies",methods=["POST"])
 def get_all_movies():
     data = request.get_json(force=True)
-    if not data:
-        cursor.execute("SELECT * from movie")
-        result = cursor.fetchall()
-        ret = []
-        for i in result:
-            i = list(i)
-            if i[8][0] == "s":
-                i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
-            if i[4] == "\\N":
-                i[4] = ""
-            ret.append(i)
-            # print(i[4])
-        # result = [i for i in result]
-        return {'rec':ret}
-    else:
-        m_id = data["movie_id"]
-        cursor.execute("SELECT People.name, mp.job from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
-        result = cursor.fetchall()
-        ret = []
-        for i in result:
-            i = list(i)
-            ret.append(i[0] + ":" + i[1])
-        # result = [i for i in result]
-        return {'rec':ret}
+    m_id = data["movie_id"]
+    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, job from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
+    result = cursor.fetchall()
+    ret = {}
+    for i in result:
+        i = list(i)
+        ret["movie_id"] = i[0]
+        ret["title"] = i[1]
+        ret["release_year"] = i[2]
+        ret["runtime"] = i[3]
+        if i[4] == "\\N":
+            i[4] = ""
+        ret["type"] = i[4]
+        ret["description"] = i[5]
+        ret["cover"] = i[6]
+        ret["production"] = i[7]
+        if i[8][0] == "s":
+            i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
+        ret["language"] = i[8]
+        if "peopleid_and_job" in ret:
+            ret["peopleid_and_job"].append(i[9] + ":" + i[10])
+        else:
+            ret["peopleid_and_job"] = [i[9] + ":" + i[10]]
+    return {'rec':ret}
+
+@app.route("/get_all_people",methods=["POST", "GET"])
+def get_all_people():
+    data = request.get_json(force=True)
+    p_id = data["peopleid"]
+    cursor.execute("SELECT * from People where peopleid='{}'".format(p_id))
+    result = cursor.fetchall()
+    ret = {}
+    result = list(result[0])
+    ret["peopleid"] = result[0]
+    ret["name"] = result[1]
+    ret["date_of_birth"] = result[2]
+    ret["profession"] = result[3]
+    ret["bio"] = result[4]
+    ret["photo"] = result[5]
+    ret["place_of_birth"] = result[6]
+    return {'rec':ret}
 
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):
