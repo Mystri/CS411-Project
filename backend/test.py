@@ -124,9 +124,9 @@ def get_all_movies():
             i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
         ret["language"] = i[8]
         if "peopleid_and_job" in ret:
-            ret["peopleid_and_job"].append(i[9] + ":" + i[10])
+            ret["peopleid_and_job"].append(i[9])
         else:
-            ret["peopleid_and_job"] = [i[9] + ":" + i[10]]
+            ret["peopleid_and_job"] = [i[9]]
     return {'rec':ret}
 
 @app.route("/get_all_people",methods=["POST", "GET"])

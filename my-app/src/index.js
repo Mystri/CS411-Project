@@ -5,6 +5,7 @@ import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
 import Updateinfo from "./Updateinfo.js"
 import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
+import MovieDetail from "./MovieDetailComponent/MovieDetail.js"
 
 import {
     BrowserRouter as Router,
@@ -67,6 +68,7 @@ ReactDOM.render(
             </Route>
             <Route path="/newuser" ><URegister /></Route>
             <Route path="/personal"><Updateinfo /></Route>
+            <Route path="/movie"><MovieDetail /></Route>
             <Route path="">
 
                 <Test />
