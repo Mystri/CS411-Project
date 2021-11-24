@@ -146,6 +146,31 @@ def get_all_people():
     ret["place_of_birth"] = result[6]
     return {'rec':ret}
 
+@app.route("/get_all_reviews",methods=["POST", "GET"])
+def get_all_reviews():
+    data = request.get_json(force=True)
+    r_id = data["reviewId"]
+    cursor.execute("SELECT reviewId, rating from Reviews where reviewId='{}'".format(r_id))
+    result = cursor.fetchall()
+    ret = {}
+    result = list(result[0])
+    ret["reviewId"] = result[0]
+    ret["rating"] = result[1]
+    return {'rec':ret}
+
+@app.route("/get_movie_review",methods=["POST", "GET"])
+def get_movie_review():
+    data = request.get_json(force=True)
+    m_id = data["movie_id"]
+    cursor.execute("SELECT reviewId, rating, MoviesmovieId from Reviews where MoviesmovieId='{}'".format(m_id))
+    result = cursor.fetchall()
+    ret = {}
+    result = list(result[0])
+    ret["reviewId"] = result[0]
+    ret["rating"] = result[1]
+    ret["MoviesmovieId"] = result[2]
+    return {'rec':ret}
+
 @app.route("/advanced_search_movie/", methods=['POST'])
 def advanced_search_movie(tag):
     data = request.get_json(force=True)
