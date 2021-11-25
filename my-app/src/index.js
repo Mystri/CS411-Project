@@ -6,6 +6,7 @@ import LLL from "./test_page/test.js";
 import Updateinfo from "./Updateinfo.js"
 import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
 import MovieDetail from "./MovieDetailComponent/MovieDetail.js"
+import Home from "./Home/Home.js";
 
 import {
     BrowserRouter as Router,
@@ -14,7 +15,7 @@ import {
     Link
 } from "react-router-dom";
 
-class Test extends React.Component {
+class Main extends React.Component {
 
     constructor(props) {
         super(props);
@@ -40,6 +41,7 @@ class Test extends React.Component {
             <div>
                 {/* <Link to="/newuser"><button>New User</button></Link> */}
                 <LoginForm />
+
                 <Link to="/newuser"><button>New User</button></Link>
                 <h2>Top Five Actors</h2>
                 <ul>
@@ -51,11 +53,15 @@ class Test extends React.Component {
                 </ul>
                 <TaggedSearchBar />
 
+
+
             </div>
         )
 
     }
 }
+
+
 
 ReactDOM.render(
 
@@ -63,16 +69,12 @@ ReactDOM.render(
 
         <Switch>
 
-            <Route path="/lol">
-                <LLL />
-            </Route>
+            <Route path="/lol"><LLL /></Route>
             <Route path="/newuser" ><URegister /></Route>
             <Route path="/personal"><Updateinfo /></Route>
             <Route path="/movie"><MovieDetail /></Route>
-            <Route path="">
-
-                <Test />
-            </Route>
+            <Route path="/home"><Home /></Route>
+            <Route path=""><Main /></Route>
 
         </Switch>
     </Router>
