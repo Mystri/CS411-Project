@@ -105,7 +105,7 @@ def search_movie():
 def get_all_movies():
     data = request.get_json(force=True)
     m_id = data["movie_id"]
-    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, job from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
+    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
     result = cursor.fetchall()
     ret = {}
     for i in result:
@@ -124,9 +124,9 @@ def get_all_movies():
             i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
         ret["language"] = i[8]
         if "peopleid_and_job" in ret:
-            ret["peopleid_and_job"].append(i[9])
+            ret["peopleid_and_job"].append(i[9]+":"+i[10])
         else:
-            ret["peopleid_and_job"] = [i[9]]
+            ret["peopleid_and_job"] = [i[9]+":"+i[10]]
     return {'rec':ret}
 
 @app.route("/get_all_people",methods=["POST", "GET"])
@@ -144,6 +144,31 @@ def get_all_people():
     ret["bio"] = result[4]
     ret["photo"] = result[5]
     ret["place_of_birth"] = result[6]
+    return {'rec':ret}
+
+@app.route("/get_all_reviews",methods=["POST", "GET"])
+def get_all_reviews():
+    data = request.get_json(force=True)
+    r_id = data["reviewId"]
+    cursor.execute("SELECT reviewId, rating from Reviews where reviewId='{}'".format(r_id))
+    result = cursor.fetchall()
+    ret = {}
+    result = list(result[0])
+    ret["reviewId"] = result[0]
+    ret["rating"] = result[1]
+    return {'rec':ret}
+
+@app.route("/get_movie_review",methods=["POST", "GET"])
+def get_movie_review():
+    data = request.get_json(force=True)
+    m_id = data["movie_id"]
+    cursor.execute("SELECT reviewId, rating, MoviesmovieId from Reviews where MoviesmovieId='{}'".format(m_id))
+    result = cursor.fetchall()
+    ret = {}
+    result = list(result[0])
+    ret["reviewId"] = result[0]
+    ret["rating"] = result[1]
+    ret["MoviesmovieId"] = result[2]
     return {'rec':ret}
 
 @app.route("/advanced_search_movie/", methods=['POST'])
