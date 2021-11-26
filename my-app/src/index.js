@@ -5,8 +5,8 @@ import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
 import Updateinfo from "./Updateinfo.js"
 import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
-import MovieDetail from "./MovieDetailComponent/MovieDetail.js"
 import Home from "./Home/Home.js";
+import Search from "./Search/Search.js";
 
 import {
     BrowserRouter as Router,
@@ -62,7 +62,6 @@ class Main extends React.Component {
 }
 
 
-
 ReactDOM.render(
 
     <Router>
@@ -72,9 +71,10 @@ ReactDOM.render(
             <Route path="/lol"><LLL /></Route>
             <Route path="/newuser" ><URegister /></Route>
             <Route path="/personal"><Updateinfo /></Route>
-            <Route path="/movie"><MovieDetail /></Route>
             <Route path="/home"><Home /></Route>
+            <Route path="/advanced_search"><Search /></Route>
             <Route path=""><Main /></Route>
+
 
         </Switch>
     </Router>
