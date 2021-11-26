@@ -43,11 +43,11 @@ def search_movie():
     isa = data["isActor"]
 
     if key and not isa:
-        key_sql = "SELECT DISTINCT title, movie_id from movie where title LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.title LIKE '%{}%'".format(key)
     elif key and isa:
-        key_sql = "SELECT DISTINCT title, movie_id from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT movie.title, movie.movie_id from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
     else:
-        key_sql = "SELECT DISTINCT title, movie_id from movie"
+        key_sql = "SELECT DISTINCT movie.title, movie.movie_id from movie"
 
     typ_sql_sent = ""
     for typ_key, typ_value in typ.items():
@@ -55,9 +55,9 @@ def search_movie():
             if typ_sql_sent:
                 typ_sql_sent += " UNION "
             if key_sql:
-                typ_sql_sent += "SELECT DISTINCT title, movie_id from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
+                typ_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.type = '{}' and (movie.title, movie.movie_id) in ({})".format(typ_key, key_sql)
             else:
-                typ_sql_sent += "SELECT DISTINCT title, movie_id from movie where type = '{}'".format(typ_key)
+                typ_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
 
@@ -71,9 +71,9 @@ def search_movie():
             if lan_sql_sent:
                 lan_sql_sent += " UNION "
             if key_sql:
-                lan_sql_sent += "SELECT DISTINCT title, movie_id from movie where language = '{}' and title in ({})".format(lan_key, key_sql)
+                lan_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.language = '{}' and (movie.title, movie.movie_id) in ({})".format(lan_key, key_sql)
             else:
-                lan_sql_sent += "SELECT DISTINCT title, movie_id from movie where language = '{}'".format(lan_key)
+                lan_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.language = '{}'".format(lan_key)
     if not lan_sql_sent:
         lan_sql_sent = key_sql
 
