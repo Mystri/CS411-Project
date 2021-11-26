@@ -17,7 +17,7 @@ conn = connector.connect(
     "pymysql",
     user="root",
     password='Xu440987',
-    db="cs411",
+    db="411new",
 )
 cursor = conn.cursor()
 
@@ -295,5 +295,90 @@ def top_5_actor():
 
     return {'rec':result}
 
+@app.route("/create_list", methods=["post"])
+def create_list():
+    data = request.get_json(force=True)
+    user = data["user"]
+    name = data["list_name"]
+    desc = data["description"]
+    cursor.execute("SELECT MAX(list_id) from List")
+    listid = cursor.fetchall()[0][0]
+    if listid==None:
+        listid =0
+    else:
+        listid += 1
+    cursor.execute("INSERT INTO List VALUES ('{}','{}','{}','{}')".format(listid, name, desc, user))
+    conn.commit()
+    return {"rec":{"user_id":user, "list_name":name, "description":desc, "listid":listid}}
+
+@app.route("/add_movie_to_list", methods=["post"])
+def add_movie_to_list():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    movieid = data["movie_id"]
+    try:
+        cursor.execute("INSERT INTO list2movie VALUES ({},'{}')".format(listid, movieid))
+        conn.commit()
+        return {"rec":1}
+    except Exception as e:
+        print(e)
+        return {"rec":0}
+
+@app.route("/get_list_movie", methods=["post"])
+def get_list_movie():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
+    result = cursor.fetchall()
+    res = []
+    for i in result:
+        res.append({"movie_id":i[0],
+        "title":i[1],
+        "release_year":i[2],
+        "runtime":i[3],
+        "description":i[4],
+        "cover":i[5],
+        "production":i[6],
+        "language":i[7]})
+    return {"rec":res}
+
+@app.route("/add_fav_list", methods=["post"])
+def add_fav_list():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    userid = data["user_id"]
+    try:
+        cursor.execute("INSERT INTO user_fav_list VALUES ({},'{}')".format(listid,userid))
+        conn.commit()
+        return {"rec":1}
+    except Exception as e:
+        print(e)
+        return {"rec":str(e)}
+
+@app.route("/get_fav_list", methods=["post"])
+def get_fav_list():
+    data = request.get_json(force=True)
+    userid = data["user_id"]
+    cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
+    result = cursor.fetchall()
+    res = []
+    for i in result:
+        res.append({
+            "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
+        })
+    return {"rec":res}
+
+@app.route("/get_owned_list", methods=["post"])
+def get_owned_list():
+    data = request.get_json(force=True)
+    userid = data["user_id"]
+    cursor.execute("select * from List where creator='{}';".format(userid))
+    result = cursor.fetchall()
+    res = []
+    for i in result:
+        res.append({
+            "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
+        })
+    return {"rec":res}
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
