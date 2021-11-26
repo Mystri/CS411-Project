@@ -34,6 +34,18 @@ def photo_url():
 
     return {'rec':result}
 
+@app.route("/search_list_by_name",methods=["POST", "GET"])
+def search_list_by_name():
+    data = request.get_json(force=True)
+    name = data["name"]
+    cursor.execute("SELECT list_id from List where name='{}'".format(name))
+    result = cursor.fetchall()
+    result = [i[0] for i in result]
+    if result:
+        return {'rec': result}
+    else:
+        return {'rec': 0}
+
 @app.route("/search_movie",methods=["POST", "GET"])
 def search_movie():
     data = request.get_json(force=True)
