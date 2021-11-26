@@ -43,11 +43,11 @@ def search_movie():
     isa = data["isActor"]
 
     if key and not isa:
-        key_sql = "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.title LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.title LIKE '%{}%'".format(key)
     elif key and isa:
-        key_sql = "SELECT DISTINCT movie.title, movie.movie_id from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
     else:
-        key_sql = "SELECT DISTINCT movie.title, movie.movie_id from movie"
+        key_sql = "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie"
 
     typ_sql_sent = ""
     for typ_key, typ_value in typ.items():
@@ -55,15 +55,33 @@ def search_movie():
             if typ_sql_sent:
                 typ_sql_sent += " UNION "
             if key_sql:
-                typ_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.type = '{}' and (movie.title, movie.movie_id) in ({})".format(typ_key, key_sql)
+                typ_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.type = '{}' and (movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language) in ({})".format(typ_key, key_sql)
             else:
-                typ_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.type = '{}'".format(typ_key)
+                typ_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
 
     cursor.execute(typ_sql_sent)
     result_type = cursor.fetchall()
-    result_type = set([i for i in result_type])
+    res_typ = []
+    for i in result_type:
+        ret_typ = {}
+        i = list(i)
+        ret_typ["movie_id"] = i[0]
+        ret_typ["title"] = i[1]
+        ret_typ["release_year"] = i[2]
+        ret_typ["runtime"] = i[3]
+        if i[4] == "\\N":
+            i[4] = ""
+        ret_typ["type"] = i[4]
+        ret_typ["description"] = i[5]
+        ret_typ["cover"] = i[6]
+        ret_typ["production"] = i[7]
+        if i[8][0] == "s":
+            i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
+        ret_typ["language"] = i[8]
+        res_typ.append(ret_typ)
+    # result_type = set([i for i in result_type])
 
     lan_sql_sent = ""
     for lan_key, lan_value in lan.items():
@@ -71,15 +89,33 @@ def search_movie():
             if lan_sql_sent:
                 lan_sql_sent += " UNION "
             if key_sql:
-                lan_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.language = '{}' and (movie.title, movie.movie_id) in ({})".format(lan_key, key_sql)
+                lan_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.language = '{}' and (movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language) in ({})".format(lan_key, key_sql)
             else:
-                lan_sql_sent += "SELECT DISTINCT movie.title, movie.movie_id from movie where movie.language = '{}'".format(lan_key)
+                lan_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.language = '{}'".format(lan_key)
     if not lan_sql_sent:
         lan_sql_sent = key_sql
 
     cursor.execute(lan_sql_sent)
     result_lang = cursor.fetchall()
-    result_lang = set([i for i in result_lang])
+    res_lang = []
+    for i in result_lang:
+        ret_lang = {}
+        i = list(i)
+        ret_lang["movie_id"] = i[0]
+        ret_lang["title"] = i[1]
+        ret_lang["release_year"] = i[2]
+        ret_lang["runtime"] = i[3]
+        if i[4] == "\\N":
+            i[4] = ""
+        ret_lang["type"] = i[4]
+        ret_lang["description"] = i[5]
+        ret_lang["cover"] = i[6]
+        ret_lang["production"] = i[7]
+        if i[8][0] == "s":
+            i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
+        ret_lang["language"] = i[8]
+        res_lang.append(ret_lang)
+    # result_lang = set([i for i in result_lang])
 
     # isa_sql = ""
     # if isa:
@@ -94,7 +130,10 @@ def search_movie():
 
     # # Fetch the results
     # result = cursor.fetchall()
-    result = list(result_type & result_lang)
+    result = []
+    for i in res_typ:
+        if i in res_lang:
+            result.append(i)
 
     if result:
         return {'rec': result}
