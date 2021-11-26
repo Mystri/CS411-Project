@@ -17,7 +17,7 @@ conn = connector.connect(
     "pymysql",
     user="root",
     password='Xu440987',
-    db="cs411",
+    db="411new",
 )
 cursor = conn.cursor()
 
@@ -34,6 +34,18 @@ def photo_url():
 
     return {'rec':result}
 
+@app.route("/search_list_by_name",methods=["POST", "GET"])
+def search_list_by_name():
+    data = request.get_json(force=True)
+    name = data["name"]
+    cursor.execute("SELECT list_id from List where name='{}'".format(name))
+    result = cursor.fetchall()
+    result = [i[0] for i in result]
+    if result:
+        return {'rec': result}
+    else:
+        return {'rec': 0}
+
 @app.route("/search_movie",methods=["POST", "GET"])
 def search_movie():
     data = request.get_json(force=True)
@@ -43,11 +55,11 @@ def search_movie():
     isa = data["isActor"]
 
     if key and not isa:
-        key_sql = "SELECT DISTINCT title, movie_id from movie where title LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.title LIKE '%{}%'".format(key)
     elif key and isa:
-        key_sql = "SELECT DISTINCT title, movie_id from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
+        key_sql = "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where People.name LIKE '%{}%'".format(key)
     else:
-        key_sql = "SELECT DISTINCT title, movie_id from movie"
+        key_sql = "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie"
 
     typ_sql_sent = ""
     for typ_key, typ_value in typ.items():
@@ -55,15 +67,33 @@ def search_movie():
             if typ_sql_sent:
                 typ_sql_sent += " UNION "
             if key_sql:
-                typ_sql_sent += "SELECT DISTINCT title, movie_id from movie where type = '{}' and title in ({})".format(typ_key, key_sql)
+                typ_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.type = '{}' and (movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language) in ({})".format(typ_key, key_sql)
             else:
-                typ_sql_sent += "SELECT DISTINCT title, movie_id from movie where type = '{}'".format(typ_key)
+                typ_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
 
     cursor.execute(typ_sql_sent)
     result_type = cursor.fetchall()
-    result_type = set([i for i in result_type])
+    res_typ = []
+    for i in result_type:
+        ret_typ = {}
+        i = list(i)
+        ret_typ["movie_id"] = i[0]
+        ret_typ["title"] = i[1]
+        ret_typ["release_year"] = i[2]
+        ret_typ["runtime"] = i[3]
+        if i[4] == "\\N":
+            i[4] = ""
+        ret_typ["type"] = i[4]
+        ret_typ["description"] = i[5]
+        ret_typ["cover"] = i[6]
+        ret_typ["production"] = i[7]
+        if i[8][0] == "s":
+            i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
+        ret_typ["language"] = i[8]
+        res_typ.append(ret_typ)
+    # result_type = set([i for i in result_type])
 
     lan_sql_sent = ""
     for lan_key, lan_value in lan.items():
@@ -71,15 +101,33 @@ def search_movie():
             if lan_sql_sent:
                 lan_sql_sent += " UNION "
             if key_sql:
-                lan_sql_sent += "SELECT DISTINCT title, movie_id from movie where language = '{}' and title in ({})".format(lan_key, key_sql)
+                lan_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.language = '{}' and (movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language) in ({})".format(lan_key, key_sql)
             else:
-                lan_sql_sent += "SELECT DISTINCT title, movie_id from movie where language = '{}'".format(lan_key)
+                lan_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.language = '{}'".format(lan_key)
     if not lan_sql_sent:
         lan_sql_sent = key_sql
 
     cursor.execute(lan_sql_sent)
     result_lang = cursor.fetchall()
-    result_lang = set([i for i in result_lang])
+    res_lang = []
+    for i in result_lang:
+        ret_lang = {}
+        i = list(i)
+        ret_lang["movie_id"] = i[0]
+        ret_lang["title"] = i[1]
+        ret_lang["release_year"] = i[2]
+        ret_lang["runtime"] = i[3]
+        if i[4] == "\\N":
+            i[4] = ""
+        ret_lang["type"] = i[4]
+        ret_lang["description"] = i[5]
+        ret_lang["cover"] = i[6]
+        ret_lang["production"] = i[7]
+        if i[8][0] == "s":
+            i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
+        ret_lang["language"] = i[8]
+        res_lang.append(ret_lang)
+    # result_lang = set([i for i in result_lang])
 
     # isa_sql = ""
     # if isa:
@@ -94,7 +142,10 @@ def search_movie():
 
     # # Fetch the results
     # result = cursor.fetchall()
-    result = list(result_type & result_lang)
+    result = []
+    for i in res_typ:
+        if i in res_lang:
+            result.append(i)
 
     if result:
         return {'rec': result}
@@ -295,5 +346,90 @@ def top_5_actor():
 
     return {'rec':result}
 
+@app.route("/create_list", methods=["post"])
+def create_list():
+    data = request.get_json(force=True)
+    user = data["user"]
+    name = data["list_name"]
+    desc = data["description"]
+    cursor.execute("SELECT MAX(list_id) from List")
+    listid = cursor.fetchall()[0][0]
+    if listid==None:
+        listid =0
+    else:
+        listid += 1
+    cursor.execute("INSERT INTO List VALUES ('{}','{}','{}','{}')".format(listid, name, desc, user))
+    conn.commit()
+    return {"rec":{"user_id":user, "list_name":name, "description":desc, "listid":listid}}
+
+@app.route("/add_movie_to_list", methods=["post"])
+def add_movie_to_list():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    movieid = data["movie_id"]
+    try:
+        cursor.execute("INSERT INTO list2movie VALUES ({},'{}')".format(listid, movieid))
+        conn.commit()
+        return {"rec":1}
+    except Exception as e:
+        print(e)
+        return {"rec":0}
+
+@app.route("/get_list_movie", methods=["post"])
+def get_list_movie():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
+    result = cursor.fetchall()
+    res = []
+    for i in result:
+        res.append({"movie_id":i[0],
+        "title":i[1],
+        "release_year":i[2],
+        "runtime":i[3],
+        "description":i[4],
+        "cover":i[5],
+        "production":i[6],
+        "language":i[7]})
+    return {"rec":res}
+
+@app.route("/add_fav_list", methods=["post"])
+def add_fav_list():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    userid = data["user_id"]
+    try:
+        cursor.execute("INSERT INTO user_fav_list VALUES ({},'{}')".format(listid,userid))
+        conn.commit()
+        return {"rec":1}
+    except Exception as e:
+        print(e)
+        return {"rec":str(e)}
+
+@app.route("/get_fav_list", methods=["post"])
+def get_fav_list():
+    data = request.get_json(force=True)
+    userid = data["user_id"]
+    cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
+    result = cursor.fetchall()
+    res = []
+    for i in result:
+        res.append({
+            "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
+        })
+    return {"rec":res}
+
+@app.route("/get_owned_list", methods=["post"])
+def get_owned_list():
+    data = request.get_json(force=True)
+    userid = data["user_id"]
+    cursor.execute("select * from List where creator='{}';".format(userid))
+    result = cursor.fetchall()
+    res = []
+    for i in result:
+        res.append({
+            "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
+        })
+    return {"rec":res}
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
