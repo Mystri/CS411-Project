@@ -42,7 +42,7 @@ render() {
     return (
         <Card style={{ width: '75%' }}>
             <ListGroup variant="flush">
-                <ListGroup.Item action onClick={alertClicked}>Cras justo odio</ListGroup.Item>
+                <ListGroup.Item>Cras justo odio</ListGroup.Item>
                 <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
                 <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
             </ListGroup>

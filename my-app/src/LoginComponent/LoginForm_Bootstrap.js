@@ -15,6 +15,7 @@ export default ({ setSuccessLogin }) => {
             headers: { 'Content-type': 'text/plain' },
             body: JSON.stringify({ 'email': email, 'password': password })
         }
+        
         fetch('http://localhost:8000/login', login_request)
             .then(response => {
                 return response.json()
@@ -24,15 +25,10 @@ export default ({ setSuccessLogin }) => {
                 console.log(loginStatus);
                 if (loginStatus === 0 || loginStatus === false) {
                     alert('No corresponding Email and Password found. Please enter again or create new user.')
-                } else {
-                    alert('Success')
-                    setSuccessLogin();
-                    this.props.history.push({
-                        pathname: '/home'
-                        // state: {person_info: Object.values(this.state.login_status)}
-                    })
                 }
             })
+
+            
     }
     const [show, setShow] = useState(false);
 

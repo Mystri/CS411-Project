@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { Container, Navbar, Nav, NavDropdown, Form, FormControl, Button , Stack } from 'react-bootstrap'
+import { Container, Navbar, Nav, NavDropdown, Form, FormControl, Button , Dropdown } from 'react-bootstrap'
+import React, { useState } from 'react'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LoginIndicator from '../LoginComponent/LoginIndicator';
 
 export default () => {
+
+    const [searchMethod, setSearchMethod] = useState("Movie"); 
+    const [keyword, setKeyword] = useState("");
+
+
     return (
         <Navbar bg="light" expand="lg">
         <Container fluid>
@@ -30,18 +35,31 @@ export default () => {
                 Link
                 </Nav.Link>
             </Nav>
-            <Stack direction="horizontal" gap={2}>
-            <Form className="d-flex">
-                <FormControl
-                type="search"
-                placeholder="Search"
-                className="me-2"
-                aria-label="Search"
-                />
-                <Button variant="outline-success">Search</Button>
-            </Form>
-            <LoginIndicator/>
-            </Stack>
+
+            <Dropdown>
+                <Dropdown.Toggle variant="success" id="dropdown-basic" className="me-2">
+                    {searchMethod}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                    <Dropdown.Item  onClick={ () => setSearchMethod("Movie") }>Movie</Dropdown.Item>
+                    <Dropdown.Item  onClick={ () => setSearchMethod("Actor") }>Actor</Dropdown.Item>
+                    <Dropdown.Item  onClick={ () => setSearchMethod("List") }>List</Dropdown.Item>
+
+                </Dropdown.Menu>
+            </Dropdown>
+
+            <Form className="d-flex" style={{width: '1000px'}}>
+                    <FormControl
+                    type="search"
+                    placeholder="Search"
+                    className="me-2"
+                    onChange={ (e) => setKeyword(e.target.value) }
+                    value={keyword}
+                    />
+                    <Button variant="outline-success" className="me-2" href={"/advanced_search#".concat(searchMethod).concat("#").concat(keyword)} >Search</Button>
+                    <LoginIndicator/>
+                </Form>
             </Navbar.Collapse>
         </Container>
         </Navbar>
