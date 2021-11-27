@@ -145,14 +145,14 @@ class Updateinfo extends React.Component {
         return (
             <div>
                
-                <Link to=""><button>
+                {/* <Link to=""><button>
                     Back to main page
                 </button>
-                </Link>
+                </Link> */}
 
                 <form id="update" onSubmit={this.handleSubmit}>
                     <div>
-                        <h1>Update personal information</h1>
+                        {/* <h1>Update personal information</h1> */}
 
                         <label htmlFor='username'> New Username: </label>
                         <input type="text" placeholder="New Username" value={this.state.new_username} onChange={this.handleUsername} name="username" id="username" /><br />

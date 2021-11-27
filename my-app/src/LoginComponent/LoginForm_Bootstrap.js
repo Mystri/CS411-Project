@@ -1,7 +1,7 @@
-import { Form, Row, Col, Button } from 'react-bootstrap'
+import { Form, Row, Col, Button,Modal } from 'react-bootstrap'
 import React, { useState } from 'react'
-
-export default ({setSuccessLogin}) => {
+import RegisterForm from "./RegisterForm.js"
+export default ({ setSuccessLogin }) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -9,51 +9,76 @@ export default ({setSuccessLogin}) => {
 
     const onClick = () => {
         const login_request = {
-            method : "POST",
+            method: "POST",
             mode: "cors",
             credentials: "omit",
-            headers: {'Content-type':'text/plain'},
-            body: JSON.stringify({'email' : email,'password' : password})
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({ 'email': email, 'password': password })
         }
         fetch('http://localhost:8000/login', login_request)
             .then(response => {
-                return response.json()})
+                return response.json()
+            })
             .then(response => {
                 setLoginStatus(response.rec);
                 console.log(loginStatus);
                 if (loginStatus === 0 || loginStatus === false) {
                     alert('No corresponding Email and Password found. Please enter again or create new user.')
                 } else {
+                    alert('Success')
                     setSuccessLogin();
+                    this.props.history.push({
+                        pathname: '/home'
+                        // state: {person_info: Object.values(this.state.login_status)}
+                    })
                 }
             })
     }
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     return (
-        <Form>
+        <form onSubmit={onClick}>
             <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
                 <Form.Label column sm={2}>
-                Email
+                    Email
                 </Form.Label>
                 <Col sm={10}>
-                <Form.Control type="email" placeholder="Email" value={email} onChange = { e => setEmail(e.target.value)}/>
+                    <Form.Control type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
                 <Form.Label column sm={2}>
-                Password
+                    Password
                 </Form.Label>
                 <Col sm={10}>
-                <Form.Control type="password" placeholder="Password" value={password} onChange = { e => setPassword(e.target.value)} />
+                    <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3">
                 <Col sm={{ span: 10, offset: 2 }}>
-                <Button type="submit" onClick={onClick}>Sign in</Button>
-                </Col>
-            </Form.Group>
-        </Form>
+
+                    <Button type="submit">Sign in</Button>{' '}
+                    <>
+                    <Button type="submit" onClick={handleShow}>Create account</Button>
+                    <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Create Your Account</Modal.Title>
+                        </Modal.Header>
+
+                        <Modal.Body>
+                            <RegisterForm/>
+                        </Modal.Body>
+
+
+                    </Modal>
+                </>
+            </Col>
+        </Form.Group>
+        </form >
     )
 }

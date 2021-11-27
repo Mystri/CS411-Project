@@ -17,7 +17,7 @@ conn = connector.connect(
     "pymysql",
     user="root",
     password='Xu440987',
-    db="cs411",
+    db="411new",
 )
 cursor = conn.cursor()
 

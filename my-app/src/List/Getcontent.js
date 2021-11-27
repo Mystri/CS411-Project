@@ -1,14 +1,24 @@
 import React, {useState} from 'react';
 import {Modal, Button} from 'react-bootstrap'
-import LoginForm_Bootstrap from './LoginForm_Bootstrap';
 
+var x = "Abc";
 
-export default ({onLogin}) => {
+export default () => {
+  const [title] = useState(x);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  const getMovies = () => {
+      const l_name = {
+        method: "POST",
+        mode: "cors",
+        credentials: "omit",
+        headers: { 'Content-type': 'text/plain' },
+        body: JSON.stringify({'title': title})
+      }
+      fetch('http://localhost:8000/', l_name)
+  }
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -19,9 +29,8 @@ export default ({onLogin}) => {
         <Modal.Header closeButton>
           <Modal.Title>Log In</Modal.Title>
         </Modal.Header>
-
+            <title/>
         <Modal.Body>
-          <LoginForm_Bootstrap setSuccessLogin={onLogin}/>
         </Modal.Body>
 
 
