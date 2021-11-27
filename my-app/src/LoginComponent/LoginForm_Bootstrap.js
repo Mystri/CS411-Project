@@ -14,7 +14,7 @@ export default ({ setSuccessLogin }) => {
         if (loginStatus == -1) {
             alert("Login Failed");
         } else if (loginStatus) {
-            setSuccessLogin();
+            setSuccessLogin(loginStatus);
         }
     }, [loginStatus]);
 
