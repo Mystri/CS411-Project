@@ -136,7 +136,7 @@ class RegisterForm extends React.Component {
                             Gender
                         </Form.Label>
                         <Col sm={10}>
-                        <Form.Select aria-label ="Gender">
+                        <Form.Select aria-label ="Gender" value ={this.state.gender} onChange={this.handleGenderRegistration}>
                             <option value="" disabled selected>Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>

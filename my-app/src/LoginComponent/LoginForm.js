@@ -6,7 +6,7 @@ import {
     Route,
     Link
 } from "react-router-dom";
-var x = 0;
+
 class LoginForm extends React.Component {
 
     constructor(props) {
@@ -59,7 +59,7 @@ class LoginForm extends React.Component {
                     alert('No corresponding Email and Password found. Please enter again or create new user.')
                     
                 }else{
-                    x = Object.values(this.state.login_status);
+                    // x = Object.values(this.state.login_status);
                     alert('Welcome! Log in successfully!')
                     // alert(x)
                     // const person_info = JSON.parse(this.state.login_status)
@@ -103,4 +103,3 @@ class LoginForm extends React.Component {
 }
 
 export default withRouter(LoginForm); 
-export {x};

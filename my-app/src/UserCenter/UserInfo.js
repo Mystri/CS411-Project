@@ -1,5 +1,5 @@
 // this file will contains the personal info of user, including user's own list, user's fav list
-import { Tabs, Tab, Row, Col, Nav } from 'react-bootstrap';
+import { Tabs, Tab, Row, Col, Nav, Button } from 'react-bootstrap';
 import {
     BrowserRouter as Router,
     withRouter,
@@ -8,8 +8,8 @@ import {
     Link
 } from "react-router-dom";
 import React from "react";
-import Updateinfo from "../Updateinfo.js"
-import mydisplay from "../List/Mylistdisplay.js"
+import Updateinfo from "./Updateinfo.js"
+import Mydisplay from "../List/Mylistdisplay.js"
 import Favdisplay from "../List/Favlistdisplay.js"
 
 // export default function UserInfo(){
@@ -33,17 +33,21 @@ import Favdisplay from "../List/Favlistdisplay.js"
 class UserInfo extends React.Component {
     render() {
         return (
-            <Tab.Container id="left-tabs" defaultActiveKey="info">
+            <div>
+            <Button variant= "secondary" style={{margin: "0.5em",position:"absolute",top:0,right:0}} href="/home">Back to homepage</Button>
+            
+            <Tab.Container id="left-tabs"  defaultActiveKey="info" >
                 <Row>
                     <Col sm={3}>
-                        <Nav variant="pills" className="flex-column">
+                        
+                        <Nav justify variant="pills" className="flex-column" style={{margin: "0.5em"}}>
                             <Nav.Item>
                                 <Nav.Link eventKey="info">Update Your Information</Nav.Link>
                             </Nav.Item>
-                            <Nav.Item>
+                            <Nav.Item style={{padding:"0.5em 0 0"}}>
                                 <Nav.Link eventKey="mylist">My Own Lists</Nav.Link>
                             </Nav.Item>
-                            <Nav.Item>
+                            <Nav.Item style={{padding:"0.5em 0 0"}}>
                                 <Nav.Link eventKey="favlist">My Favorite Lists</Nav.Link>
                             </Nav.Item>
                         </Nav>
@@ -64,6 +68,7 @@ class UserInfo extends React.Component {
                             <h2>
                                  My Own Lists  
                             </h2><br/>
+                                <Mydisplay />
                             </Tab.Pane>
                             <Tab.Pane eventKey="favlist">
                             <br/>  
@@ -77,6 +82,7 @@ class UserInfo extends React.Component {
                     </Col>
                 </Row>
             </Tab.Container>
+            </div>
         )
     }
 }

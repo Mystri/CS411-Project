@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { Form, Row, Col, Button, Modal } from 'react-bootstrap'
 import {
     BrowserRouter as Router,
     withRouter,
@@ -7,7 +8,7 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import { x } from "./LoginComponent/LoginForm.js";
+import { x } from "../LoginComponent/LoginForm_Bootstrap.js";
 const gender = x[2]
 const username = x[4]
 class Updateinfo extends React.Component {
@@ -30,7 +31,7 @@ class Updateinfo extends React.Component {
         this.handleGender = this.handleGender.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.DeleteUser = this.DeleteUser.bind(this);
-        
+
     }
     handleUsername(e) {
         // if(e.target.value.length > 0){
@@ -103,7 +104,7 @@ class Updateinfo extends React.Component {
                 console.log('parsing failed', e)
             })
         // try to clear the input box after inputs
-            document.getElementById('update').reset();
+        document.getElementById('update').reset();
 
 
 
@@ -128,7 +129,7 @@ class Updateinfo extends React.Component {
                 console.log('parsed json', response.rec);
                 if (this.state.delete === 1) {
                     alert('Your account has been deleted.')
-                    this.props.history.push("");
+                    this.props.history.push("/home");
                 } else {
                     alert('something is wrong')
                 }
@@ -144,44 +145,54 @@ class Updateinfo extends React.Component {
 
         return (
             <div>
-               
+
                 {/* <Link to=""><button>
                     Back to main page
                 </button>
                 </Link> */}
 
                 <form id="update" onSubmit={this.handleSubmit}>
-                    <div>
-                        {/* <h1>Update personal information</h1> */}
-
-                        <label htmlFor='username'> New Username: </label>
-                        <input type="text" placeholder="New Username" value={this.state.new_username} onChange={this.handleUsername} name="username" id="username" /><br />
-                        <label htmlFor='password'> New Password: </label>
-                        <input type="text" placeholder="New Password" value={this.state.new_password} onChange={this.handlePassword} name="Password" id="Password" /><br />
-                        <label htmlFor='gender'> Update your gender: </label>
-                        <select id='gender' value={this.state.new_gender} onChange={this.handleGender}>
-                            <option value=""disabled selected>Gender</option>
+                    {/* <h1>Update personal information</h1> */}
+                    <Form.Group as={Row} className="mb-3" controlId="newusername">
+                        <Form.Label column sm={2}>New Username</Form.Label>
+                        <Col sm={3}>
+                            <Form.Control type="text" placeholder="New Username" value={this.state.new_username} onChange={this.handleUsername} name="username" id="username" />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-3" controlId="newpassword">
+                        <Form.Label column sm={2}>New Password</Form.Label>
+                        <Col sm={3}>
+                            <Form.Control type="text" placeholder="New Password" value={this.state.new_password} onChange={this.handlePassword} name="Password" id="Password" />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-3" controlId="newgender">
+                        <Form.Label column sm={2}>
+                            Gender
+                        </Form.Label>
+                        <Col sm={3}>
+                        <Form.Select value = {this.state.new_gender} onChange={this.handleGender}>
+                            <option value="" disabled selected>Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Non-binary">Non-Binary</option>
-                        </select><br />
-
-                        {/* <label htmlFor = 'email'>Email
-                    </label> 
-                    <input type="email" placeholder="Email" value={this.state.email} onChange = {this.handleEmailRegistration} name="Email" id="Email" required/><br/> */}
-                        <label htmlFor="birthday"> Update your Birthday: </label>
-                        <input type="date" value={this.state.new_birthday} onChange={this.handleBirthday} id="birthday" name="birthday" /><br />
-                        {/* <h2>Succeed: {this.state.succeed}</h2> */}
-                        <input type="submit" value="Save Changes"></input>
-                        {/* <button>
-                            Save Changes
-                        </button> */}
-
-
-
+                        </Form.Select>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-3" controlId="newbirthday">
+                        <Form.Label column sm={2}>
+                            Birthday
+                        </Form.Label>
+                        <Col sm={3}>
+                            <Form.Control type="date" value={this.state.new_birthday} onChange={this.handleBirthday}/>
+                        </Col>
+                    </Form.Group>
+                    <div className="mb-2">
+                        <Button type="submit" >Save Changes</Button>
                     </div>
                 </form>
-                <button onClick={this.DeleteUser}>Delete Account</button>
+                <div>
+                    <Button type="submit" onClick={this.DeleteUser}>Delete Account</Button><br />
+                </div>
             </div>
         )
     }

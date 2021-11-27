@@ -3,21 +3,21 @@ import {Modal, Button} from 'react-bootstrap'
 
 var x = "Abc";
 
-export default () => {
-  const [title] = useState(x);
+export default (lid) => {
+  // const [lid] = useState(x);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const getMovies = () => {
-      const l_name = {
+  const getMovies =() => {
+      const l_id = {
         method: "POST",
         mode: "cors",
         credentials: "omit",
         headers: { 'Content-type': 'text/plain' },
-        body: JSON.stringify({'title': title})
+        body: JSON.stringify({'list_id': lid})
       }
-      fetch('http://localhost:8000/', l_name)
+      fetch('http://localhost:8000/get_list_movie', l_id)
   }
   return (
     <>

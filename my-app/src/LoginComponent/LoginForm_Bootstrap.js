@@ -1,6 +1,7 @@
 import { Form, Row, Col, Button,Modal } from 'react-bootstrap'
 import React, { useState } from 'react'
 import RegisterForm from "./RegisterForm.js"
+var x = 0;
 export default ({ setSuccessLogin }) => {
 
     const [email, setEmail] = useState("");
@@ -25,6 +26,10 @@ export default ({ setSuccessLogin }) => {
                 console.log(loginStatus);
                 if (loginStatus === 0 || loginStatus === false) {
                     alert('No corresponding Email and Password found. Please enter again or create new user.')
+                    
+                }else{
+                    x = Object.values(loginStatus);
+                    alert('Welcome! Log in successfully!')
                 }
             })
 
@@ -58,7 +63,7 @@ export default ({ setSuccessLogin }) => {
             <Form.Group as={Row} className="mb-3">
                 <Col sm={{ span: 10, offset: 2 }}>
 
-                    <Button type="submit">Sign in</Button>{' '}
+                    <Button type="submit" onSubmit={onClick}>Sign in</Button>{' '}
                     <>
                     <Button type="submit" onClick={handleShow}>Create account</Button>
                     <Modal show={show} onHide={handleClose}>
@@ -78,3 +83,4 @@ export default ({ setSuccessLogin }) => {
         </form >
     )
 }
+export {x};

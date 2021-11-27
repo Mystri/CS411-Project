@@ -8,37 +8,14 @@ import {
     Link
 } from "react-router-dom";
 import { Card, Container, Stack, ListGroup, Modal, Button } from 'react-bootstrap'
+import { x } from "../LoginComponent/LoginForm_Bootstrap.js";
 
-import { x } from "../LoginComponent/LoginForm.js";
-const Listdetail = () => {
-            const [show, setShow] = useState(false);
-            const handleClose = () => setShow(false);
-            const handleShow = () => setShow(true);
-            return (
-                <>
-                    <Button variant="primary" onClick={handleShow}>
-                        Login
-                    </Button>
-    
-                    <Modal show={show} onHide={handleClose}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Log In</Modal.Title>
-                        </Modal.Header>
-    
-                        {/* <Modal.Body>
-                            <LoginForm_Bootstrap setSuccessLogin={onLogin} />
-                        </Modal.Body> */}
-                    </Modal>
-                </>
-            )
-        }
-
-class Favdisplay extends React.PureComponent {
+class Favdisplay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            favlist: "",
-            email: x[4] // example
+            favlist: [],
+            email: x[0] // example
         }
         this.getmyfav = this.getmyfav.bind(this);
 
@@ -52,7 +29,7 @@ class Favdisplay extends React.PureComponent {
             headers: { 'Content-type': 'text/plain' },
             body: JSON.stringify({ 'email': this.state.email })
         };
-        fetch('http://localhost:8000/favlist', { method: 'POST' })
+        fetch('http://localhost:8000/get_fav_list', request)
             .then(response => response.json())
             .then(response => {
                 this.setState({ favlist: response.rec })
@@ -64,13 +41,15 @@ class Favdisplay extends React.PureComponent {
     }
 
     render() {
-        
+        const favlist = this.state.favlist;
         return (
             <Card style={{ width: '50%' }}>
                 <ListGroup variant="flush">
-                    <ListGroup.Item action onClick={Listdetail}>Cras justo odio</ListGroup.Item>
-                    <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-                    <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+
+                    {favlist.map(favl=>(
+                            <ListGroup.Item id={favlist.listid} onClick>{favl.list_name}</ListGroup.Item>
+                        ))
+                    }
                 </ListGroup>
             </Card>
         )

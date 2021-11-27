@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
-import Updateinfo from "./Updateinfo.js"
+import Updateinfo from "./UserCenter/Updateinfo.js"
 import TaggedSearchBar from "./SearchBar/TaggedSearchBar.js";
 import MovieDetail from "./MovieDetailComponent/MovieDetail.js";
 import Home from "./Home/Home.js";
@@ -72,6 +72,7 @@ ReactDOM.render(
             <Route path="/newuser" ><URegister /></Route>
             <Route path="/personal"><Updateinfo /></Route>
             <Route path="/home"><Home /></Route>
+            <Route path ="/userinfo"><UserInfo/></Route>
             <Route path="/advanced_search"><Search /></Route>
             <Route path=""><Main /></Route>
             

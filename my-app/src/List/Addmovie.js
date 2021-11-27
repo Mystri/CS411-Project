@@ -10,12 +10,12 @@ import {
 import { Card, Container, Stack, ListGroup } from 'react-bootstrap'
 
 import { x } from "../LoginComponent/LoginForm.js";
-class Addmovie extends React.PureComponent {
+class Addmovie extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            favlist: "",
-            email: x[4] // example
+            list_id: "",
+            movie_id: "" // example
         }
         this.getmyfav = this.getmyfav.bind(this);
 
@@ -27,14 +27,14 @@ class Addmovie extends React.PureComponent {
             mode: 'cors',
             credentials: 'omit',
             headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({ 'email': this.state.email })
+            body: JSON.stringify({ 'list_id': this.state.list_id,'movie_id':this.state.movie_id })
         };
-        fetch('http://localhost:8000/favlist', { method: 'POST' })
+        fetch('http://localhost:8000/add_movie_to_list', { method: 'POST' })
             .then(response => response.json())
             .then(response => {
-                this.setState({ favlist: response.rec })
+                // this.setState({ favlist: response.rec })
                 console.log(response.rec + "info");
-                console.log(this.state.favlist)
+                // console.log(this.state.favlist)
             })
 
     }

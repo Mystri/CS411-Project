@@ -1,18 +1,26 @@
-import React, {useState, useEffect} from 'react'
-import {Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio} from 'react-bootstrap'
+import React, { useState, useEffect } from 'react'
+import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap'
 
 
 import Header from "../Header/Header"
-
-const ResultCardMovie = () => {
+import Mydisplay from "../List/Mylistdisplay.js"
+import Createlist from "../List/Createlist.js"
+function ResultCardMovie() {
+    const [show, setShow] = useState(false);
+    const [show1, setShow1] = useState(false)
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const handleClose1 = () => setShow1(false);
+    const handleShow1 = () => setShow1(true);
     return (
+
         <Container className="mb-2">
             <Card>
                 <script src="holder.js"></script>
                 <Card.Body>
                     <Row>
                         <Col xs='2'>
-                                <Image src="holder.js/100px200" className='mx-auto'/>
+                            <Image src="holder.js/100px200" className='mx-auto' />
                         </Col>
                         <Col>
                             <h2>
@@ -26,7 +34,31 @@ const ResultCardMovie = () => {
                             </div>
                         </Col>
                         <Col className='m-auto'>
-                            <Button variant='outline-primary' className='m-auto ' style={{float: 'right'}}>+</Button>   
+                            <Button variant='outline-primary' className='m-auto ' style={{ float: 'right' }} onClick={handleShow}>+</Button>
+                            <Modal show={show} onHide={handleClose}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Your List</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <Mydisplay />
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="primary" onClick={handleShow1}>
+                                            Create a new list
+                                        </Button>
+
+                                    </Modal.Footer>
+                               
+                            </Modal>
+                            <Modal show={show1} onHide={handleClose1}>
+                                <Modal.Header closeButton>
+                                <Modal.Title>Create Your New List</Modal.Title>
+                                </Modal.Header>
+                                    <Modal.Body>
+                                        <Createlist/>
+                                    </Modal.Body>
+                                
+                            </Modal>
                         </Col>
                     </Row>
                 </Card.Body>
@@ -46,15 +78,15 @@ export default () => {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        
+
         const link = window.location.href.split("#");
         if (link.length == 3) {
             console.log("length", link.length);
             setMethod(link[1]);
             setKeyword(link[2]);
-        } 
-        
-        }, []);
+        }
+
+    }, []);
 
 
     const [language, setLanguage] = useState(
@@ -86,14 +118,14 @@ export default () => {
     };
 
     const handleChangeLanguage = (languageName) => {
-        
+
         const updated = new Map(language);
         updated.set(languageName, !updated.get(languageName));
         setLanguage(updated);
-    } 
+    }
 
     const handleChangeType = (typeName) => {
-        
+
         const updated = new Map(type);
         updated.set(typeName, !updated.get(typeName));
         setType(updated);
@@ -110,12 +142,12 @@ export default () => {
 
 
         var bodyObject;
-        if ( method === "Actor") {
+        if (method === "Actor") {
             bodyObject = {
-            "language": mapToObj(language),
-            "type": mapToObj(type),
-            "keyword": keyword,
-            "isActor": true
+                "language": mapToObj(language),
+                "type": mapToObj(type),
+                "keyword": keyword,
+                "isActor": true
             };
         } else {
             bodyObject = {
@@ -123,14 +155,14 @@ export default () => {
                 "type": mapToObj(type),
                 "keyword": keyword,
                 "isActor": false
-                };
+            };
         }
 
-        const request ={
+        const request = {
             method: 'POST',
             mode: 'cors',
             credentials: 'omit',
-            headers: {'Content-type':'text/plain'},
+            headers: { 'Content-type': 'text/plain' },
             body: JSON.stringify(bodyObject)
         };
 
@@ -138,32 +170,33 @@ export default () => {
 
 
         fetch('http://localhost:8000/search_movie', request)
-                    .then(data => {
-                        console.log('parsed json', data);
-                        return data.json()})
-                    .then(data => {
-                        console.log(data.rec);
-                        if (!data.rec) {
-                            console.log('no results');
-                            setBanners(['No results!']);
-                        } else {
-                            setBanners(data.rec);
-                        }
-                        console.log('parsed json', data.rec);            
-                    }, (ex) => {
-                        console.log('parsing failed', ex)
-                    })
+            .then(data => {
+                console.log('parsed json', data);
+                return data.json()
+            })
+            .then(data => {
+                console.log(data.rec);
+                if (!data.rec) {
+                    console.log('no results');
+                    setBanners(['No results!']);
+                } else {
+                    setBanners(data.rec);
+                }
+                console.log('parsed json', data.rec);
+            }, (ex) => {
+                console.log('parsing failed', ex)
+            })
 
     };
 
 
 
-    
-    
+
+
 
     return (
         <Stack gap={3}>
-            <Header/>
+            <Header />
 
 
             <Container>
@@ -172,29 +205,29 @@ export default () => {
 
 
                         <Form className="d-flex mb-2" >
-                        <Dropdown>
-                            <Dropdown.Toggle variant="success" id="dropdown-basic" className="me-2">
-                                {method}
-                            </Dropdown.Toggle>
+                            <Dropdown>
+                                <Dropdown.Toggle variant="success" id="dropdown-basic" className="me-2">
+                                    {method}
+                                </Dropdown.Toggle>
 
-                            <Dropdown.Menu>
-                                <Dropdown.Item  onClick={ () => setMethod("Movie") }>Movie</Dropdown.Item>
-                                <Dropdown.Item  onClick={ () => setMethod("Actor") }>Actor</Dropdown.Item>
-                                <Dropdown.Item  onClick={ () => setMethod("List") }>List</Dropdown.Item>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => setMethod("Movie")}>Movie</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setMethod("Actor")}>Actor</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setMethod("List")}>List</Dropdown.Item>
 
-                            </Dropdown.Menu>
-                        </Dropdown>
+                                </Dropdown.Menu>
+                            </Dropdown>
                             <FormControl
-                            type="search"
-                            placeholder="Search"
-                            className="me-2"
-                            onChange={ (e) => setKeyword(e.target.value) }
-                            value={keyword}
+                                type="search"
+                                placeholder="Search"
+                                className="me-2"
+                                onChange={(e) => setKeyword(e.target.value)}
+                                value={keyword}
                             />
                             <Button variant="outline-success" onClick={handleSearch}> Search </Button>
                         </Form>
 
-                        <Collapse in={method=="Movie" || method == "Actor"}>
+                        <Collapse in={method == "Movie" || method == "Actor"}>
 
                             <div>
 
@@ -203,7 +236,7 @@ export default () => {
                                     type="checkbox"
                                     value={language["Japanese"]}
                                     onChange={() => handleChangeLanguage("Japanese")}
-                                    />
+                                />
 
                                 <Form.Check
                                     inline
@@ -211,26 +244,26 @@ export default () => {
                                     type="checkbox"
                                     value={language["Documentary"]}
                                     onChange={() => handleChangeType("Documentary")}
-                                    />
+                                />
 
                             </div>
 
                         </Collapse>
 
-                        
-
-                        
 
 
-                        </Card.Body>
+
+
+
+                    </Card.Body>
                 </Card>
 
                 <Card>
                     <Card.Body>
-                        <ResultCardMovie/>
-                        <ResultCardMovie/>
-                        <ResultCardMovie/>
-                        <ResultCardMovie/>
+                        <ResultCardMovie />
+                        <ResultCardMovie />
+                        <ResultCardMovie />
+                        <ResultCardMovie />
                     </Card.Body>
                 </Card>
             </Container>
