@@ -49,7 +49,7 @@ export default () => {
                 </Dropdown.Menu>
             </Dropdown>
 
-            <Form className="d-flex" style={{width: '1000px'}}>
+            <Form className="d-flex">
                     <FormControl
                     type="search"
                     placeholder="Search"

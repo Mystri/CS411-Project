@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap'
+import { Button, Stack } from 'react-bootstrap'
 
 import LoginModal from './LoginModal.js'
 
@@ -12,29 +12,30 @@ export default () => {
     }, []);
 
     useEffect(() => {
-        window.localStorage.setItem('login', login);
+        window.localStorage.setItem('login', JSON.stringify(login));
     }, [login]);
 
-    const onLogin = () => {
-        setLogin(1);
+    const onLogin = (login_value) => {
+        console.log(login_value);
+        setLogin(login_value);
     }
 
     const onLogout = () => {
         setLogin(0);
     }
 
+
     if (!login) {
         return (
             
-            <div>
             <LoginModal onLogin={onLogin}/>
-            </div>
         );
     } else {
         return (            
-            <div>
-            <Button variant="outline-success" onClick={onLogout}> Log out </Button>
-            </div>
+            <Stack direction="horizontal" style={{minWidth: "13rem"}}>
+            <Button variant="outline-success" className="d-flex me-2" onClick={onLogout}> Log out </Button>
+            <Button variant="outline-secondary" href="/userinfo"> Personal Info </Button>
+            </Stack>
             );
     }
 }
