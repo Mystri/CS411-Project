@@ -1,14 +1,27 @@
 import { Form, Row, Col, Button,Modal } from 'react-bootstrap'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import RegisterForm from "./RegisterForm.js"
 var x = 0;
+
 export default ({ setSuccessLogin }) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loginStatus, setLoginStatus] = useState(false);
+    const [loginStatus, setLoginStatus] = useState(0);
 
-    const onClick = () => {
+    useEffect(() => {
+        console.log(loginStatus);
+        if (loginStatus == -1) {
+            alert("Login Failed");
+        } else if (loginStatus) {
+            setSuccessLogin();
+        }
+    }, [loginStatus]);
+
+
+    const onClick = (e) => {
+        e.preventDefault();
+
         const login_request = {
             method: "POST",
             mode: "cors",
@@ -16,25 +29,23 @@ export default ({ setSuccessLogin }) => {
             headers: { 'Content-type': 'text/plain' },
             body: JSON.stringify({ 'email': email, 'password': password })
         }
-        
+
         fetch('http://localhost:8000/login', login_request)
             .then(response => {
                 return response.json()
             })
             .then(response => {
-                setLoginStatus(response.rec);
-                console.log(loginStatus);
-                if (loginStatus === 0 || loginStatus === false) {
-                    alert('No corresponding Email and Password found. Please enter again or create new user.')
-                    
-                }else{
-                    x = Object.values(loginStatus);
-                    alert('Welcome! Log in successfully!')
+                console.log(response.rec);
+                if (!response.rec) {
+                    setLoginStatus(-1);
+                } else {
+                    setLoginStatus(response.rec);
                 }
             })
 
             
     }
+    
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
