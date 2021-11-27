@@ -10,26 +10,28 @@ import {
 import { Card, Container, Stack, ListGroup } from 'react-bootstrap'
 
 import { x } from "../LoginComponent/LoginForm.js";
-class Addmovie extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            list_id: "",
-            movie_id: "" // example
-        }
-        this.getmyfav = this.getmyfav.bind(this);
+function Addmovie(){
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         list_id: "",
+    //         movie_id: "" // example
+    //     }
+    //     this.getmyfav = this.getmyfav.bind(this);
 
-    }
-    getmyfav(e) {
+    // }
+    const[list_id] = 1;
+    const[movie_id] = 2;
+    const addtolist=(e)=> {
         e.preventDefault();
         const request = {
             method: 'POST',
             mode: 'cors',
             credentials: 'omit',
             headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({ 'list_id': this.state.list_id,'movie_id':this.state.movie_id })
+            body: JSON.stringify({ 'list_id': list_id,'movie_id':movie_id })
         };
-        fetch('http://localhost:8000/add_movie_to_list', { method: 'POST' })
+        fetch('http://localhost:8000/add_movie_to_list', request)
             .then(response => response.json())
             .then(response => {
                 // this.setState({ favlist: response.rec })
@@ -39,7 +41,6 @@ class Addmovie extends React.Component {
 
     }
 
-    render() {
         return (
             <Card style={{ width: '75%',height: '10rem'}}>
                 <ListGroup variant="flush">
@@ -49,6 +50,5 @@ class Addmovie extends React.Component {
                 </ListGroup>
             </Card>
         )
-    }
 }
-export default Favdisplay;
+export default Addmovie;

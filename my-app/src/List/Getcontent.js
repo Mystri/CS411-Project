@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Modal, Button} from 'react-bootstrap'
+import React, { useState } from 'react';
+import { Form, Row, Col, Button,Modal } from 'react-bootstrap'
 
 var x = "Abc";
 
@@ -9,32 +9,39 @@ export default (lid) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const getMovies =() => {
-      const l_id = {
-        method: "POST",
-        mode: "cors",
-        credentials: "omit",
-        headers: { 'Content-type': 'text/plain' },
-        body: JSON.stringify({'list_id': lid})
-      }
-      fetch('http://localhost:8000/get_list_movie', l_id)
+  const getMovies = () => {
+    const l_id = {
+      method: "POST",
+      mode: "cors",
+      credentials: "omit",
+      headers: { 'Content-type': 'text/plain' },
+      body: JSON.stringify({ 'list_id': lid })
+    }
+    fetch('http://localhost:8000/get_list_movie', l_id)
   }
   return (
-    <>
-      <Button variant="primary" onClick={handleShow}>
-        Login
-      </Button>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Log In</Modal.Title>
-        </Modal.Header>
-            <title/>
-        <Modal.Body>
-        </Modal.Body>
-
-
-      </Modal>
-    </>
+    <form>
+      <Form.Group as={Row} className="mb-3" controlId="listname">
+        <Form.Label column sm={3}>
+          ListName
+        </Form.Label>
+        <Col sm={9}>
+          {/* <Form.Control required type="text" placeholder="Listname" value={listname} onChange={e => setName(e.target.value)} required /> */}
+        </Col>
+      </Form.Group>
+      {/* <Form.Group as={Row} className="mb-3" controlId="desc">
+        <Form.Label column sm={3}>
+          Description
+        </Form.Label>
+        <Col sm={9}>
+          <Form.Control type="text" placeholder="Description" value={description} onChange={e => setDesc(e.target.value)} />
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row} className="mb-3" controlId="createbutton">
+        <Col sm={9}>
+          <Button type="submit">Create</Button>
+        </Col>
+      </Form.Group> */}
+    </form>
   );
 }
