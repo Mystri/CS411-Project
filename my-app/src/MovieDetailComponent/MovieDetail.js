@@ -8,7 +8,7 @@ import {
     Link
 } from "react-router-dom";
 
-import StarRatings from 'react-star-ratings';
+// import StarRatings from 'react-star-ratings';
 
 
 class MovieDetail extends React.Component {
@@ -163,14 +163,15 @@ class MovieDetail extends React.Component {
                         Description:{this.state.description}
                     </div>
                 </div>
-                <div class='rating_comments'><StarRatings
+                <div class='rating_comments'>
+                    {/* <StarRatings
                         width='100%'
                 rating={this.state.rating}
                 starRatedColor="blue"
                 changeRating={this.changeRating}
                 numberOfStars={5}
                 name='rating'
-                />
+                /> */}
                 <br/>
                 <input placeholder="Add your comments"></input>
         </div>
