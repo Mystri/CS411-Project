@@ -8,19 +8,17 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import { x } from "../LoginComponent/LoginForm_Bootstrap.js";
-const gender = x[2]
-const username = x[4]
+
 class Updateinfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             // var/objs to use
-            new_username: x[4],
-            new_password: x[3],
-            new_birthday: moment(x[0]).format('YYYY-MM-DD'),
+            new_username: JSON.parse(window.localStorage.getItem('login')).username,
+            new_password: JSON.parse(window.localStorage.getItem('login')).password,
+            new_birthday: JSON.parse(window.localStorage.getItem('login')).birthday,
             // new_birthday: x[0],
-            new_gender: x[2],
+            new_gender: JSON.parse(window.localStorage.getItem('login')).gender,
             status: 0,
             delete: 0
         };
@@ -76,22 +74,24 @@ class Updateinfo extends React.Component {
     handleSubmit(e) {
         // alert(x[3])
         // alert('Username' + this.state.new_username + ',Birthday: ' + this.state.new_birthday + "; " + "Gender: " + this.state.new_gender + ',password:' + this.state.new_password + ' ,email:' + x[1]);
-        e.preventDefault();
+        // e.preventDefault();
         const request = {
             method: 'POST',
             mode: 'cors',
             credentials: 'omit',
             headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({ 'username': this.state.new_username, 'password': this.state.new_password, 'gender': this.state.new_gender, 'birthday': this.state.new_birthday, 'email': x[1] })
+            body: JSON.stringify({ 'username': this.state.new_username, 'password': this.state.new_password, 'gender': this.state.new_gender, 'birthday': this.state.new_birthday, 'email': JSON.parse(window.localStorage.getItem('login')).email })
         };
         fetch('http://localhost:8000/update_user', request)
             // if backend receive and response
             .then(response => {
+
                 return response.json()
             })
             .then(response => {
+                console.log(response)
                 this.setState({ status: response.rec });
-                console.log(request.body)
+                console.log(this.state.status)
                 if (this.state.status === 0) {
                     alert('Your personal information has been successfully updated.')
 
@@ -104,7 +104,11 @@ class Updateinfo extends React.Component {
                 console.log('parsing failed', e)
             })
         // try to clear the input box after inputs
-        document.getElementById('update').reset();
+            document.getElementById('update').reset();
+            window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
+            window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+            window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+            window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
 
 
@@ -117,7 +121,7 @@ class Updateinfo extends React.Component {
             mode: 'cors',
             credentials: 'omit',
             headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({ 'email': x[1] })
+            body: JSON.stringify({ 'email': JSON.parse(window.localStorage.getItem('login')).email })
         };
         fetch('http://localhost:8000/delete_user', request)
             .then(response => {
@@ -151,21 +155,21 @@ class Updateinfo extends React.Component {
                 </button>
                 </Link> */}
 
-                <form id="update" onSubmit={this.handleSubmit}>
+                <form id="update">
                     {/* <h1>Update personal information</h1> */}
-                    <Form.Group as={Row} className="mb-3" controlId="newusername">
+                    <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={2}>New Username</Form.Label>
                         <Col sm={3}>
                             <Form.Control type="text" placeholder="New Username" value={this.state.new_username} onChange={this.handleUsername} name="username" id="username" />
                         </Col>
                     </Form.Group>
-                    <Form.Group as={Row} className="mb-3" controlId="newpassword">
+                    <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={2}>New Password</Form.Label>
                         <Col sm={3}>
                             <Form.Control type="text" placeholder="New Password" value={this.state.new_password} onChange={this.handlePassword} name="Password" id="Password" />
                         </Col>
                     </Form.Group>
-                    <Form.Group as={Row} className="mb-3" controlId="newgender">
+                    <Form.Group as={Row} className="mb-3" >
                         <Form.Label column sm={2}>
                             Gender
                         </Form.Label>
@@ -178,7 +182,7 @@ class Updateinfo extends React.Component {
                         </Form.Select>
                         </Col>
                     </Form.Group>
-                    <Form.Group as={Row} className="mb-3" controlId="newbirthday">
+                    <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={2}>
                             Birthday
                         </Form.Label>
@@ -187,7 +191,7 @@ class Updateinfo extends React.Component {
                         </Col>
                     </Form.Group>
                     <div className="mb-2">
-                        <Button type="submit" >Save Changes</Button>
+                        <Button type="submit" onClick={this.handleSubmit}>Save Changes</Button>
                     </div>
                 </form>
                 <div>

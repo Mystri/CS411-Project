@@ -15,30 +15,31 @@ class Favdisplay extends React.Component {
         super(props);
         this.state = {
             favlist: [],
-            email: x[0] // example
+            email: "demo@gmail.com" // example
         }
-        this.getmyfav = this.getmyfav.bind(this);
+        // this.componentDidMount = this.componentDidMount.bind(this);
 
     }
-    getmyfav(e) {
-        e.preventDefault();
-        const request = {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'omit',
-            headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({ 'email': this.state.email })
-        };
-        fetch('http://localhost:8000/get_fav_list', request)
-            .then(response => response.json())
-            .then(response => {
-                this.setState({ favlist: response.rec })
-                console.log(response.rec + "info");
-                console.log(this.state.favlist)
-            })
+    // componentDidMount(e) {
+    //     const request = {
+    //         method: 'POST',
+    //         mode: 'cors',
+    //         credentials: 'omit',
+    //         headers: { 'Content-type': 'text/plain' },
+    //         body: JSON.stringify({ 'email': this.state.email })
+    //     };
+    //     fetch('http://localhost:8000/get_fav_list', request)
+    //         .then(response => {
+    //             return response.json();
+    //         })
+    //         .then(response => {
+    //             this.setState({ favlist: response.rec })
+    //             console.log(response.rec + "info");
+    //             console.log(this.state.favlist)
+    //         })
 
 
-    }
+    // }
 
     render() {
         const favlist = this.state.favlist;
@@ -46,9 +47,9 @@ class Favdisplay extends React.Component {
             <Card style={{ width: '50%' }}>
                 <ListGroup variant="flush">
 
-                    {favlist.map(favl=>(
-                            <ListGroup.Item id={favlist.listid} onClick>{favl.list_name}</ListGroup.Item>
-                        ))
+                    {favlist.map(favl => (
+                        <ListGroup.Item id={favlist.listid} onClick>{favl.list_name}</ListGroup.Item>
+                    ))
                     }
                 </ListGroup>
             </Card>

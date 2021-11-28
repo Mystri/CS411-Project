@@ -42,13 +42,13 @@ class UserInfo extends React.Component {
                         
                         <Nav justify variant="pills" className="flex-column" style={{margin: "0.5em"}}>
                             <Nav.Item>
-                                <Nav.Link eventKey="info">Update Your Information</Nav.Link>
+                                <Nav.Link eventKey="info" href="#info">Update Your Information</Nav.Link>
                             </Nav.Item>
                             <Nav.Item style={{padding:"0.5em 0 0"}}>
-                                <Nav.Link eventKey="mylist">My Own Lists</Nav.Link>
+                                <Nav.Link eventKey="mylist" href="#mylist">My Own Lists</Nav.Link>
                             </Nav.Item>
                             <Nav.Item style={{padding:"0.5em 0 0"}}>
-                                <Nav.Link eventKey="favlist">My Favorite Lists</Nav.Link>
+                                <Nav.Link eventKey="favlist" href="#favlist">My Favorite Lists</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
