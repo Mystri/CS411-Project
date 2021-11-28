@@ -292,7 +292,6 @@ def update_user():
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
     count = cursor.fetchall()[0][0]
-
     if count > 0:
         return {"rec": 0}
     else:

@@ -23,7 +23,6 @@ export default (lid) => {
     <form>
       <Form.Group as={Row} className="mb-3" controlId="listname">
         <Form.Label column sm={3}>
-          ListName
         </Form.Label>
         <Col sm={9}>
           {/* <Form.Control required type="text" placeholder="Listname" value={listname} onChange={e => setName(e.target.value)} required /> */}

@@ -20,16 +20,16 @@ class Mydisplay extends React.Component {
         super(props);
         this.state = {
             mylist: [],
-            email: "demo@gmail.com",
+            email: JSON.parse(window.localStorage.getItem('login')).email,
             showModal: false
         }
-        this.getmylist = this.getmylist.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
 
     }
-    openModal = () => this.setState({ showModal: true });
+    openModal = (id) => this.setState({ showModal: true });
     closeModal = () => this.setState({ showModal: false });
-    getmylist(e) {
-        e.preventDefault();
+    componentDidMount(e) {
+        console.log(JSON.parse(window.localStorage.getItem('login')).email)
         const request = {
             method: 'POST',
             mode: 'cors',
@@ -49,31 +49,36 @@ class Mydisplay extends React.Component {
             })
     }
 
-    // console.log(this.state.mylist)
-    // const mylist1 = this.state.mylist;
-    // alert(mylist1)
     render() {
+        const mylist1 = this.state.mylist;
         return (
             <div>
                 <Card style={{ width: '75%' }}>
                     <ListGroup>
-                        {/* {mylist1.map(myl => (
-                        <ListGroup.Item id={myl.listid}>{myl.list_name}</ListGroup.Item>
-                    ))
-                    } */}
-                        <ListGroup.Item style={{ height: '4em' }} action onClick={this.openModal}>Cras justo odio</ListGroup.Item>
-                        <Modal show={this.state.showModal} onHide={this.closeModal}>
+                        {mylist1.map(myl => (
+                            <>
+                            {/* <Modal show={this.state.showModal} onHide={this.closeModal}>
                             <Modal.Header closeButton>
-                                <Modal.Title>Your List</Modal.Title>
+                                <Modal.Title>{myl.list_name}</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
-                                <Getcontent />
+                                <Getcontent/>
                             </Modal.Body>
                             <Modal.Footer></Modal.Footer>
-                        </Modal>
-                        <ListGroup.Item style={{ height: '4em' }} action >Dapibus ac facilisis in</ListGroup.Item>
-                        <ListGroup.Item style={{ height: '4em' }} action>Vestibulum at eros</ListGroup.Item>
+                        </Modal>  */}
+                        <ListGroup.Item id={myl.listid} style={{ height: '4em' }} action onClick={() => {this.openModal(myl.listid)}}>{myl.list_name}</ListGroup.Item>
+                        
+                        </>
+                        )
+                        )
+                        }
+
+                        {/* <ListGroup.Item style={{ height: '4em' }} action onClick={this.openModal}>Cras justo odio</ListGroup.Item> */}
+
+                        {/* <ListGroup.Item style={{ height: '4em' }} action >Dapibus ac facilisis in</ListGroup.Item>
+                        <ListGroup.Item style={{ height: '4em' }} action>Vestibulum at eros</ListGroup.Item> */}
                     </ListGroup>
+
                 </Card>
             </div>
         )

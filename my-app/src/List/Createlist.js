@@ -9,7 +9,7 @@ function Createlist() {
   const handleShow = () => setShow(true);
   const [listname, setName] = useState("");
   const [description, setDesc] = useState("");
-  const creator = x[0];
+  const creator = JSON.parse(window.localStorage.getItem('login')).email;
   const createlist = () => {
     const request = {
       method: "POST",
@@ -21,7 +21,8 @@ function Createlist() {
     fetch('http://localhost:8000/create_list', request)
   }
   return (
-    <form onSubmit={createlist}>
+    <>
+    <form>
       <Form.Group as={Row} className="mb-3" controlId="listname">
         <Form.Label column sm={3}>
           ListName
@@ -40,10 +41,11 @@ function Createlist() {
       </Form.Group>
       <Form.Group as={Row} className="mb-3" controlId="createbutton">
         <Col sm={9}>
-          <Button type="submit">Create</Button>
+          <Button type="submit" onClick={createlist}>Create</Button>
         </Col>
       </Form.Group>
       </form>
+     </>
       );
 }
 export default Createlist;
