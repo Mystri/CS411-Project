@@ -72,6 +72,7 @@ ReactDOM.render(
             <Route path="/newuser" ><URegister /></Route>
             <Route path="/personal"><Updateinfo /></Route>
             <Route path="/home"><Home /></Route>
+            <Route path="/movie"><MovieDetail /></Route>
             <Route path="/userinfo"><UserInfo/></Route>
             <Route path="/advanced_search"><Search /></Route>
             <Route path=""><Main /></Route>

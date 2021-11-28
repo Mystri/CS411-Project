@@ -1,4 +1,9 @@
 import React from 'react';
+import Header from '../Header/Header';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap';
+import 'holderjs';
+import StarRatings from 'react-star-ratings';
 import "./MovieDetail.css"
 import {
     BrowserRouter as Router,
@@ -79,9 +84,9 @@ class MovieDetail extends React.Component {
                             .then(response => {
                                 // this.setState({ movie_id: response.rec.movie_id })
                                 this.setState({ 
-                                director:response.rec        
+                                director:response.rec.name  
                                 })
-                                console.log(response.rec + "hhhhhhh");
+                                console.log(response+ "hhhhhhh");
                                 console.log(this.state)
                             })
                         }else if (item[1]=='writer'){
@@ -97,9 +102,9 @@ class MovieDetail extends React.Component {
                             .then(response => {
                                 // this.setState({ movie_id: response.rec.movie_id })
                                 this.setState({ 
-                                writer:response.rec        
+                                writer:response.rec.name
                                 })
-                                console.log(response.rec + "hhhhhhh");
+                                console.log(response + "hhhhhhh");
                                 console.log(this.state)
                             })
                         }
@@ -121,21 +126,66 @@ class MovieDetail extends React.Component {
     // }
     render() {
         return(
-            <div>
-                <div class='header'>
-                <Link to = "">
-                <div class='matrix'>
-                    MATRIX
-                </div>
-                </Link>
-                <div class="search_input">
-                    <input type="text" id="i-advanced-search" placeholder="search movie">
-                    </input>
-                    <button> _</button>
-                </div>
-                </div>
+            <Stack gap={3}>
+            <Header/>
+            <Container className="mb-2">
+            <Card>
+            <script src="holder.js"></script>
+                <Card.Body>
+                    <Row>
+                        <Col xs='3'>
+                            <Image src='https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg' className='mx-auto' />
+                        </Col>
+                        <Col>
+                            <h2>
+                                {this.state.title}
+                            </h2>
+                            <br/>
+                            <div>
+                            <b>Director:</b> {this.state.director}
+                            </div>
+                            <div>
+                                <b>Writer:</b> {this.state.writer}
+                            </div>
+                            <div>
+                             <b>Type:</b>  {this.state.type}
+                            </div>
+                            <div>
+                            <b>Release year:</b>  {this.state.release_year}
+                            </div>
+                            <div>
+                            <b>Run Time:</b>  {this.state.runtime} min
+                            </div>
+                            <div>
+                            <b>Production:</b>  {this.state.production}
+                            </div>
+                            <div> 
+                            <b>Language:</b>  {this.state.language}
+                            </div>
+                            <div>
+                            Rating:
+                            </div>
+                        </Col>
+                    </Row>
+                </Card.Body>
+                <Card.Body>
+                    <b>Description:</b> {this.state.description}
+                </Card.Body>
+                <Card.Body>
+                Your Rating: <StarRatings
+                        width='100%'
+                        starDimension='20px'
+                rating={this.state.rating}
+                starRatedColor="blue"
+                changeRating={this.changeRating}
+                numberOfStars={5}
+                name='rating'
+                />
 
-                <div class='movie_body'>
+                </Card.Body>
+            </Card>
+            </Container>
+                {/* <div class='movie_body'>
 
                     <div class='movie_title'>
                         {this.state.title}
@@ -164,19 +214,19 @@ class MovieDetail extends React.Component {
                     </div>
                 </div>
                 <div class='rating_comments'>
-                    {/* <StarRatings
+                    <StarRatings
                         width='100%'
                 rating={this.state.rating}
                 starRatedColor="blue"
                 changeRating={this.changeRating}
                 numberOfStars={5}
                 name='rating'
-                /> */}
+                />
                 <br/>
                 <input placeholder="Add your comments"></input>
-        </div>
+        </div> */}
                 
-            </div>
+        </Stack>
 
         )
     }

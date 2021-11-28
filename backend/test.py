@@ -10,6 +10,8 @@ import sys
 from datetime import datetime
 from flask_cors import CORS
 import re
+import threading
+mutex =threading.Lock()
 app = Flask(__name__)
 CORS(app)
 conn = connector.connect(
@@ -156,8 +158,10 @@ def search_movie():
 def get_all_movies():
     data = request.get_json(force=True)
     m_id = data["movie_id"]
+    mutex.acquire()
     cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
     result = cursor.fetchall()
+    mutex.release()
     ret = {}
     for i in result:
         i = list(i)
@@ -184,8 +188,10 @@ def get_all_movies():
 def get_all_people():
     data = request.get_json(force=True)
     p_id = data["peopleid"]
+    mutex.acquire()
     cursor.execute("SELECT * from People where peopleid='{}'".format(p_id))
     result = cursor.fetchall()
+    mutex.release()
     ret = {}
     result = list(result[0])
     ret["peopleid"] = result[0]
@@ -265,7 +271,7 @@ def login():
 
     data = request.get_json(force=True)
     email = data['email']
-    
+    conn.ping(reconnect=True)
     cursor.execute("SELECT email, username, password, gender, birthday from user where email='{}' and password='{}'".format(email,data['password']))
 
     result = cursor.fetchall()
