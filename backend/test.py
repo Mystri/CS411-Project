@@ -40,7 +40,7 @@ def search_list_by_name():
     name = data["name"]
     cursor.execute("SELECT list_id from List where name='{}'".format(name))
     result = cursor.fetchall()
-    result = [i[0] for i in result]
+    result = [i for i in result]
     if result:
         return {'rec': result}
     else:
