@@ -12,6 +12,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    hashHistory,
     Link
 } from "react-router-dom";
 class Main extends React.Component {
@@ -42,7 +43,8 @@ class Main extends React.Component {
                 {/* <LoginForm /> */}
 
                 <Link to="/newuser"><button>New User</button></Link>
-                <h2>Top Five Actors</h2>
+                <Link to={"/movie/"+"0"}><h2>Top Five Actors</h2></Link>
+
                 <ul>
                     <li>{this.state.display[0]}</li>
                     <li>{this.state.display[1]}</li>
@@ -71,6 +73,7 @@ ReactDOM.render(
             <Route path="/newuser" ><URegister /></Route>
             <Route path="/personal"><Updateinfo /></Route>
             <Route path="/home"><Home /></Route>
+            <Route path="/movie/:movieId" ><MovieDetail /></Route>
             <Route path="/userinfo"><UserInfo/></Route>
             <Route path="/advanced_search"><Search /></Route>
             <Route path=""><Main /></Route>

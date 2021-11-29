@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Card, Container , Stack, ListGroup} from 'react-bootstrap'
 
 import Header from '../Header/Header';
@@ -6,22 +6,28 @@ import 'holderjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const MovieCard = () => (
-    <Card style={{ width: '15rem' }}>
+const MovieCard = ({title}) => (
+    <Card style={{ width: '15rem', minHeight: '18rem' }}>
     <Card.Body>
         <script src="holder.js"></script>
-        <Card.Title>Movie Title</Card.Title>
-        <Card.Img variant="top" src="holder.js/100px180" />
+        <Card.Img src="holder.js/100x180" />
+        <Card.Title>{title}</Card.Title>
 
     </Card.Body>
     </Card>
 )
 
-const ListCard = () => (
+const MovieCardGroup = ({movies}) => (
+    movies.map((m) => (
+        <MovieCard title={m.title}/>
+    ))
+)
+
+const ListCard = ({title}) => (
     <Card style={{ width: '15rem' }}>
     <Card.Body>
         <script src="holder.js"></script>
-        <Card.Title>List Title</Card.Title>
+        <Card.Title>title</Card.Title>
         <Card.Img variant="top" src="holder.js/100px180" />
         <ListGroup variant="flush">
             <ListGroup.Item>Cras justo odio</ListGroup.Item>
@@ -33,7 +39,40 @@ const ListCard = () => (
     </Card>
 )
 
+const ListCardGroup = ({lists}) => (
+    lists.map((l) => (
+        <MovieCard title={l.title}/>
+    ))
+)
+
 export default () => {
+    
+    const [movies, setMovies] = useState([]);
+    const [lists, setLists] = useState([]);
+
+    useEffect(() => {
+        
+        fetch('http://localhost:8000/randomly_generate_movie', { method: 'GET' })
+        .then(response => response.json())
+        .then(response => {
+            setMovies(response.rec);
+        })
+
+        fetch('http://localhost:8000/randomly_generate_list', { method: 'POST' })
+        .then(response => response.json())
+        .then(response => {
+            setLists(response.rec);
+        })
+
+    }, []);
+
+    useEffect(() => {
+        lists.map(l => {
+            console.log(l);
+        })
+    }, []);
+
+
     return (
         <Stack gap={3}>
             <Header/>
@@ -45,13 +84,7 @@ export default () => {
                     </h2>
                     <Stack direction="horizontal" gap={3}>
 
-                    <MovieCard/>
-                    <MovieCard/>
-                    <MovieCard/>
-                    <MovieCard/>
-                    <MovieCard/>
-
-                    
+                    <MovieCardGroup movies={movies}/>
 
                     </Stack>
                     <h2>
@@ -59,11 +92,7 @@ export default () => {
                     </h2>
                     <Stack direction="horizontal" gap={3}>
 
-                    <ListCard/>
-                    <ListCard/>
-                    <ListCard/>
-                    <ListCard/>
-                    <ListCard/>
+                    <ListCardGroup lists={lists}/>
 
                     
 

@@ -1,4 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Header from '../Header/Header';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Stack, Form, FormControl, Button,ListGroup, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap';
+import 'holderjs';
+import StarRatings from 'react-star-ratings';
 import "./MovieDetail.css"
 import {
     BrowserRouter as Router,
@@ -10,6 +15,45 @@ import {
 
 // import StarRatings from 'react-star-ratings';
 
+const ListCard = (item) => {
+    const [disable, setDisable] = useState(false);
+    const handleFav = () =>{
+        setDisable(true);
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"list_id":item.valueProps.list_id, "user_id":JSON.parse(window.localStorage.getItem('login')).email})
+        };
+        fetch('http://localhost:8000/add_fav_list', request)
+                .then(data => {
+                    console.log('parsed json', data);
+                    return data.json()
+                })
+                .then(data => {
+                    console.log('parsed json', data.rec);
+                }, (ex) => {
+                    console.log('parsing failed', ex)
+                });
+    }
+
+    console.log("hhhhh",item)
+    if (item.valueProps.cover=='none'){
+        item.valueProps.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
+    }
+    return(
+    
+    <Card style={{ width: '15rem' }}>
+    <Card.Body>
+        <script src="holder.js"></script>
+        <Card.Title>{item.valueProps.list_name}</Card.Title>
+        <Card.Img variant="top" width='180' height='300' src={item.valueProps.cover} />
+        <Button variant='primary' width='180' disabled={disable} onClick={handleFav}>Add Favourite</Button>
+
+    </Card.Body>
+    </Card>
+)}
 
 class MovieDetail extends React.Component {
     constructor(props) {
@@ -17,7 +61,7 @@ class MovieDetail extends React.Component {
         this.state = {
             // var/objs to use
             display: "",
-            movie_id:"",
+            movie_id: this.props.match.params.movieId,
             cover:"",
             description:"",
             language:"",
@@ -31,7 +75,8 @@ class MovieDetail extends React.Component {
             writer:"",
             clickIndex: 0,
             hoverIndex: 0,
-            rating:0
+            rating:0,
+            list:[]
         };
         this.changeRating = this.changeRating.bind(this)
     }
@@ -41,11 +86,12 @@ class MovieDetail extends React.Component {
             mode: 'cors',
             credentials: 'omit',
             headers: {'Content-type':'text/plain'},
-            body:JSON.stringify({'movie_id':'tt10056564'})
+            body:JSON.stringify({'movie_id':this.state.movie_id})
         };
         fetch('http://localhost:8000/get_all_movies', request)
             .then(response => response.json())
             .then(response => {
+                console.log("hhhhhh",response)
                 // this.setState({ movie_id: response.rec.movie_id })
                 this.setState({ 
                 movie_id: response.rec.movie_id,
@@ -59,10 +105,14 @@ class MovieDetail extends React.Component {
                 title:response.rec.title,
                 type:response.rec.type         
                 })
+                if (this.state.cover=='none'){
+                    this.state.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
+                }
                 console.log(response.rec + "info");
                 console.log(this.state)
             }).then(
-                response=>{
+                ()=>{
+                    if (this.state.people_id)
                         this.state.people_id.map((item,index)=>{
                         item = item.split(":")
                         console.log(item)
@@ -79,9 +129,9 @@ class MovieDetail extends React.Component {
                             .then(response => {
                                 // this.setState({ movie_id: response.rec.movie_id })
                                 this.setState({ 
-                                director:response.rec        
+                                director:response.rec.name  
                                 })
-                                console.log(response.rec + "hhhhhhh");
+                                console.log(response+ "hhhhhhh");
                                 console.log(this.state)
                             })
                         }else if (item[1]=='writer'){
@@ -97,15 +147,35 @@ class MovieDetail extends React.Component {
                             .then(response => {
                                 // this.setState({ movie_id: response.rec.movie_id })
                                 this.setState({ 
-                                writer:response.rec        
+                                writer:response.rec.name
                                 })
-                                console.log(response.rec + "hhhhhhh");
+                                console.log(response + "hhhhhhh");
                                 console.log(this.state)
                             })
-                        }
-                }
+                        
+                }}
             )
-    });
+    }).then(
+        ()=>{
+            const request ={
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: {'Content-type':'text/plain'},
+                body:JSON.stringify({'user_id':JSON.parse(window.localStorage.getItem('login')).email})
+            };
+            fetch('http://localhost:8000/randomly_generate_list', request)
+                            .then(response => response.json())
+                            .then(response => {
+                                // this.setState({ movie_id: response.rec.movie_id })
+                                this.setState({ 
+                                list:response.rec  
+                                })
+                                console.log(response+ "hhhhhhh");
+                                console.log(this.state)
+                            })
+        }
+    );
     // componentDidMount(e) {
     }
     changeRating( newRating, name ) {
@@ -121,21 +191,78 @@ class MovieDetail extends React.Component {
     // }
     render() {
         return(
-            <div>
-                <div class='header'>
-                <Link to = "">
-                <div class='matrix'>
-                    MATRIX
-                </div>
-                </Link>
-                <div class="search_input">
-                    <input type="text" id="i-advanced-search" placeholder="search movie">
-                    </input>
-                    <button> _</button>
-                </div>
-                </div>
+            <Stack gap={3}>
+            <Header/>
+            <Container className="mb-2">
+            <Card>
+            <script src="holder.js"></script>
+                <Card.Body>
+                    <Row>
+                        <Col xs='3'>
+                            <Image src={this.state.cover} className='mx-auto' width='200' heigh='300' />
+                        </Col>
+                        <Col>
+                            <h2>
+                                {this.state.title}
+                            </h2>
+                            <br/>
+                            <div>
+                            <b>Director:</b> {this.state.director}
+                            </div>
+                            <div>
+                                <b>Writer:</b> {this.state.writer}
+                            </div>
+                            <div>
+                             <b>Type:</b>  {this.state.type}
+                            </div>
+                            <div>
+                            <b>Release year:</b>  {this.state.release_year}
+                            </div>
+                            <div>
+                            <b>Run Time:</b>  {this.state.runtime} min
+                            </div>
+                            <div>
+                            <b>Production:</b>  {this.state.production}
+                            </div>
+                            <div> 
+                            <b>Language:</b>  {this.state.language}
+                            </div>
+                            <div>
+                            Rating:
+                            </div>
+                        </Col>
+                    </Row>
+                </Card.Body>
+                <Card.Body>
+                    <b>Description:</b> {this.state.description}
+                </Card.Body>
+                <Card.Body>
+                <b>Your Rating:</b> <StarRatings
+                        width='100%'
+                        starDimension='20px'
+                rating={this.state.rating}
+                starRatedColor="blue"
+                changeRating={this.changeRating}
+                numberOfStars={5}
+                name='rating'
+                />
 
-                <div class='movie_body'>
+                </Card.Body>
+                <Card.Body>
+                <b>The list you may interested</b> 
+                <Stack direction="horizontal" gap={3}>
+                    {this.state.list.map((item,index)=>{
+                            return(<ListCard valueProps = {item} user_id ={JSON.parse(window.localStorage.getItem('login')).email} />)
+                        })}
+
+                    
+
+                    </Stack>
+                </Card.Body>
+            </Card>
+            
+            </Container>
+                {/* <div class='movie_body'>
 
                     <div class='movie_title'>
                         {this.state.title}
@@ -164,19 +291,19 @@ class MovieDetail extends React.Component {
                     </div>
                 </div>
                 <div class='rating_comments'>
-                    {/* <StarRatings
+                    <StarRatings
                         width='100%'
                 rating={this.state.rating}
                 starRatedColor="blue"
                 changeRating={this.changeRating}
                 numberOfStars={5}
                 name='rating'
-                /> */}
+                />
                 <br/>
                 <input placeholder="Add your comments"></input>
-        </div>
+        </div> */}
                 
-            </div>
+        </Stack>
 
         )
     }

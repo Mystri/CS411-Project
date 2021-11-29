@@ -1,69 +1,201 @@
 import React, { useState, useEffect } from 'react'
-import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap'
+import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle, InputGroup, Alert} from 'react-bootstrap'
 
 
 import Header from "../Header/Header"
 import Mydisplay from "../List/Mylistdisplay.js"
 import Createlist from "../List/Createlist.js"
-function ResultCardMovie({item}) {
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    hashHistory,
+    Link
+} from "react-router-dom";
+function ResultCardMovie(item) {
     const [show, setShow] = useState(false);
-    const [show1, setShow1] = useState(false)
+    const [show1, setShow1] = useState(false);
+    const [userlist, setUserList] = useState([]);
+    const [disableList, setDisableList] = useState([]);
+    const [name, setName] = useState("");
+    const [desc, setDesc] = useState("");
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    const handleClose1 = () => setShow1(false);
-    const handleShow1 = () => setShow1(true);
+    const handleShow = () => {
+        
+        setShow(true);
+        setShow1(false);
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"user_id":item.user_id})
+        };
+        fetch('http://localhost:8000/get_owned_list', request)
+            .then(data => {
+                console.log('parsed json', data);
+                return data.json()
+            })
+            .then(data => {
+                console.log(data.rec);
+                if (!data.rec) {
+                    console.log('no results');
+                    setUserList(['No results!']);
+                } else {
+                    for (let i=0;i<data.rec.length;i++){
+                        disableList.push(false)
+                    }
+                    setUserList(data.rec);
+                }
+                console.log('banner', userlist);
+            }, (ex) => {
+                console.log('parsing failed', ex)
+            })
+    
+    };
+    const handleList = (listid,index)=>{
+        let newarr = [...disableList];
+        newarr[index] = true;
+        setDisableList(newarr);
+        console.log(disableList)
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"movie_id":item.valueProps.movie_id, "list_id":listid})
+        };
+        console.log("hhhhhhhh",request);
+        fetch('http://localhost:8000/add_movie_to_list', request)
+            .then(data => {
+                console.log('parsed json', data);
+                return data.json()
+            })
+            .then(data => {
+                console.log(data.rec);
+            }, (ex) => {
+                console.log('parsing failed', ex)
+            })
+    };
+    const handleCreate = () => {
+        if (name){
+            const request = {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-type': 'text/plain' },
+                body: JSON.stringify({"user":item.user_id, "list_name":name, "description":desc})
+            };
+            fetch('http://localhost:8000/create_list', request)
+                .then(data => {
+                    console.log('parsed json', data);
+                    return data.json()
+                })
+                .then(data => {
+                    console.log('parsed json', data.rec);
+                    if (data.rec){
+                        handleShow();
+                    }else{
+                        return(alert('You have already have this list!'))
+                    }
+                }, (ex) => {
+                    console.log('parsing failed', ex)
+                });
+            setName("")
+            setDesc("");
+        }else{
+            return(alert('The list should have name!'));
+    }};
+    const handleClose1 = () => {setShow1(false);}
+    const handleShow1 = () => {setShow1(true);setShow(false);}
+    console.log("hhhhh",item)
+    if (item.valueProps.cover=='none'){
+        item.valueProps.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
+    }
     return (
-
+        
         <Container className="mb-2">
             <Card>
                 <script src="holder.js"></script>
                 <Card.Body>
                     <Row>
                         <Col xs='2'>
-                            <Image src="holder.js/100px200" className='mx-auto' />
+                        <Link style={{ textDecoration:'none'}} to={'/movie/'+item.valueProps.movie_id}>
+                            <Image src={item.valueProps.cover} height='150' width='100' className='mx-auto' />
+                        </Link>
                         </Col>
-                        <Col>
-                            <h2>
-                                {item}
-                            </h2>
+                        <Col xs='9'>
+                            <Link style={{ textDecoration:'none'}} to={'/movie/'+item.valueProps.movie_id}>
+                            <h3>
+                                {item.valueProps.title}
+                            </h3>
+                            </Link>
                             <div>
-                                Actor:
+                                Runtime: {item.valueProps.runtime} min
                             </div>
                             <div>
-                                Text
+                                Type: {item.valueProps.type}
                             </div>
                         </Col>
                         <Col className='m-auto'>
-                            <Button variant='outline-primary' className='m-auto ' style={{ float: 'right' }} onClick={handleShow}>+</Button>
+                        <Button variant='outline-primary' style={{ float: 'right' }} onClick={handleShow}>
+                                +
+                            </Button>
+
                             <Modal show={show} onHide={handleClose}>
                                 <Modal.Header closeButton>
-                                    <Modal.Title>Your List</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Mydisplay />
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button variant="primary" onClick={handleShow1}>
-                                            Create a new list
-                                        </Button>
-
-                                    </Modal.Footer>
-                               
+                                <Modal.Title>Your List</Modal.Title>
+                                </Modal.Header>
+                                {userlist.map((item,index)=>{
+                                    return(
+                                
+                                <Modal.Body>{item.list_name}
+                                {console.log(disableList[index])}
+                                <Button variant='primary' style={{ float: 'right' }} disabled={disableList[index]} onClick={()=>handleList(item.listid, index)}>
+                                    +
+                                </Button>
+                                </Modal.Body>
+                                )})}
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={handleShow1}>
+                                    Create New List
+                                </Button>
+                                </Modal.Footer>
                             </Modal>
                             <Modal show={show1} onHide={handleClose1}>
                                 <Modal.Header closeButton>
-                                <Modal.Title>Create Your New List</Modal.Title>
+                                <Modal.Title>Create New List</Modal.Title>
                                 </Modal.Header>
-                                    <Modal.Body>
-                                        <Createlist/>
-                                    </Modal.Body>
-                                
+                                <Modal.Body>
+                                <InputGroup className="mb-3">
+                                <InputGroup.Text id="basic-addon3">
+                                name
+                                </InputGroup.Text>
+                                <FormControl id="basic-url" aria-describedby="basic-addon3" onChange={(e) => setName(e.target.value)}
+                                                            value={name}/>
+                            </InputGroup>
+                            <InputGroup className="mb-3">
+                                <InputGroup.Text id="basic-addon3">
+                                desc
+                                </InputGroup.Text>
+                                <FormControl id="basic-url" aria-describedby="basic-addon3" onChange={(e) => setDesc(e.target.value)}
+                                                            value={desc}/>
+                            </InputGroup>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose1}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={()=>{handleCreate()}}>
+                                    Create
+                                </Button>
+                                </Modal.Footer>
                             </Modal>
                         </Col>
                     </Row>
-                </Card.Body>
-                <Card.Body>
-                    lasdkfj
                 </Card.Body>
             </Card>
         </Container>
@@ -74,7 +206,7 @@ export default () => {
 
     const [method, setMethod] = useState("");
     const [keyword, setKeyword] = useState("");
-    const [banners, setBanners] = useState(["lkajsdlkfads", "slkdfj", "salkdf"]);
+    const [banners, setBanners] = useState([]);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -155,7 +287,8 @@ export default () => {
             fetch('http://localhost:8000/search_list_by_name', request)
             .then(data => {
                 console.log('parsed json', data);
-                return data.json();
+                console.log('parsed json', keyword);
+                return data.json()
             })
             .then(data => {
                 console.log(data.rec);
@@ -165,7 +298,7 @@ export default () => {
                 } else {
                     setBanners(data.rec);
                 }
-                console.log('parsed json', data.rec);
+                console.log('banner', banners);
             }, (ex) => {
                 console.log('parsing failed', ex)
             })
@@ -255,7 +388,6 @@ export default () => {
                                 <Dropdown.Menu>
                                     <Dropdown.Item onClick={() => setMethod("Movie")}>Movie</Dropdown.Item>
                                     <Dropdown.Item onClick={() => setMethod("Actor")}>Actor</Dropdown.Item>
-                                    <Dropdown.Item onClick={() => setMethod("List")}>List</Dropdown.Item>
 
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -269,28 +401,41 @@ export default () => {
                             <Button variant="outline-success" onClick={handleSearch}> Search </Button>
                         </Form>
 
-                        <Collapse in={method == "Movie" || method == "Actor"}>
 
-                            <div>
+                            <Container>
 
-                                <Form.Check
-                                    label="Japanese"
-                                    type="checkbox"
-                                    value={language["Japanese"]}
-                                    onChange={() => handleChangeLanguage("Japanese")}
-                                />
+                                {
+                                    Array.from(language).map((l) => {
+                                        return (
+                                            <Form.Check
+                                            label= {l[0]}
+                                            inline
+                                            type="checkbox"
+                                            value={language[l[0]]}
+                                            onChange={() => handleChangeLanguage(l[0])}
+                                        />
+                                        )
+                                    })
+                                }
+                            </Container>
+                            <Container>
+                            
 
-                                <Form.Check
-                                    inline
-                                    label="Documentary"
-                                    type="checkbox"
-                                    value={language["Documentary"]}
-                                    onChange={() => handleChangeType("Documentary")}
-                                />
+                                {
+                                    Array.from(type).map((t) => {
+                                        return (
+                                            <Form.Check
+                                            label= {t[0]}
+                                            inline
+                                            type="checkbox"
+                                            value={type[t[0]]}
+                                            onChange={() => handleChangeType(t[0])}
+                                        />
+                                        )
+                                    })
+                                }
+                            </Container>
 
-                            </div>
-
-                        </Collapse>
 
 
 
@@ -302,12 +447,9 @@ export default () => {
 
                 <Card>
                     <Card.Body>
-                        {
-                            banners.map(item => (
-                                <ResultCardMovie item={item}/>
-                            ))
-                        }
-                        <ResultCardMovie item={"lskdfj"}/>
+                        {banners.map((item,index)=>{
+                            return(<ResultCardMovie valueProps = {item} user_id ={JSON.parse(window.localStorage.getItem('login')).email} />)
+                        })}
                     </Card.Body>
                 </Card>
             </Container>

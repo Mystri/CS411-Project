@@ -10,7 +10,7 @@ import {
 import React from "react";
 import Updateinfo from "./Updateinfo.js"
 import Mydisplay from "../List/Mylistdisplay.js"
-import Favdisplay from "../List/Favlistdisplay.js"
+import Favlistdisplay,{Getfavlist} from "../List/Favlistdisplay.js"
 
 // export default function UserInfo(){
 //     return (
@@ -29,7 +29,6 @@ import Favdisplay from "../List/Favlistdisplay.js"
 //         </Nav>
 //     )
 // };
-
 class UserInfo extends React.Component {
     render() {
         return (
@@ -42,13 +41,13 @@ class UserInfo extends React.Component {
                         
                         <Nav justify variant="pills" className="flex-column" style={{margin: "0.5em"}}>
                             <Nav.Item>
-                                <Nav.Link eventKey="info">Update Your Information</Nav.Link>
+                                <Nav.Link eventKey="info" href="#info" >Update Your Information</Nav.Link>
                             </Nav.Item>
                             <Nav.Item style={{padding:"0.5em 0 0"}}>
-                                <Nav.Link eventKey="mylist">My Own Lists</Nav.Link>
+                                <Nav.Link eventKey="mylist" href="#mylist" >My Own Lists</Nav.Link>
                             </Nav.Item>
                             <Nav.Item style={{padding:"0.5em 0 0"}}>
-                                <Nav.Link eventKey="favlist">My Favorite Lists</Nav.Link>
+                                <Nav.Link eventKey="favlist" href="#favlist" >My Favorite Lists</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
@@ -76,7 +75,7 @@ class UserInfo extends React.Component {
                                  My Favorite Lists  
                             </h2>
                             <br/>
-                                <Favdisplay />
+                                <Favlistdisplay />
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>

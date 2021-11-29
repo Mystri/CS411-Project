@@ -10,14 +10,16 @@ import sys
 from datetime import datetime
 from flask_cors import CORS
 import re
+import threading
+mutex =threading.Lock()
 app = Flask(__name__)
 CORS(app)
 conn = connector.connect(
-    "festive-planet-281310:us-central1:cs411",
+    "festive-planet-281310:us-central1:cs4111",
     "pymysql",
     user="root",
     password='Xu440987',
-    db="411new",
+    db="cs411",
 )
 cursor = conn.cursor()
 
@@ -38,9 +40,11 @@ def photo_url():
 def search_list_by_name():
     data = request.get_json(force=True)
     name = data["name"]
+    mutex.acquire()
     cursor.execute("SELECT list_id from List where name='{}'".format(name))
     result = cursor.fetchall()
-    result = [i[0] for i in result]
+    mutex.release()
+    result = [i for i in result]
     if result:
         return {'rec': result}
     else:
@@ -148,16 +152,19 @@ def search_movie():
             result.append(i)
 
     if result:
-        return {'rec': result}
+        return {'rec': result[:20]}
     else:
         return {'rec': 0}
 
 @app.route("/get_all_movies",methods=["POST"])
 def get_all_movies():
     data = request.get_json(force=True)
+
     m_id = data["movie_id"]
-    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie INNER JOIN mp on movie.movie_id=mp.tconst INNER JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
+    mutex.acquire()
+    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie LEFT JOIN mp on movie.movie_id=mp.tconst LEFT JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
     result = cursor.fetchall()
+    mutex.release()
     ret = {}
     for i in result:
         i = list(i)
@@ -169,23 +176,29 @@ def get_all_movies():
             i[4] = ""
         ret["type"] = i[4]
         ret["description"] = i[5]
+
         ret["cover"] = i[6]
         ret["production"] = i[7]
         if i[8][0] == "s":
             i[8] = ",".join(re.findall('[A-Z][^A-Z]*', i[8][1:]))
         ret["language"] = i[8]
-        if "peopleid_and_job" in ret:
-            ret["peopleid_and_job"].append(i[9]+":"+i[10])
+        if i[9] and i[10]:
+            if "peopleid_and_job" in ret:
+                ret["peopleid_and_job"].append(i[9]+":"+i[10])
+            else:
+                ret["peopleid_and_job"] = [i[9]+":"+i[10]]
         else:
-            ret["peopleid_and_job"] = [i[9]+":"+i[10]]
+            ret["peopleid_and_job"] = []
     return {'rec':ret}
 
 @app.route("/get_all_people",methods=["POST", "GET"])
 def get_all_people():
     data = request.get_json(force=True)
     p_id = data["peopleid"]
+    mutex.acquire()
     cursor.execute("SELECT * from People where peopleid='{}'".format(p_id))
     result = cursor.fetchall()
+    mutex.release()
     ret = {}
     result = list(result[0])
     ret["peopleid"] = result[0]
@@ -247,16 +260,19 @@ def register():
 
     data = request.get_json(force=True)
     email = data['email']
-    
-    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+    mutex.acquire()
 
+    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+    mutex.release()
     count = cursor.fetchall()[0][0]
 
     if count > 0:
         return {"rec": 0}
     else:
+        mutex.acquire()
         cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','{}','{}','')".format(data['username'],email,data['password'],data['gender'], data['birthday']))
         conn.commit()
+        mutex.release()
         return {"rec": 1}
 
 
@@ -265,9 +281,9 @@ def login():
 
     data = request.get_json(force=True)
     email = data['email']
-    
+    mutex.acquire()
     cursor.execute("SELECT email, username, password, gender, birthday from user where email='{}' and password='{}'".format(email,data['password']))
-
+    mutex.release()
     result = cursor.fetchall()
 
     if len(result) == 0:
@@ -292,7 +308,6 @@ def update_user():
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
 
     count = cursor.fetchall()[0][0]
-
     if count > 0:
         return {"rec": 0}
     else:
@@ -352,12 +367,17 @@ def create_list():
     user = data["user"]
     name = data["list_name"]
     desc = data["description"]
+    print("SELECT COUNT(*) from List where name='{}' and creator='{}'".format(name,user))
+    cursor.execute("SELECT COUNT(*) from List where name='{}' and creator='{}'".format(name,user) )
+    if cursor.fetchall()[0][0]>0:
+        return {'rec':0}
     cursor.execute("SELECT MAX(list_id) from List")
     listid = cursor.fetchall()[0][0]
     if listid==None:
         listid =0
     else:
         listid += 1
+    print("INSERT INTO List VALUES ('{}','{}','{}','{}')".format(listid, name, desc, user))
     cursor.execute("INSERT INTO List VALUES ('{}','{}','{}','{}')".format(listid, name, desc, user))
     conn.commit()
     return {"rec":{"user_id":user, "list_name":name, "description":desc, "listid":listid}}
@@ -365,12 +385,14 @@ def create_list():
 @app.route("/add_movie_to_list", methods=["post"])
 def add_movie_to_list():
     data = request.get_json(force=True)
+
     listid = data["list_id"]
     movieid = data["movie_id"]
     try:
-        cursor.execute("INSERT INTO list2movie VALUES ({},'{}')".format(listid, movieid))
+        cursor.execute("INSERT INTO list2movie(list_id, movie_id) VALUES ({},'{}')".format(listid, movieid))
         conn.commit()
         return {"rec":1}
+
     except Exception as e:
         print(e)
         return {"rec":0}
@@ -399,10 +421,11 @@ def add_fav_list():
     listid = data["list_id"]
     userid = data["user_id"]
     try:
-        cursor.execute("INSERT INTO user_fav_list VALUES ({},'{}')".format(listid,userid))
+        cursor.execute("INSERT INTO user_fav_list(list_id, user_id) VALUES ({},'{}')".format(listid,userid))
         conn.commit()
         return {"rec":1}
     except Exception as e:
+
         print(e)
         return {"rec":str(e)}
 
@@ -410,7 +433,9 @@ def add_fav_list():
 def get_fav_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
+    mutex.acquire()
     cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
+    mutex.release()
     result = cursor.fetchall()
     res = []
     for i in result:
@@ -423,7 +448,9 @@ def get_fav_list():
 def get_owned_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
+    mutex.acquire()
     cursor.execute("select * from List where creator='{}';".format(userid))
+    mutex.release()
     result = cursor.fetchall()
     res = []
     for i in result:
@@ -431,5 +458,48 @@ def get_owned_list():
             "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
         })
     return {"rec":res}
+
+@app.route("/randomly_generate_list", methods=["post"])
+def randomly_generate_list():
+    data = request.get_json(force=True)
+    userid = data["user_id"]
+    mutex.acquire()
+    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from user_fav_list where user_id='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
+    result = cursor.fetchall()
+    mutex.release()
+    res = {}
+    for i in result:
+        if i[0] not in res:
+            res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3]}
+        else:
+            res[i[0]]["movie"].append(i[2])
+    resc = []
+    for i in res:
+        if len(res[i]["movie"])>=3:
+            res[i]["movie"] = res[i]["movie"][:3]
+        else:
+            res[i]["movie"]+=[""]*(3-len(res[i]["movie"]))
+        resc.append(res[i])
+    return {"rec":resc}
+
+@app.route("/randomly_generate_movie", methods=["get"])
+def randomly_generate_movie():
+    mutex.acquire()
+    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie order by Rand() limit 5")
+    result = cursor.fetchall()
+    mutex.release()
+    res = []
+    for i in result:
+        res.append({"movie_id":i[0],
+        "title":i[1],
+        "release_year":i[2],
+        "runtime":i[3],
+        "description":i[4],
+        "cover":i[5],
+        "production":i[6],
+        "language":i[7]})
+    return {"rec":res}
+
+
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
