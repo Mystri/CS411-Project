@@ -352,7 +352,7 @@ export default () => {
                     } else {
                         setBanners(data.rec);
                     }
-                    console.log('parsed json', data.rec);
+                    console.log('banner', banners);
                 }, (ex) => {
                     console.log('parsing failed', ex)
                 })
@@ -368,9 +368,6 @@ export default () => {
     return (
         <Stack gap={3}>
             <Header />
-            <div>
-                {banners}
-            </div>
 
 
 
