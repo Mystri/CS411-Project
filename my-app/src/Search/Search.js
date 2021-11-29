@@ -5,7 +5,7 @@ import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, 
 import Header from "../Header/Header"
 import Mydisplay from "../List/Mylistdisplay.js"
 import Createlist from "../List/Createlist.js"
-function ResultCardMovie() {
+function ResultCardMovie({item}) {
     const [show, setShow] = useState(false);
     const [show1, setShow1] = useState(false)
     const handleClose = () => setShow(false);
@@ -24,7 +24,7 @@ function ResultCardMovie() {
                         </Col>
                         <Col>
                             <h2>
-                                Title
+                                {item}
                             </h2>
                             <div>
                                 Actor:
@@ -74,7 +74,7 @@ export default () => {
 
     const [method, setMethod] = useState("");
     const [keyword, setKeyword] = useState("");
-    const [banners, setBanners] = useState([""]);
+    const [banners, setBanners] = useState(["lkajsdlkfads", "slkdfj", "salkdf"]);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -140,39 +140,22 @@ export default () => {
     const handleSearch = (event) => {
         event.preventDefault();
 
+        if (method === "List") {
 
-        var bodyObject;
-        if (method === "Actor") {
-            bodyObject = {
-                "language": mapToObj(language),
-                "type": mapToObj(type),
-                "keyword": keyword,
-                "isActor": true
-            };
-        } else {
-            bodyObject = {
-                "language": mapToObj(language),
-                "type": mapToObj(type),
-                "keyword": keyword,
-                "isActor": false
-            };
-        }
-
-        const request = {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'omit',
-            headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify(bodyObject)
-        };
-
-        console.log(request.body);
-
-
-        fetch('http://localhost:8000/search_movie', request)
+            var bodyObject = {
+                "name" : keyword
+            }
+            const request = {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-type': 'text/plain' },
+                body: JSON.stringify(bodyObject)
+            }
+            fetch('http://localhost:8000/search_list_by_name', request)
             .then(data => {
                 console.log('parsed json', data);
-                return data.json()
+                return data.json();
             })
             .then(data => {
                 console.log(data.rec);
@@ -187,6 +170,61 @@ export default () => {
                 console.log('parsing failed', ex)
             })
 
+        } else {
+
+            var bodyObject;
+            if (method === "Actor") {
+                bodyObject = {
+                    "language": mapToObj(language),
+                    "type": mapToObj(type),
+                    "keyword": keyword,
+                    "isActor": true
+                };
+
+            } 
+            if (method === "Movie") {
+                bodyObject = {
+                    "language": mapToObj(language),
+                    "type": mapToObj(type),
+                    "keyword": keyword,
+                    "isActor": false
+                };
+ 
+            }
+
+            const request = {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-type': 'text/plain' },
+                body: JSON.stringify(bodyObject)
+            };
+
+
+
+
+            console.log(request.body);
+
+
+            fetch('http://localhost:8000/search_movie', request)
+                .then(data => {
+                    console.log('parsed json', data);
+                    return data.json();
+                })
+                .then(data => {
+                    console.log(data.rec);
+                    if (!data.rec) {
+                        console.log('no results');
+                        setBanners(['No results!']);
+                    } else {
+                        setBanners(data.rec);
+                    }
+                    console.log('parsed json', data.rec);
+                }, (ex) => {
+                    console.log('parsing failed', ex)
+                })
+        }
+
     };
 
 
@@ -197,6 +235,10 @@ export default () => {
     return (
         <Stack gap={3}>
             <Header />
+            <div>
+                {banners}
+            </div>
+
 
 
             <Container>
@@ -260,10 +302,12 @@ export default () => {
 
                 <Card>
                     <Card.Body>
-                        <ResultCardMovie />
-                        <ResultCardMovie />
-                        <ResultCardMovie />
-                        <ResultCardMovie />
+                        {
+                            banners.map(item => (
+                                <ResultCardMovie item={item}/>
+                            ))
+                        }
+                        <ResultCardMovie item={"lskdfj"}/>
                     </Card.Body>
                 </Card>
             </Container>

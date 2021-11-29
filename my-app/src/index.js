@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import LoginForm from "./LoginComponent/LoginForm.js";
 import URegister from "./RegisterComponent/Register.js";
 import LLL from "./test_page/test.js";
 import Updateinfo from "./UserCenter/Updateinfo.js"
@@ -40,7 +39,7 @@ class Main extends React.Component {
         return (
             <div>
                 {/* <Link to="/newuser"><button>New User</button></Link> */}
-                <LoginForm />
+                {/* <LoginForm /> */}
 
                 <Link to="/newuser"><button>New User</button></Link>
                 <h2>Top Five Actors</h2>
