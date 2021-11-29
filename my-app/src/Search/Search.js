@@ -109,6 +109,9 @@ function ResultCardMovie(item) {
     const handleClose1 = () => {setShow1(false);}
     const handleShow1 = () => {setShow1(true);setShow(false);}
     console.log("hhhhh",item)
+    if (item.valueProps.cover=='none'){
+        item.valueProps.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
+    }
     return (
         
         <Container className="mb-2">
@@ -118,7 +121,7 @@ function ResultCardMovie(item) {
                     <Row>
                         <Col xs='2'>
                         <Link style={{ textDecoration:'none'}} to={'/movie/'+item.valueProps.movie_id}>
-                            <Image src="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg" height='150' width='100' className='mx-auto' />
+                            <Image src={item.valueProps.cover} height='150' width='100' className='mx-auto' />
                         </Link>
                         </Col>
                         <Col xs='9'>
@@ -391,7 +394,7 @@ export default () => {
                 <Card>
                     <Card.Body>
                         {banners.map((item,index)=>{
-                            return(<ResultCardMovie valueProps = {item} user_id ={"demo@gmail.com"} />)
+                            return(<ResultCardMovie valueProps = {item} user_id ={JSON.parse(window.localStorage.getItem('login')).email} />)
                         })}
                     </Card.Body>
                 </Card>

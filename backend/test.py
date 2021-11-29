@@ -15,11 +15,11 @@ mutex =threading.Lock()
 app = Flask(__name__)
 CORS(app)
 conn = connector.connect(
-    "festive-planet-281310:us-central1:cs411",
+    "festive-planet-281310:us-central1:cs4111",
     "pymysql",
     user="root",
     password='Xu440987',
-    db="411new",
+    db="cs411",
 )
 cursor = conn.cursor()
 
@@ -40,8 +40,10 @@ def photo_url():
 def search_list_by_name():
     data = request.get_json(force=True)
     name = data["name"]
+    mutex.acquire()
     cursor.execute("SELECT list_id from List where name='{}'".format(name))
     result = cursor.fetchall()
+    mutex.release()
     result = [i for i in result]
     if result:
         return {'rec': result}
@@ -157,6 +159,7 @@ def search_movie():
 @app.route("/get_all_movies",methods=["POST"])
 def get_all_movies():
     data = request.get_json(force=True)
+
     m_id = data["movie_id"]
     mutex.acquire()
     cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie LEFT JOIN mp on movie.movie_id=mp.tconst LEFT JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
@@ -173,6 +176,7 @@ def get_all_movies():
             i[4] = ""
         ret["type"] = i[4]
         ret["description"] = i[5]
+
         ret["cover"] = i[6]
         ret["production"] = i[7]
         if i[8][0] == "s":
@@ -256,16 +260,19 @@ def register():
 
     data = request.get_json(force=True)
     email = data['email']
-    
-    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+    mutex.acquire()
 
+    cursor.execute("SELECT count(*) from user where email='{}'".format(email))
+    mutex.release()
     count = cursor.fetchall()[0][0]
 
     if count > 0:
         return {"rec": 0}
     else:
+        mutex.acquire()
         cursor.execute("INSERT INTO user VALUES ('{}','{}','{}','{}','{}','')".format(data['username'],email,data['password'],data['gender'], data['birthday']))
         conn.commit()
+        mutex.release()
         return {"rec": 1}
 
 
@@ -274,9 +281,9 @@ def login():
 
     data = request.get_json(force=True)
     email = data['email']
-    conn.ping(reconnect=True)
+    mutex.acquire()
     cursor.execute("SELECT email, username, password, gender, birthday from user where email='{}' and password='{}'".format(email,data['password']))
-
+    mutex.release()
     result = cursor.fetchall()
 
     if len(result) == 0:
@@ -360,6 +367,7 @@ def create_list():
     user = data["user"]
     name = data["list_name"]
     desc = data["description"]
+    print("SELECT COUNT(*) from List where name='{}' and creator='{}'".format(name,user))
     cursor.execute("SELECT COUNT(*) from List where name='{}' and creator='{}'".format(name,user) )
     if cursor.fetchall()[0][0]>0:
         return {'rec':0}
@@ -369,6 +377,7 @@ def create_list():
         listid =0
     else:
         listid += 1
+    print("INSERT INTO List VALUES ('{}','{}','{}','{}')".format(listid, name, desc, user))
     cursor.execute("INSERT INTO List VALUES ('{}','{}','{}','{}')".format(listid, name, desc, user))
     conn.commit()
     return {"rec":{"user_id":user, "list_name":name, "description":desc, "listid":listid}}
@@ -380,7 +389,7 @@ def add_movie_to_list():
     listid = data["list_id"]
     movieid = data["movie_id"]
     try:
-        cursor.execute("INSERT INTO list2movie VALUES ({},'{}')".format(listid, movieid))
+        cursor.execute("INSERT INTO list2movie(list_id, movie_id) VALUES ({},'{}')".format(listid, movieid))
         conn.commit()
         return {"rec":1}
 
@@ -412,10 +421,11 @@ def add_fav_list():
     listid = data["list_id"]
     userid = data["user_id"]
     try:
-        cursor.execute("INSERT INTO user_fav_list VALUES ({},'{}')".format(listid,userid))
+        cursor.execute("INSERT INTO user_fav_list(list_id, user_id) VALUES ({},'{}')".format(listid,userid))
         conn.commit()
         return {"rec":1}
     except Exception as e:
+
         print(e)
         return {"rec":str(e)}
 

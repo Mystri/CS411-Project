@@ -24,7 +24,7 @@ const ListCard = (item) => {
             mode: 'cors',
             credentials: 'omit',
             headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({"list_id":item.valueProps.list_id, "user_id":"demo@gmail.com"})
+            body: JSON.stringify({"list_id":item.valueProps.list_id, "user_id":JSON.parse(window.localStorage.getItem('login')).email})
         };
         fetch('http://localhost:8000/add_fav_list', request)
                 .then(data => {
@@ -37,14 +37,18 @@ const ListCard = (item) => {
                     console.log('parsing failed', ex)
                 });
     }
-    console.log(item)
+
+    console.log("hhhhh",item)
+    if (item.valueProps.cover=='none'){
+        item.valueProps.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
+    }
     return(
     
     <Card style={{ width: '15rem' }}>
     <Card.Body>
         <script src="holder.js"></script>
         <Card.Title>{item.valueProps.list_name}</Card.Title>
-        <Card.Img variant="top" width='180' height='300' src="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg" />
+        <Card.Img variant="top" width='180' height='300' src={item.valueProps.cover} />
         <Button variant='primary' width='180' disabled={disable} onClick={handleFav}>Add Favourite</Button>
 
     </Card.Body>
@@ -101,6 +105,9 @@ class MovieDetail extends React.Component {
                 title:response.rec.title,
                 type:response.rec.type         
                 })
+                if (this.state.cover=='none'){
+                    this.state.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
+                }
                 console.log(response.rec + "info");
                 console.log(this.state)
             }).then(
@@ -155,7 +162,7 @@ class MovieDetail extends React.Component {
                 mode: 'cors',
                 credentials: 'omit',
                 headers: {'Content-type':'text/plain'},
-                body:JSON.stringify({'user_id':"demo@gmail.com"})
+                body:JSON.stringify({'user_id':JSON.parse(window.localStorage.getItem('login')).email})
             };
             fetch('http://localhost:8000/randomly_generate_list', request)
                             .then(response => response.json())
@@ -192,7 +199,7 @@ class MovieDetail extends React.Component {
                 <Card.Body>
                     <Row>
                         <Col xs='3'>
-                            <Image src='https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg' className='mx-auto' />
+                            <Image src={this.state.cover} className='mx-auto' width='200' heigh='300' />
                         </Col>
                         <Col>
                             <h2>
@@ -245,7 +252,7 @@ class MovieDetail extends React.Component {
                 <b>The list you may interested</b> 
                 <Stack direction="horizontal" gap={3}>
                     {this.state.list.map((item,index)=>{
-                            return(<ListCard valueProps = {item} user_id ={"demo@gmail.com"} />)
+                            return(<ListCard valueProps = {item} user_id ={JSON.parse(window.localStorage.getItem('login')).email} />)
                         })}
 
                     
