@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import moment from 'moment';
 import {
     BrowserRouter as Router,
@@ -10,52 +10,57 @@ import {
 import { x } from "../LoginComponent/LoginForm_Bootstrap.js";
 import { Card, Container, Stack, ListGroup, Modal } from 'react-bootstrap'
 import Getcontent from "./Getcontent.js";
-class Mydisplay extends React.Component {
-    // const [show, setShow] = useState(false);
-    // const handleClose = () => setShow(false);
-    // const handleShow = () => setShow(true);
-    // const[mylist,setList] = useState([]);
-    // const email = x[0];
-    constructor(props) {
-        super(props);
-        this.state = {
-            mylist: [],
-            email: JSON.parse(window.localStorage.getItem('login')).email,
-            showModal: false
-        }
-        this.componentDidMount = this.componentDidMount.bind(this);
+export default ()=>{
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const[mylist,setList] = useState([]);
+    const email = JSON.parse(window.localStorage.getItem('login')).email;
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         mylist: [],
+    //         email: JSON.parse(window.localStorage.getItem('login')).email,
+    //         showModal: false
+    //     }
+    //     this.getmylist = this.getmylist.bind(this);
 
-    }
-    openModal = (id) => this.setState({ showModal: true });
-    closeModal = () => this.setState({ showModal: false });
-    componentDidMount(e) {
+    // }
+    // openModal = (id) => this.setState({ showModal: true });
+    // closeModal = () => this.setState({ showModal: false });
+    // getmylist() {
         console.log(JSON.parse(window.localStorage.getItem('login')).email)
-        const request = {
+        useEffect(() => {
+            const request = {
             method: 'POST',
             mode: 'cors',
             credentials: 'omit',
             headers: { 'Content-type': 'text/plain' },
-            body: JSON.stringify({ "user_id": this.state.email })
+            body: JSON.stringify({ "user_id": email })
         };
         fetch('http://localhost:8000/get_owned_list', request)
             .then(response => {
                 return response.json();
             })
             .then(response => {
-                this.setState({ mylist: response.rec })
-                // setList(response.rec)
+                // this.setState({ mylist: response.rec })
+                setList(response.rec)
                 console.log(response.rec + "info");
                 console.log(this.state.mylist)
             })
-    }
+            .catch((error) => {
+                console.log(error)
+              });
+            },[]);
 
-    render() {
-        const mylist1 = this.state.mylist;
+
+        
         return (
             <div>
+                {/* {this.getmylist()} */}
                 <Card style={{ width: '75%' }}>
                     <ListGroup>
-                        {mylist1.map(myl => (
+                        {mylist.map(myl => (
                             <>
                             {/* <Modal show={this.state.showModal} onHide={this.closeModal}>
                             <Modal.Header closeButton>
@@ -66,7 +71,7 @@ class Mydisplay extends React.Component {
                             </Modal.Body>
                             <Modal.Footer></Modal.Footer>
                         </Modal>  */}
-                        <ListGroup.Item id={myl.listid} style={{ height: '4em' }} action onClick={() => {this.openModal(myl.listid)}}>{myl.list_name}</ListGroup.Item>
+                        <ListGroup.Item id={myl.listid} style={{ height: '4em' }} action>{myl.list_name}</ListGroup.Item>
                         
                         </>
                         )
@@ -82,6 +87,4 @@ class Mydisplay extends React.Component {
                 </Card>
             </div>
         )
-    }
 }
-export default Mydisplay;

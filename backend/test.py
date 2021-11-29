@@ -433,7 +433,9 @@ def add_fav_list():
 def get_fav_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
+    mutex.acquire()
     cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
+    mutex.release()
     result = cursor.fetchall()
     res = []
     for i in result:
@@ -446,8 +448,9 @@ def get_fav_list():
 def get_owned_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
-
+    mutex.acquire()
     cursor.execute("select * from List where creator='{}';".format(userid))
+    mutex.release()
     result = cursor.fetchall()
     res = []
     for i in result:
