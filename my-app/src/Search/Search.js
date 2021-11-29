@@ -1,69 +1,198 @@
 import React, { useState, useEffect } from 'react'
-import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap'
+import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle, InputGroup, Alert} from 'react-bootstrap'
 
 
 import Header from "../Header/Header"
 import Mydisplay from "../List/Mylistdisplay.js"
 import Createlist from "../List/Createlist.js"
-function ResultCardMovie() {
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    hashHistory,
+    Link
+} from "react-router-dom";
+function ResultCardMovie(item) {
     const [show, setShow] = useState(false);
-    const [show1, setShow1] = useState(false)
+    const [show1, setShow1] = useState(false);
+    const [userlist, setUserList] = useState([]);
+    const [disableList, setDisableList] = useState([]);
+    const [name, setName] = useState("");
+    const [desc, setDesc] = useState("");
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    const handleClose1 = () => setShow1(false);
-    const handleShow1 = () => setShow1(true);
+    const handleShow = () => {
+        
+        setShow(true);
+        setShow1(false);
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"user_id":item.user_id})
+        };
+        fetch('http://localhost:8000/get_owned_list', request)
+            .then(data => {
+                console.log('parsed json', data);
+                return data.json()
+            })
+            .then(data => {
+                console.log(data.rec);
+                if (!data.rec) {
+                    console.log('no results');
+                    setUserList(['No results!']);
+                } else {
+                    for (let i=0;i<data.rec.length;i++){
+                        disableList.push(false)
+                    }
+                    setUserList(data.rec);
+                }
+                console.log('banner', userlist);
+            }, (ex) => {
+                console.log('parsing failed', ex)
+            })
+    
+    };
+    const handleList = (listid,index)=>{
+        let newarr = [...disableList];
+        newarr[index] = true;
+        setDisableList(newarr);
+        console.log(disableList)
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"movie_id":item.valueProps.movie_id, "list_id":listid})
+        };
+        console.log("hhhhhhhh",request);
+        fetch('http://localhost:8000/add_movie_to_list', request)
+            .then(data => {
+                console.log('parsed json', data);
+                return data.json()
+            })
+            .then(data => {
+                console.log(data.rec);
+            }, (ex) => {
+                console.log('parsing failed', ex)
+            })
+    };
+    const handleCreate = () => {
+        if (name){
+            const request = {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-type': 'text/plain' },
+                body: JSON.stringify({"user":item.user_id, "list_name":name, "description":desc})
+            };
+            fetch('http://localhost:8000/create_list', request)
+                .then(data => {
+                    console.log('parsed json', data);
+                    return data.json()
+                })
+                .then(data => {
+                    console.log('parsed json', data.rec);
+                    if (data.rec){
+                        handleShow();
+                    }else{
+                        return(alert('You have already have this list!'))
+                    }
+                }, (ex) => {
+                    console.log('parsing failed', ex)
+                });
+            setName("")
+            setDesc("");
+        }else{
+            return(alert('The list should have name!'));
+    }};
+    const handleClose1 = () => {setShow1(false);}
+    const handleShow1 = () => {setShow1(true);setShow(false);}
+    console.log("hhhhh",item)
     return (
-
+        
         <Container className="mb-2">
             <Card>
                 <script src="holder.js"></script>
                 <Card.Body>
                     <Row>
                         <Col xs='2'>
-                            <Image src="holder.js/100px200" className='mx-auto' />
+                        <Link style={{ textDecoration:'none'}} to={'/movie/'+item.valueProps.movie_id}>
+                            <Image src="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg" height='150' width='100' className='mx-auto' />
+                        </Link>
                         </Col>
-                        <Col>
-                            <h2>
-                                Title
-                            </h2>
+                        <Col xs='9'>
+                            <Link style={{ textDecoration:'none'}} to={'/movie/'+item.valueProps.movie_id}>
+                            <h3>
+                                {item.valueProps.title}
+                            </h3>
+                            </Link>
                             <div>
-                                Actor:
+                                Runtime: {item.valueProps.runtime} min
                             </div>
                             <div>
-                                Text
+                                Type: {item.valueProps.type}
                             </div>
                         </Col>
                         <Col className='m-auto'>
-                            <Button variant='outline-primary' className='m-auto ' style={{ float: 'right' }} onClick={handleShow}>+</Button>
+                        <Button variant='outline-primary' style={{ float: 'right' }} onClick={handleShow}>
+                                +
+                            </Button>
+
                             <Modal show={show} onHide={handleClose}>
                                 <Modal.Header closeButton>
-                                    <Modal.Title>Your List</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Mydisplay />
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button variant="primary" onClick={handleShow1}>
-                                            Create a new list
-                                        </Button>
-
-                                    </Modal.Footer>
-                               
+                                <Modal.Title>Your List</Modal.Title>
+                                </Modal.Header>
+                                {userlist.map((item,index)=>{
+                                    return(
+                                
+                                <Modal.Body>{item.list_name}
+                                {console.log(disableList[index])}
+                                <Button variant='primary' style={{ float: 'right' }} disabled={disableList[index]} onClick={()=>handleList(item.listid, index)}>
+                                    +
+                                </Button>
+                                </Modal.Body>
+                                )})}
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={handleShow1}>
+                                    Create New List
+                                </Button>
+                                </Modal.Footer>
                             </Modal>
                             <Modal show={show1} onHide={handleClose1}>
                                 <Modal.Header closeButton>
-                                <Modal.Title>Create Your New List</Modal.Title>
+                                <Modal.Title>Create New List</Modal.Title>
                                 </Modal.Header>
-                                    <Modal.Body>
-                                        <Createlist/>
-                                    </Modal.Body>
-                                
+                                <Modal.Body>
+                                <InputGroup className="mb-3">
+                                <InputGroup.Text id="basic-addon3">
+                                name
+                                </InputGroup.Text>
+                                <FormControl id="basic-url" aria-describedby="basic-addon3" onChange={(e) => setName(e.target.value)}
+                                                            value={name}/>
+                            </InputGroup>
+                            <InputGroup className="mb-3">
+                                <InputGroup.Text id="basic-addon3">
+                                desc
+                                </InputGroup.Text>
+                                <FormControl id="basic-url" aria-describedby="basic-addon3" onChange={(e) => setDesc(e.target.value)}
+                                                            value={desc}/>
+                            </InputGroup>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose1}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={()=>{handleCreate()}}>
+                                    Create
+                                </Button>
+                                </Modal.Footer>
                             </Modal>
                         </Col>
                     </Row>
-                </Card.Body>
-                <Card.Body>
-                    lasdkfj
                 </Card.Body>
             </Card>
         </Container>
@@ -74,7 +203,7 @@ export default () => {
 
     const [method, setMethod] = useState("");
     const [keyword, setKeyword] = useState("");
-    const [banners, setBanners] = useState([""]);
+    const [banners, setBanners] = useState([]);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -172,6 +301,7 @@ export default () => {
         fetch('http://localhost:8000/search_movie', request)
             .then(data => {
                 console.log('parsed json', data);
+                console.log('parsed json', keyword);
                 return data.json()
             })
             .then(data => {
@@ -182,7 +312,7 @@ export default () => {
                 } else {
                     setBanners(data.rec);
                 }
-                console.log('parsed json', data.rec);
+                console.log('banner', banners);
             }, (ex) => {
                 console.log('parsing failed', ex)
             })
@@ -260,10 +390,9 @@ export default () => {
 
                 <Card>
                     <Card.Body>
-                        <ResultCardMovie />
-                        <ResultCardMovie />
-                        <ResultCardMovie />
-                        <ResultCardMovie />
+                        {banners.map((item,index)=>{
+                            return(<ResultCardMovie valueProps = {item} user_id ={"demo@gmail.com"} />)
+                        })}
                     </Card.Body>
                 </Card>
             </Container>

@@ -360,6 +360,9 @@ def create_list():
     user = data["user"]
     name = data["list_name"]
     desc = data["description"]
+    cursor.execute("SELECT COUNT(*) from List where name='{}' and creator='{}'".format(name,user) )
+    if cursor.fetchall()[0][0]>0:
+        return {'rec':0}
     cursor.execute("SELECT MAX(list_id) from List")
     listid = cursor.fetchall()[0][0]
     if listid==None:
@@ -373,12 +376,14 @@ def create_list():
 @app.route("/add_movie_to_list", methods=["post"])
 def add_movie_to_list():
     data = request.get_json(force=True)
+
     listid = data["list_id"]
     movieid = data["movie_id"]
     try:
         cursor.execute("INSERT INTO list2movie VALUES ({},'{}')".format(listid, movieid))
         conn.commit()
         return {"rec":1}
+
     except Exception as e:
         print(e)
         return {"rec":0}
@@ -431,6 +436,7 @@ def get_fav_list():
 def get_owned_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
+
     cursor.execute("select * from List where creator='{}';".format(userid))
     result = cursor.fetchall()
     res = []
@@ -439,5 +445,30 @@ def get_owned_list():
             "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
         })
     return {"rec":res}
+
+@app.route("/randomly_generate_list", methods=["post"])
+def randomly_generate_list():
+    data = request.get_json(force=True)
+    userid = data["user_id"]
+    mutex.acquire()
+    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from user_fav_list where user_id='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
+    result = cursor.fetchall()
+    mutex.release()
+    res = {}
+    for i in result:
+        if i[0] not in res:
+            res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3]}
+        else:
+            res[i[0]]["movie"].append(i[2])
+    resc = []
+    for i in res:
+        if len(res[i]["movie"])>=3:
+            res[i]["movie"] = res[i]["movie"][:3]
+        else:
+            res[i]["movie"]+=[""]*(3-len(res[i]["movie"]))
+        resc.append(res[i])
+    return {"rec":resc}
+
+
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

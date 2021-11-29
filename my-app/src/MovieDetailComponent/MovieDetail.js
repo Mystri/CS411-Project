@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../Header/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Stack, Form, FormControl, Button, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap';
+import { Stack, Form, FormControl, Button,ListGroup, Container, Card, Dropdown, Collapse, Image, Row, Col, Ratio, Modal, ModalTitle } from 'react-bootstrap';
 import 'holderjs';
 import StarRatings from 'react-star-ratings';
 import "./MovieDetail.css"
@@ -15,6 +15,41 @@ import {
 
 // import StarRatings from 'react-star-ratings';
 
+const ListCard = (item) => {
+    const [disable, setDisable] = useState(false);
+    const handleFav = () =>{
+        setDisable(true);
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"list_id":item.valueProps.list_id, "user_id":"demo@gmail.com"})
+        };
+        fetch('http://localhost:8000/add_fav_list', request)
+                .then(data => {
+                    console.log('parsed json', data);
+                    return data.json()
+                })
+                .then(data => {
+                    console.log('parsed json', data.rec);
+                }, (ex) => {
+                    console.log('parsing failed', ex)
+                });
+    }
+    console.log(item)
+    return(
+    
+    <Card style={{ width: '15rem' }}>
+    <Card.Body>
+        <script src="holder.js"></script>
+        <Card.Title>{item.valueProps.list_name}</Card.Title>
+        <Card.Img variant="top" width='180' height='300' src="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg" />
+        <Button variant='primary' width='180' disabled={disable} onClick={handleFav}>Add Favourite</Button>
+
+    </Card.Body>
+    </Card>
+)}
 
 class MovieDetail extends React.Component {
     constructor(props) {
@@ -22,7 +57,7 @@ class MovieDetail extends React.Component {
         this.state = {
             // var/objs to use
             display: "",
-            movie_id:"",
+            movie_id: this.props.match.params.movieId,
             cover:"",
             description:"",
             language:"",
@@ -36,7 +71,8 @@ class MovieDetail extends React.Component {
             writer:"",
             clickIndex: 0,
             hoverIndex: 0,
-            rating:0
+            rating:0,
+            list:[]
         };
         this.changeRating = this.changeRating.bind(this)
     }
@@ -46,11 +82,12 @@ class MovieDetail extends React.Component {
             mode: 'cors',
             credentials: 'omit',
             headers: {'Content-type':'text/plain'},
-            body:JSON.stringify({'movie_id':'tt10056564'})
+            body:JSON.stringify({'movie_id':this.state.movie_id})
         };
         fetch('http://localhost:8000/get_all_movies', request)
             .then(response => response.json())
             .then(response => {
+                console.log("hhhhhh",response)
                 // this.setState({ movie_id: response.rec.movie_id })
                 this.setState({ 
                 movie_id: response.rec.movie_id,
@@ -67,7 +104,8 @@ class MovieDetail extends React.Component {
                 console.log(response.rec + "info");
                 console.log(this.state)
             }).then(
-                response=>{
+                ()=>{
+                    if (this.state.people_id)
                         this.state.people_id.map((item,index)=>{
                         item = item.split(":")
                         console.log(item)
@@ -107,10 +145,30 @@ class MovieDetail extends React.Component {
                                 console.log(response + "hhhhhhh");
                                 console.log(this.state)
                             })
-                        }
-                }
+                        
+                }}
             )
-    });
+    }).then(
+        ()=>{
+            const request ={
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: {'Content-type':'text/plain'},
+                body:JSON.stringify({'user_id':"demo@gmail.com"})
+            };
+            fetch('http://localhost:8000/randomly_generate_list', request)
+                            .then(response => response.json())
+                            .then(response => {
+                                // this.setState({ movie_id: response.rec.movie_id })
+                                this.setState({ 
+                                list:response.rec  
+                                })
+                                console.log(response+ "hhhhhhh");
+                                console.log(this.state)
+                            })
+        }
+    );
     // componentDidMount(e) {
     }
     changeRating( newRating, name ) {
@@ -172,7 +230,7 @@ class MovieDetail extends React.Component {
                     <b>Description:</b> {this.state.description}
                 </Card.Body>
                 <Card.Body>
-                Your Rating: <StarRatings
+                <b>Your Rating:</b> <StarRatings
                         width='100%'
                         starDimension='20px'
                 rating={this.state.rating}
@@ -183,7 +241,19 @@ class MovieDetail extends React.Component {
                 />
 
                 </Card.Body>
+                <Card.Body>
+                <b>The list you may interested</b> 
+                <Stack direction="horizontal" gap={3}>
+                    {this.state.list.map((item,index)=>{
+                            return(<ListCard valueProps = {item} user_id ={"demo@gmail.com"} />)
+                        })}
+
+                    
+
+                    </Stack>
+                </Card.Body>
             </Card>
+            
             </Container>
                 {/* <div class='movie_body'>
 
