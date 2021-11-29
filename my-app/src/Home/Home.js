@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Card, Container , Stack, ListGroup} from 'react-bootstrap'
+import { Card, Container , Stack, ListGroup, Image } from 'react-bootstrap'
 
 import Header from '../Header/Header';
 import 'holderjs';
@@ -23,16 +23,14 @@ const MovieCardGroup = ({movies}) => (
     ))
 )
 
-const ListCard = ({title}) => (
-    <Card style={{ width: '15rem' }}>
+const ListCard = ({title, movies}) => (
+    <Card style={{ width: '15rem', minHeight: '18rem'}}>
     <Card.Body>
         <script src="holder.js"></script>
-        <Card.Title>title</Card.Title>
-        <Card.Img variant="top" src="holder.js/100px180" />
+        <Card.Title>{title}</Card.Title>
+        <Image src="holder.js/100px180" />
         <ListGroup variant="flush">
-            <ListGroup.Item>Cras justo odio</ListGroup.Item>
-            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+            {movies.map((m) => <ListGroup.Item>{m}</ListGroup.Item>)}
         </ListGroup>
 
     </Card.Body>
@@ -41,7 +39,7 @@ const ListCard = ({title}) => (
 
 const ListCardGroup = ({lists}) => (
     lists.map((l) => (
-        <MovieCard title={l.title}/>
+        <ListCard title={l.list_name} movies={l.movie}/>
     ))
 )
 
@@ -58,7 +56,7 @@ export default () => {
             setMovies(response.rec);
         })
 
-        fetch('http://localhost:8000/randomly_generate_list', { method: 'POST' })
+        fetch('http://localhost:8000/randomly_generate_list', { method: 'POST', body: JSON.stringify({"user_id": ''})})
         .then(response => response.json())
         .then(response => {
             setLists(response.rec);
@@ -68,9 +66,9 @@ export default () => {
 
     useEffect(() => {
         lists.map(l => {
-            console.log(l);
+            console.log(JSON.stringify(l));
         })
-    }, []);
+    }, [lists]);
 
 
     return (
