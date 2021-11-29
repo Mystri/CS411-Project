@@ -469,6 +469,24 @@ def randomly_generate_list():
         resc.append(res[i])
     return {"rec":resc}
 
+@app.route("/randomly_generate_movie", methods=["get"])
+def randomly_generate_movie():
+    mutex.acquire()
+    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie order by Rand() limit 5")
+    result = cursor.fetchall()
+    mutex.release()
+    res = []
+    for i in result:
+        res.append({"movie_id":i[0],
+        "title":i[1],
+        "release_year":i[2],
+        "runtime":i[3],
+        "description":i[4],
+        "cover":i[5],
+        "production":i[6],
+        "language":i[7]})
+    return {"rec":res}
+
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
