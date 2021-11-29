@@ -368,9 +368,6 @@ export default () => {
     return (
         <Stack gap={3}>
             <Header />
-            <div>
-                {banners}
-            </div>
 
 
 
