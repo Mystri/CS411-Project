@@ -401,10 +401,11 @@ def add_movie_to_list():
 def get_list_movie():
     data = request.get_json(force=True)
     listid = data["list_id"]
-    cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
+    cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,movie.description, movie.cover, movie.production, movie.language, movie.type from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
     result = cursor.fetchall()
     res = []
     for i in result:
+        print(i)
         res.append({"movie_id":i[0],
         "title":i[1],
         "release_year":i[2],
@@ -412,7 +413,9 @@ def get_list_movie():
         "description":i[4],
         "cover":i[5],
         "production":i[6],
-        "language":i[7]})
+        "language":i[7],
+        "type":i[8]})
+
     return {"rec":res}
 
 @app.route("/add_fav_list", methods=["post"])
@@ -425,6 +428,7 @@ def add_fav_list():
         conn.commit()
         return {"rec":1}
     except Exception as e:
+
 
         print(e)
         return {"rec":str(e)}
