@@ -18,6 +18,7 @@ import {
 const ListCard = (item) => {
     const [disable, setDisable] = useState(false);
     const handleFav = () =>{
+        if (JSON.parse(window.localStorage.getItem('login')).email){
         setDisable(true);
         const request = {
             method: 'POST',
@@ -36,6 +37,10 @@ const ListCard = (item) => {
                 }, (ex) => {
                     console.log('parsing failed', ex)
                 });
+        }else{
+            alert('Please login first!')
+        }
+
     }
 
     console.log("hhhhh",item)
@@ -159,12 +164,9 @@ class MovieDetail extends React.Component {
     }).then(
         ()=>{
             const request ={
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'omit',
-                headers: {'Content-type':'text/plain'},
-                body:JSON.stringify({'user_id':JSON.parse(window.localStorage.getItem('login')).email})
-            };
+                    method: 'POST',
+                    body:JSON.stringify({'user_id':''})};
+            console.log("hgfdg",request)
             fetch('http://localhost:8000/randomly_generate_list', request)
                             .then(response => response.json())
                             .then(response => {
@@ -257,7 +259,11 @@ class MovieDetail extends React.Component {
                 <b>The list you may interested</b> 
                 <Stack direction="horizontal" gap={3}>
                     {this.state.list.map((item,index)=>{
-                            return(<ListCard valueProps = {item} user_id ={JSON.parse(window.localStorage.getItem('login')).email} />)
+                        if (JSON.parse(window.localStorage.getItem('login')).email){
+                            return(<ListCard valueProps = {item} user_id ={JSON.parse(window.localStorage.getItem('login')).email} />)}
+                        else{
+                            return(<ListCard valueProps = {item} user_id ='' />)
+                        }
                         })}
 
                     
