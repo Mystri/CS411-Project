@@ -94,7 +94,7 @@ class Updateinfo extends React.Component {
                 console.log(this.state.status)
                 if (this.state.status === 0) {
                     alert('Your personal information has been successfully updated.')
-
+                    // this.props.history.push("/home");
                 } else {
                     alert('Username may already existed! Please use other usernames')
                 }
@@ -104,11 +104,11 @@ class Updateinfo extends React.Component {
                 console.log('parsing failed', e)
             })
         // try to clear the input box after inputs
-            document.getElementById('update').reset();
-            window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
-            window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
-            window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
-            window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
+            // document.getElementById('update').reset();
+            // window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
+            // window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+            // window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+            // window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
 
 

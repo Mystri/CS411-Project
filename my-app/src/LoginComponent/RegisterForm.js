@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { Form, Row, Col, Button } from 'react-bootstrap'
+import Home from "../Home/Home.js"
 class RegisterForm extends React.Component {
     constructor(props) {
         super(props);
@@ -18,7 +19,8 @@ class RegisterForm extends React.Component {
             password: "",
             birthday: "",
             gender: "",
-            succeed: 0
+            succeed: 0,
+            showModal: false
 
         };
         this.handleEmailRegistration = this.handleEmailRegistration.bind(this);
@@ -27,8 +29,17 @@ class RegisterForm extends React.Component {
         this.handleBirthdayRegistration = this.handleBirthdayRegistration.bind(this);
         this.handleGenderRegistration = this.handleGenderRegistration.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        // this.handleOpenModal = this.handleOpenModal.bind(this);
+    	// this.handleCloseModal = this.handleCloseModal.bind(this);
     }
-    let
+    // handleOpenModal () {
+    // 	this.setState({ showModal: true });
+  	// }
+  
+  	// 	handleCloseModal () {
+    // 	this.setState({ showModal: false });
+  	// }
+
     handleUsernameRegistration(e) {
         this.setState({
             username: e.target.value
@@ -80,7 +91,8 @@ class RegisterForm extends React.Component {
                 this.setState({ succeed: response.rec });
                 if (this.state.succeed === 1) {
                     alert('Your account has been registered successfully!')
-                    this.props.history.push("/home");
+                    // this.handleCloseModal();
+                    window.location.reload();
                 } else {
                     alert('Username or Email already existed! Please use another usernames or Email address')
                 }
@@ -191,4 +203,4 @@ class RegisterForm extends React.Component {
     }
 }
 // export default URegister;
-export default RegisterForm; 
+export default withRouter(RegisterForm); 

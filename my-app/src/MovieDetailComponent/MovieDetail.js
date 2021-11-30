@@ -79,6 +79,7 @@ class MovieDetail extends React.Component {
             list:[]
         };
         this.changeRating = this.changeRating.bind(this)
+        this.goBack = this.goBack.bind(this);
     }
     componentDidMount(e) {
         const request ={
@@ -183,7 +184,10 @@ class MovieDetail extends React.Component {
           rating: newRating
         });
       }
-
+      goBack(){
+        this.props.history.goBack();
+    }
+    
     // <img alt="Lee Jung-jae, Anupam Tripathi, Oh Yeong-su, Heo Sung-tae, Park Hae-soo, Jung Hoyeon, and Wi Ha-Joon in Ojing-eo geim (2021)" class="ipc-image" loading="lazy" src="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg" srcset="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX190_CR0,0,190,281_.jpg 190w, https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX285_CR0,0,285,422_.jpg 285w, https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_QL75_UX380_CR0,0,380,562_.jpg 380w" sizes="50vw, (min-width: 480px) 34vw, (min-width: 600px) 26vw, (min-width: 1024px) 16vw, (min-width: 1280px) 16vw" width="190">
     // <img alt="Jeremy Renner and Hailee Steinfeld in Hawkeye (2021)" class="ipc-image" loading="lazy" src="https://m.media-amazon.com/images/M/MV5BNmQ1MGQ2NjItNzVmOC00MmIwLWJjZTUtNGFlMmNjYWE2NjNkXkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_QL75_UY281_CR18,0,190,281_.jpg" srcset="https://m.media-amazon.com/images/M/MV5BNmQ1MGQ2NjItNzVmOC00MmIwLWJjZTUtNGFlMmNjYWE2NjNkXkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_QL75_UY281_CR18,0,190,281_.jpg 190w, https://m.media-amazon.com/images/M/MV5BNmQ1MGQ2NjItNzVmOC00MmIwLWJjZTUtNGFlMmNjYWE2NjNkXkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_QL75_UY422_CR26,0,285,422_.jpg 285w, https://m.media-amazon.com/images/M/MV5BNmQ1MGQ2NjItNzVmOC00MmIwLWJjZTUtNGFlMmNjYWE2NjNkXkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_QL75_UY562_CR35,0,380,562_.jpg 380w" sizes="50vw, (min-width: 480px) 34vw, (min-width: 600px) 26vw, (min-width: 1024px) 16vw, (min-width: 1280px) 16vw" width="190"></img>
     // // myclick(e) {
@@ -197,9 +201,10 @@ class MovieDetail extends React.Component {
             <Card>
             <script src="holder.js"></script>
                 <Card.Body>
+                <Button variant= "secondary" style={{margin: "0.5em",position:"absolute",top:0,right:0}} onClick={this.goBack}>Back</Button>
                     <Row>
                         <Col xs='3'>
-                            <Image src={this.state.cover} className='mx-auto' width='200' heigh='300' />
+                            <Image src={this.state.cover} className='mx-auto' width='200' heigh='300'/>
                         </Col>
                         <Col>
                             <h2>

@@ -8,6 +8,7 @@ import MovieDetail from "./MovieDetailComponent/MovieDetail.js";
 import Home from "./Home/Home.js";
 import Search from "./Search/Search.js";
 import UserInfo from "./UserCenter/UserInfo.js";
+import Getcontent from "./List/Getcontent.js";
 import {
     BrowserRouter as Router,
     Switch,
@@ -15,6 +16,7 @@ import {
     hashHistory,
     Link
 } from "react-router-dom";
+
 class Main extends React.Component {
 
     constructor(props) {
@@ -76,6 +78,9 @@ ReactDOM.render(
             <Route path="/movie/:movieId" ><MovieDetail /></Route>
             <Route path="/userinfo"><UserInfo/></Route>
             <Route path="/advanced_search"><Search /></Route>
+            <Route path="/mylist/:lid" ><Getcontent /></Route>
+            <Route path="/favlist/:lid" ><Getcontent /></Route>
+            
             <Route path=""><Main /></Route>
 
 

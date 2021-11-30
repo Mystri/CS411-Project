@@ -401,18 +401,21 @@ def add_movie_to_list():
 def get_list_movie():
     data = request.get_json(force=True)
     listid = data["list_id"]
+    mutex.acquire()
     cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
     result = cursor.fetchall()
+    mutex.release()
     res = []
     for i in result:
         res.append({"movie_id":i[0],
         "title":i[1],
         "release_year":i[2],
         "runtime":i[3],
-        "description":i[4],
-        "cover":i[5],
-        "production":i[6],
-        "language":i[7]})
+        "type":i[4],
+        "description":i[5],
+        "cover":i[6],
+        "production":i[7],
+        "language":i[8]})
     return {"rec":res}
 
 @app.route("/add_fav_list", methods=["post"])
@@ -499,7 +502,26 @@ def randomly_generate_movie():
         "production":i[6],
         "language":i[7]})
     return {"rec":res}
-
+#add for display list info
+@app.route("/get_list_by_id",methods=["POST"])
+def get_list_by_id():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    mutex.acquire()
+    cursor.execute("select * from List where list_id='{}';".format(listid))
+    result = cursor.fetchall()
+    mutex.release()
+    ret = {}
+    result = list(result[0])
+    ret["listid"] = result[0]
+    ret["list_name"] = result[1]
+    ret["description"] = result[2]
+    ret["user_id"] = result[3]
+    # for i in result:
+    #     res.append({
+    #         "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
+    #     })
+    return {"rec":ret}
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
