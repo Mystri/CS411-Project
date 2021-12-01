@@ -54,7 +54,7 @@ export default () => {
     return (
         <Navbar bg="light" expand="lg">
         <Container fluid>
-            <Navbar.Brand href="/home">MATRIX</Navbar.Brand>
+            <Navbar.Brand href="/home" style={{fontSize: 40}}><strong>MATRIX</strong></Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
             <Nav

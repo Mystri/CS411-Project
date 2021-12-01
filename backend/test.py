@@ -313,7 +313,6 @@ def update_user():
 
     data = request.get_json(force=True)
     email = data['email']
-    # mutex.acquire()
     cursor.execute(
         "UPDATE user SET username='{}', password='{}', gender='{}', birthday='{}' where email='{}'".format(
             data['username'], data['password'], data['gender'], data['birthday'], email))
@@ -322,9 +321,8 @@ def update_user():
     conn.commit()
     
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
-    
     count = cursor.fetchall()[0][0]
-    # mutex.release()
+   
     if count > 0:
         return {"rec": 0}
     else:

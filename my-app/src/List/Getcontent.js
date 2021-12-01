@@ -64,7 +64,6 @@ export default withRouter((props) => {
         console.log('parsing failed', e)
       })
   }, []);
-
   console.log(props)
   return (
 <>
@@ -92,6 +91,22 @@ export default withRouter((props) => {
           </p>
         </Modal.Body>
       </Modal>
+      {/* <Nav.Link href="#delete" onClick={() => setShow(true)}>Delete</Nav.Link>
+      <Modal show={show}
+        onHide={() => setShow(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Delete your list</Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    <p>Are you sure you want to delete your list from your account?</p>
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button variant="secondary">Close</Button>
+    <Button variant="danger">Delete</Button>
+  </Modal.Footer>
+</Modal> */}
     </Nav>
   </Navbar.Collapse>
 </Container>
@@ -155,4 +170,3 @@ function Moviecard(item) {
     </Container>
   )
 }
-// export withRouter(Getcontent)

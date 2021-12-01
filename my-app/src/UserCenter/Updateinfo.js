@@ -29,7 +29,7 @@ class Updateinfo extends React.Component {
         this.handleGender = this.handleGender.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.DeleteUser = this.DeleteUser.bind(this);
-        this.componentDidMount = this.componentDidMount.bind(this)
+        // this.componentDidMount = this.componentDidMount.bind(this)
 
     }
     handleUsername(e) {
@@ -117,24 +117,24 @@ class Updateinfo extends React.Component {
 
 
     }
-    componentDidMount(e) {
-        window.localStorage.setItem('username',JSON.stringify(this.state.new_username));
-        window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
-        window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
-        window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
+    // componentDidMount(e) {
+    //     window.localStorage.setItem('username',JSON.stringify(this.state.new_username));
+    //     window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+    //     window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+    //     window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
-        // this.setState({new_username:JSON.parse(window.localStorage.getItem('login')).username})
-        // this.setState({new_password: JSON.parse(window.localStorage.getItem('login')).password})
-        // this.setState({new_birthday: JSON.parse(window.localStorage.getItem('login')).birthday})
-        // // new_birthday: x[0],
-        // this.setState({new_gender: JSON.parse(window.localStorage.getItem('login')).gender})
-        // window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
-        // window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
-        // window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
-        // window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
+    //     // this.setState({new_username:JSON.parse(window.localStorage.getItem('login')).username})
+    //     // this.setState({new_password: JSON.parse(window.localStorage.getItem('login')).password})
+    //     // this.setState({new_birthday: JSON.parse(window.localStorage.getItem('login')).birthday})
+    //     // // new_birthday: x[0],
+    //     // this.setState({new_gender: JSON.parse(window.localStorage.getItem('login')).gender})
+    //     // window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
+    //     // window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+    //     // window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+    //     // window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
 
-    }
+    // }
 
     DeleteUser(e) {
         e.preventDefault();
@@ -218,7 +218,7 @@ class Updateinfo extends React.Component {
                     </div>
                 </form>
                 <div>
-                    <Button type="submit" onClick={this.DeleteUser}>Delete Account</Button><br />
+                    <Button variant="danger" type="submit" onClick={this.DeleteUser}>Delete Account</Button><br />
                 </div>
             </div>
         )
