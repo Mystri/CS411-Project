@@ -475,11 +475,7 @@ def randomly_generate_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
     mutex.acquire()
-<<<<<<< HEAD
     cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from fav_list where user='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
-=======
-    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover, tmp.creator from list2movie INNER JOIN (select * from List where list_id not in (select list_id from user_fav_list where user_id='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
->>>>>>> 12038367fd388626a11aaaa77ebac8350b16dee1
     result = cursor.fetchall()
     mutex.release()
     res = {}
