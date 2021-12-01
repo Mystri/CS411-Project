@@ -1,52 +1,104 @@
 import React, {useEffect, useState} from 'react';
-import { Card, Container , Stack, ListGroup, Image } from 'react-bootstrap'
+import { Card, Container , Stack, ListGroup, Image, Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 
 import Header from '../Header/Header';
 import 'holderjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const MovieCard = ({title}) => (
+const MovieCard = ({info}) => (
     <Card style={{ width: '15rem', minHeight: '18rem' }}>
     <Card.Body>
-        <script src="holder.js"></script>
-        <Card.Img src="holder.js/100x180" />
-        <Card.Title>{title}</Card.Title>
+        <Card.Title>{info.title}</Card.Title>
+        <Link style={{ textDecoration:'none'}} to={'/movie/'.concat(info.movie_id)}>
+            <Card.Img src={info.production === "none" 
+                        ? "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"    
+                        : info.production
+                        } />
+        </Link>
 
     </Card.Body>
     </Card>
 )
 
 const MovieCardGroup = ({movies}) => (
-    movies.map((m) => (
-        <MovieCard title={m.title}/>
-    ))
+    movies.map((m) => {
+        console.log("m:", m);
+        return(
+
+        <Stack direction='horizontal' className='align-items-stretch' gap={3}>
+            <MovieCard info={m}/>
+        </Stack>
+    )})
 )
 
-const ListCard = ({title, movies}) => (
-    <Card style={{ width: '15rem', minHeight: '18rem'}}>
-    <Card.Body>
-        <script src="holder.js"></script>
-        <Card.Title>{title}</Card.Title>
-        <Image src="holder.js/100px180" />
-        <ListGroup variant="flush">
-            {movies.map((m) => <ListGroup.Item>{m}</ListGroup.Item>)}
-        </ListGroup>
+const ListCard = ({info}) => {
 
-    </Card.Body>
-    </Card>
-)
+
+
+    const [disable, setDisable] = useState(false);
+    const handleFav = () =>{
+        setDisable(true);
+        const request = {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: { 'Content-type': 'text/plain' },
+            body: JSON.stringify({"list_id":info.list_id, "user_id":JSON.parse(window.localStorage.getItem('login')).email})
+        };
+        fetch('http://localhost:8000/add_fav_list', request)
+                .then(data => {
+                    console.log('parsed json', data);
+                    return data.json()
+                })
+                .then(data => {
+                    console.log('parsed json', data.rec);
+                }, (ex) => {
+                    console.log('parsing failed', ex)
+                });
+    }
+
+    
+
+    return (
+        <Card style={{ width: '15rem', minHeight: '18rem'}} >
+        <Card.Body>
+            
+                <Card.Title style={{height:'2.2rem'}}>
+                    {info.list_name}
+                    <Button variant='outline-primary' style={{ float: 'right' }} width='180' disabled={disable} onClick={handleFav}>+</Button>
+                </Card.Title>
+            
+            <Link style={{ textDecoration:'none'}} to={'/list/'.concat(info.list_id)}>
+                <Card.Img src={info.cover === "none" 
+                    ? "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"    
+                    : info.cover
+                    } 
+                    />
+            </Link>
+
+        </Card.Body>
+        </Card>
+    )
+
+}
 
 const ListCardGroup = ({lists}) => (
-    lists.map((l) => (
-        <ListCard title={l.list_name} movies={l.movie}/>
-    ))
+    <Stack direction='horizontal' className='align-items-stretch' gap={3}>
+        {lists.map((l) => (
+            <ListCard info={l}/>
+        ))}
+    </Stack>
 )
 
 export default () => {
     
     const [movies, setMovies] = useState([]);
     const [lists, setLists] = useState([]);
+
+    const login = JSON.parse(window.localStorage.getItem('login'));
+
 
     useEffect(() => {
         
@@ -55,8 +107,20 @@ export default () => {
         .then(response => {
             setMovies(response.rec);
         })
+        
+        console.log("userid: ", login);
 
-        fetch('http://localhost:8000/randomly_generate_list', { method: 'POST', body: JSON.stringify({"user_id": ''})})
+        const body = login ? {"user_id": login.email} : {"user_id": ''};
+
+
+        fetch('http://localhost:8000/randomly_generate_list', 
+            { method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-type': 'text/plain' },
+                body: JSON.stringify(body)
+            }
+        )
         .then(response => response.json())
         .then(response => {
             setLists(response.rec);
@@ -91,8 +155,6 @@ export default () => {
                     <Stack direction="horizontal" gap={3}>
 
                     <ListCardGroup lists={lists}/>
-
-                    
 
                     </Stack>
                 </Stack>

@@ -59,7 +59,7 @@ class UserInfo extends React.Component {
                                 <h2>
                                  Update Your Information   
                                 </h2><br/>
-                                <Updateinfo />
+                                <Updateinfo/>
                                 </div>
                             </Tab.Pane>
                             <Tab.Pane eventKey="mylist">

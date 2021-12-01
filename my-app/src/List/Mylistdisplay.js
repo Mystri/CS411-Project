@@ -46,7 +46,6 @@ export default ()=>{
                 // this.setState({ mylist: response.rec })
                 setList(response.rec)
                 console.log(response.rec + "info");
-                console.log(this.state.mylist)
             })
             .catch((error) => {
                 console.log(error)
@@ -60,31 +59,20 @@ export default ()=>{
                 {/* {this.getmylist()} */}
                 <Card style={{ width: '75%' }}>
                     <ListGroup>
-                        {mylist.map(myl => (
-                            <>
-                            {/* <Modal show={this.state.showModal} onHide={this.closeModal}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>{myl.list_name}</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Getcontent/>
-                            </Modal.Body>
-                            <Modal.Footer></Modal.Footer>
-                        </Modal>  */}
-                        <ListGroup.Item id={myl.listid} style={{ height: '4em' }} action>{myl.list_name}</ListGroup.Item>
-                        
-                        </>
-                        )
+                        {mylist.map((myl) => {
+                        return (<Mytab valueProps={myl} />)}
                         )
                         }
-
-                        {/* <ListGroup.Item style={{ height: '4em' }} action onClick={this.openModal}>Cras justo odio</ListGroup.Item> */}
-
-                        {/* <ListGroup.Item style={{ height: '4em' }} action >Dapibus ac facilisis in</ListGroup.Item>
-                        <ListGroup.Item style={{ height: '4em' }} action>Vestibulum at eros</ListGroup.Item> */}
+                        
                     </ListGroup>
 
                 </Card>
             </div>
         )
+}
+function Mytab(myl) {
+    return (
+        <ListGroup.Item id={myl.valueProps.listid} style={{ height: '4em' }}
+                            action href={"/list/"+myl.valueProps.listid}>{myl.valueProps.list_name}</ListGroup.Item>
+    )
 }

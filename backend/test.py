@@ -299,15 +299,18 @@ def update_user():
 
     data = request.get_json(force=True)
     email = data['email']
-
+    mutex.acquire()
     cursor.execute(
         "UPDATE user SET username='{}', password='{}', gender='{}', birthday='{}' where email='{}'".format(
             data['username'], data['password'], data['gender'], data['birthday'], email))
+    
+    
     conn.commit()
-
+    
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
-
+    
     count = cursor.fetchall()[0][0]
+    mutex.release()
     if count > 0:
         return {"rec": 0}
     else:
@@ -321,12 +324,12 @@ def delete_user():
 
     data = request.get_json(force=True)
     email = data['email']
-
+    mutex.acquire()
     cursor.execute("DELETE FROM user WHERE email='{}'".format(email))
     conn.commit()
-
+   
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
-
+    mutex.release()
     count = cursor.fetchall()[0][0]
 
     if count > 0:
@@ -401,7 +404,9 @@ def add_movie_to_list():
 def get_list_movie():
     data = request.get_json(force=True)
     listid = data["list_id"]
+    mutex.acquire()
     cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,movie.description, movie.cover, movie.production, movie.language, movie.type from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
+    mutex.release()
     result = cursor.fetchall()
     res = []
     for i in result:
@@ -439,8 +444,9 @@ def get_fav_list():
     userid = data["user_id"]
     mutex.acquire()
     cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
-    mutex.release()
+ 
     result = cursor.fetchall()
+    mutex.release()
     res = []
     for i in result:
         res.append({
@@ -454,8 +460,9 @@ def get_owned_list():
     userid = data["user_id"]
     mutex.acquire()
     cursor.execute("select * from List where creator='{}';".format(userid))
-    mutex.release()
+    
     result = cursor.fetchall()
+    mutex.release()
     res = []
     for i in result:
         res.append({
@@ -504,7 +511,26 @@ def randomly_generate_movie():
         "language":i[7],
         "type":i[8]})
     return {"rec":res}
-
+#add for display list info
+@app.route("/get_list_by_id",methods=["POST"])
+def get_list_by_id():
+    data = request.get_json(force=True)
+    listid = data["list_id"]
+    mutex.acquire()
+    cursor.execute("select * from List where list_id='{}';".format(listid))
+    result = cursor.fetchall()
+    mutex.release()
+    ret = {}
+    result = list(result[0])
+    ret["listid"] = result[0]
+    ret["list_name"] = result[1]
+    ret["description"] = result[2]
+    ret["user_id"] = result[3]
+    # for i in result:
+    #     res.append({
+    #         "user_id":i[3], "list_name":i[1], "description":i[2], "listid":i[0]
+    #     })
+    return {"rec":ret}
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

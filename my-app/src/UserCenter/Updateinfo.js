@@ -73,7 +73,7 @@ class Updateinfo extends React.Component {
     }
     handleSubmit(e) {
         // alert(x[3])
-        // alert('Username' + this.state.new_username + ',Birthday: ' + this.state.new_birthday + "; " + "Gender: " + this.state.new_gender + ',password:' + this.state.new_password + ' ,email:' + x[1]);
+        alert('Username' + this.state.new_username + ',Birthday: ' + this.state.new_birthday + "; " + "Gender: " + this.state.new_gender + ',password:' + this.state.new_password);
         // e.preventDefault();
         const request = {
             method: 'POST',
@@ -85,7 +85,6 @@ class Updateinfo extends React.Component {
         fetch('http://localhost:8000/update_user', request)
             // if backend receive and response
             .then(response => {
-
                 return response.json()
             })
             .then(response => {
@@ -94,7 +93,8 @@ class Updateinfo extends React.Component {
                 console.log(this.state.status)
                 if (this.state.status === 0) {
                     alert('Your personal information has been successfully updated.')
-
+                    console.log(this.state.new_username)
+                    // this.props.history.push("/home");
                 } else {
                     alert('Username may already existed! Please use other usernames')
                 }
@@ -103,12 +103,16 @@ class Updateinfo extends React.Component {
                 this.setState({ requestError: true });
                 console.log('parsing failed', e)
             })
+            .catch((error) => {
+                console.error('Error:', error);
+              });
         // try to clear the input box after inputs
-            document.getElementById('update').reset();
+            // document.getElementById('update').reset();
             window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
             window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
             window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
             window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
+           
 
 
 
@@ -155,7 +159,7 @@ class Updateinfo extends React.Component {
                 </button>
                 </Link> */}
 
-                <form id="update">
+                <form id="update" onSubmit={this.handleSubmit}>
                     {/* <h1>Update personal information</h1> */}
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={2}>New Username</Form.Label>
@@ -191,7 +195,7 @@ class Updateinfo extends React.Component {
                         </Col>
                     </Form.Group>
                     <div className="mb-2">
-                        <Button type="submit" onClick={this.handleSubmit}>Save Changes</Button>
+                        <Button type="submit">Save Changes</Button>
                     </div>
                 </form>
                 <div>

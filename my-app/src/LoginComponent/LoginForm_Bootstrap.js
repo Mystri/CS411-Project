@@ -52,7 +52,8 @@ export default ({ setSuccessLogin }) => {
     const handleShow = () => setShow(true);
 
     return (
-        <form onSubmit={onClick}>
+        <div>
+        <form onSubmit = {onClick} id="login">
             <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
                 <Form.Label column sm={2}>
                     Email
@@ -74,8 +75,8 @@ export default ({ setSuccessLogin }) => {
             <Form.Group as={Row} className="mb-3">
                 <Col sm={{ span: 10, offset: 2 }}>
 
-                    <Button type="submit" onSubmit={onClick}>Sign in</Button>{' '}
-                    <>
+                    
+                    {/* <>
                     <Button type="submit" onClick={handleShow}>Create account</Button>
                     <Modal show={show} onHide={handleClose}>
                         <Modal.Header closeButton>
@@ -88,10 +89,23 @@ export default ({ setSuccessLogin }) => {
 
 
                     </Modal>
-                </>
-            </Col>
+                </> */}
+           </Col>
         </Form.Group>
         </form >
+        <Col sm={{ span: 10, offset: 2 }}>
+        <Button form="login" type="submit" onSubmit={onClick}>Sign in</Button>{' '} or
+        {' '}<Button type="submit" onClick={handleShow}>Create account</Button>
+                    <Modal show={show} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Create Your Account</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <RegisterForm/>
+                        </Modal.Body>
+                    </Modal>
+        </Col>
+        </div>
     )
 }
 export {x};

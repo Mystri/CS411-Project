@@ -8,13 +8,16 @@ import MovieDetail from "./MovieDetailComponent/MovieDetail.js";
 import Home from "./Home/Home.js";
 import Search from "./Search/Search.js";
 import UserInfo from "./UserCenter/UserInfo.js";
+import Getcontent from "./List/Getcontent.js";
 import {
     BrowserRouter as Router,
     Switch,
     Route,
     hashHistory,
-    Link
+    Link,
+    Redirect
 } from "react-router-dom";
+
 class Main extends React.Component {
 
     constructor(props) {
@@ -43,7 +46,7 @@ class Main extends React.Component {
                 {/* <LoginForm /> */}
 
                 <Link to="/newuser"><button>New User</button></Link>
-                <Link to={"/movie/"+"0"}><h2>Top Five Actors</h2></Link>
+                <Link to={"/movie/" + "0"}><h2>Top Five Actors</h2></Link>
 
                 <ul>
                     <li>{this.state.display[0]}</li>
@@ -74,12 +77,16 @@ ReactDOM.render(
             <Route path="/personal"><Updateinfo /></Route>
             <Route path="/home"><Home /></Route>
             <Route path="/movie/:movieId" ><MovieDetail /></Route>
-            <Route path="/userinfo"><UserInfo/></Route>
+            <Route path="/userinfo"><UserInfo /></Route>
             <Route path="/advanced_search"><Search /></Route>
+            <Route path="/list/:lid" ><Getcontent /></Route>
+            <Route exact path="/">
+                <Redirect to="/home" />
+            </Route>
             <Route path=""><Main /></Route>
 
 
         </Switch>
-    </Router> 
+    </Router>
 
     , document.getElementById("root"));
