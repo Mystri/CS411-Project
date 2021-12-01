@@ -62,6 +62,7 @@ const ListCard = (item) => {
         <Link style={{ textDecoration:'none',color: 'black'}} to={'/list/'.concat(item.valueProps.list_id)}>
         <Card.Img variant="top" width='180' height='300' src={item.valueProps.cover} />
         </Link>
+        <div style={{ float: 'right' }}>Create by <small>{item.valueProps.level}</small> user</div>
     </Card.Body>
     </Card>
 )}
