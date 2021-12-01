@@ -21,6 +21,7 @@ conn = connector.connect(
     password='Xu440987',
     db="411newnew",
 )
+
 cursor = conn.cursor()
 
 
@@ -491,7 +492,7 @@ def randomly_generate_list():
     res = {}
     for i in result:
         if i[0] not in res:
-            res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3],"creator":i[4]}
+            res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3]}
         else:
             res[i[0]]["movie"].append(i[2])
     resc = []
