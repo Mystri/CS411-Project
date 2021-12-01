@@ -19,7 +19,7 @@ conn = connector.connect(
     "pymysql",
     user="root",
     password='Xu440987',
-    db="new411",
+    db="411newnew",
 )
 cursor = conn.cursor()
 
@@ -162,10 +162,20 @@ def get_all_movies():
 
     m_id = data["movie_id"]
     mutex.acquire()
-    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie LEFT JOIN mp on movie.movie_id=mp.tconst LEFT JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
+    cursor.execute("SELECT movie.movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie LEFT JOIN mp on movie.movie_id=mp.tconst LEFT JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
     result = cursor.fetchall()
     mutex.release()
+
+    mutex.acquire()
+    cursor.execute("SELECT AVG(rating) FROM rating GROUP BY movie_id".format(m_id))
+    rating_result = cursor.fetchall()
+    mutex.release()
+
     ret = {}
+    if rating_result:
+        ret["rating"] = rating_result[0]
+    else:
+        ret["rating"] = 5
     for i in result:
         i = list(i)
         ret["movie_id"] = i[0]
@@ -512,6 +522,29 @@ def randomly_generate_movie():
         "type":i[8]})
     return {"rec":res}
 #add for display list info
+
+@app.route("/rating_post",methods=["POST"])
+def rating_post():
+    data = request.get_json(force=True)
+    movie_i = data["movieid"]
+    user_i = data["userid"]
+    rating_num = data["rating"]
+    mutex.acquire()
+    cursor.execute("INSERT INTO rating (rating, whether_lucky, movie_id, user) VALUES ({},{},'{}','{}')".format(rating_num, 0, movie_i, user_i))
+    conn.commit()
+    cursor.execute("select * from rating where (movie_id, user)=('{}','{}');".format(movie_i, user_i))
+    result = cursor.fetchall()
+
+    mutex.release()
+    ret = {}
+    result = list(result[0])
+    ret["rating"] = result[0]
+    ret["whether_lucky"] = result[1]
+    ret["movie_id"] = result[2]
+    ret["user_id"] = result[3]
+    return {"rec":ret}
+
+
 @app.route("/get_list_by_id",methods=["POST"])
 def get_list_by_id():
     data = request.get_json(force=True)
