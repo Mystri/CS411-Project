@@ -78,8 +78,7 @@ ReactDOM.render(
             <Route path="/movie/:movieId" ><MovieDetail /></Route>
             <Route path="/userinfo"><UserInfo/></Route>
             <Route path="/advanced_search"><Search /></Route>
-            <Route path="/mylist/:lid" ><Getcontent /></Route>
-            <Route path="/favlist/:lid" ><Getcontent /></Route>
+            <Route path="/list/:lid" ><Getcontent /></Route>
             
             <Route path=""><Main /></Route>
 

@@ -299,14 +299,16 @@ def update_user():
 
     data = request.get_json(force=True)
     email = data['email']
-
+    mutex.acquire()
     cursor.execute(
         "UPDATE user SET username='{}', password='{}', gender='{}', birthday='{}' where email='{}'".format(
             data['username'], data['password'], data['gender'], data['birthday'], email))
+    
+    mutex.release()
     conn.commit()
-
+    
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
-
+    
     count = cursor.fetchall()[0][0]
     if count > 0:
         return {"rec": 0}
@@ -321,12 +323,12 @@ def delete_user():
 
     data = request.get_json(force=True)
     email = data['email']
-
+    mutex.acquire()
     cursor.execute("DELETE FROM user WHERE email='{}'".format(email))
     conn.commit()
-
+   
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
-
+    mutex.release()
     count = cursor.fetchall()[0][0]
 
     if count > 0:
@@ -401,9 +403,10 @@ def add_movie_to_list():
 def get_list_movie():
     data = request.get_json(force=True)
     listid = data["list_id"]
+    mutex.acquire()
     cursor.execute("SELECT movie.movie_id, movie.title, movie.release_year, movie.runtime,movie.description, movie.cover, movie.production, movie.language, movie.type from movie inner join (SELECT * FROM list2movie where list_id={}) as tmp on movie.movie_id=tmp.movie_id;".format(listid))
-    result = cursor.fetchall()
     mutex.release()
+    result = cursor.fetchall()
     res = []
     for i in result:
         print(i)

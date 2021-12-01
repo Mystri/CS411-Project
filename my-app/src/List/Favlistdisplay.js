@@ -82,6 +82,6 @@ export default () => {
 function FavTab(fav) {
     return (
         <ListGroup.Item id={fav.valueProps.listid} style={{ height: '4em' }}
-                            action href={"/favlist/"+fav.valueProps.listid}>{fav.valueProps.list_name}</ListGroup.Item>
+                            action href={"/list/"+fav.valueProps.listid}>{fav.valueProps.list_name}</ListGroup.Item>
     )
 }

@@ -73,6 +73,6 @@ export default ()=>{
 function Mytab(myl) {
     return (
         <ListGroup.Item id={myl.valueProps.listid} style={{ height: '4em' }}
-                            action href={"/mylist/"+myl.valueProps.listid}>{myl.valueProps.list_name}</ListGroup.Item>
+                            action href={"/list/"+myl.valueProps.listid}>{myl.valueProps.list_name}</ListGroup.Item>
     )
 }
