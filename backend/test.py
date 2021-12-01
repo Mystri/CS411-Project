@@ -658,6 +658,8 @@ BEGIN
     END;
     
     SELECT DISTINCT * FROM level_Table ORDER BY username ASC;
+
+    DROP TABLE IF EXISTS level_Table;
 END;
 //
     """
