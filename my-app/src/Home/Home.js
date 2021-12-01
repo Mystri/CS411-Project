@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const MovieCard = ({info}) => (
     <Card style={{ width: '15rem', minHeight: '18rem' }}>
     <Card.Body>
+
         <Link style={{ textDecoration:'none', color: 'black'}} to={'/movie/'.concat(info.movie_id)}>
             <Card.Title>{info.title}</Card.Title>
             <Card.Img src={info.cover === "none" 
