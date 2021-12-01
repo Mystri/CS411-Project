@@ -297,7 +297,7 @@ class MovieDetail extends React.Component {
 
                 </Card.Body>
                 <Card.Body>
-                <b>The list you may interested</b> 
+                <b>Lists you may interested</b> 
                 <Stack direction="horizontal" gap={3}>
                     {this.state.list.map((item,index)=>{
                         if (JSON.parse(window.localStorage.getItem('login')).email){
