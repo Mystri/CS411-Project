@@ -40,7 +40,9 @@ export default ()=>{
               });
             },[]);
 
-
+const delete_list = () => {
+    
+}
         
         return (
             <div>
