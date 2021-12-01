@@ -8,17 +8,17 @@ import {
     Route,
     Link
 } from "react-router-dom";
-
+const user_info = JSON.parse(window.localStorage.getItem('login'))
 class Updateinfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             // var/objs to use
-            new_username: JSON.parse(window.localStorage.getItem('login')).username,
-            new_password: JSON.parse(window.localStorage.getItem('login')).password,
-            new_birthday: JSON.parse(window.localStorage.getItem('login')).birthday,
+            new_username: user_info.username,
+            new_password: user_info.password,
+            new_birthday: user_info.birthday,
             // new_birthday: x[0],
-            new_gender: JSON.parse(window.localStorage.getItem('login')).gender,
+            new_gender: user_info.gender,
             status: 0,
             delete: 0
         };
@@ -108,10 +108,10 @@ class Updateinfo extends React.Component {
               });
         // try to clear the input box after inputs
             // document.getElementById('update').reset();
-            window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
-            window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
-            window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
-            window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
+            // window.localStorage.setItem('login'.username, JSON.stringify(this.state.new_username));
+            // window.localStorage.setItem('login'.password, JSON.stringify(this.state.new_password));
+            // window.localStorage.setItem('login'.gender, JSON.stringify(this.state.new_gender));
+            // window.localStorage.setItem('login'.birthday, JSON.stringify(this.state.new_birthday));
            
 
 

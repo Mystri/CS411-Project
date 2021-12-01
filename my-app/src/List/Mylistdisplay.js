@@ -16,19 +16,7 @@ export default ()=>{
     const handleShow = () => setShow(true);
     const[mylist,setList] = useState([]);
     const email = JSON.parse(window.localStorage.getItem('login')).email;
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         mylist: [],
-    //         email: JSON.parse(window.localStorage.getItem('login')).email,
-    //         showModal: false
-    //     }
-    //     this.getmylist = this.getmylist.bind(this);
-
-    // }
-    // openModal = (id) => this.setState({ showModal: true });
-    // closeModal = () => this.setState({ showModal: false });
-    // getmylist() {
+    
         console.log(JSON.parse(window.localStorage.getItem('login')).email)
         useEffect(() => {
             const request = {
