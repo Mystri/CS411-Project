@@ -19,7 +19,7 @@ conn = connector.connect(
     "pymysql",
     user="root",
     password='Xu440987',
-    db="cs411",
+    db="new411",
 )
 cursor = conn.cursor()
 
@@ -76,7 +76,7 @@ def search_movie():
                 typ_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
-
+    
     cursor.execute(typ_sql_sent)
     result_type = cursor.fetchall()
     res_typ = []
@@ -429,7 +429,7 @@ def add_fav_list():
     listid = data["list_id"]
     userid = data["user_id"]
     try:
-        cursor.execute("INSERT INTO user_fav_list(list_id, user_id) VALUES ({},'{}')".format(listid,userid))
+        cursor.execute("INSERT INTO fav_list(list_id, user) VALUES ({},'{}')".format(listid,userid))
         conn.commit()
         return {"rec":1}
     except Exception as e:
@@ -443,7 +443,7 @@ def get_fav_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
     mutex.acquire()
-    cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
+    cursor.execute("select * from List inner join (select * from fav_list where user='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
  
     result = cursor.fetchall()
     mutex.release()
@@ -475,7 +475,7 @@ def randomly_generate_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
     mutex.acquire()
-    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from user_fav_list where user_id='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
+    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from fav_list where user='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
     result = cursor.fetchall()
     mutex.release()
     res = {}
