@@ -496,7 +496,7 @@ def randomly_generate_list():
 @app.route("/randomly_generate_movie", methods=["get"])
 def randomly_generate_movie():
     mutex.acquire()
-    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie order by Rand() limit 5")
+    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,movie.description, movie.cover, movie.production, movie.language,movie.type from movie order by Rand() limit 5")
     result = cursor.fetchall()
     mutex.release()
     res = []
@@ -508,7 +508,8 @@ def randomly_generate_movie():
         "description":i[4],
         "cover":i[5],
         "production":i[6],
-        "language":i[7]})
+        "language":i[7],
+        "type":i[8]})
     return {"rec":res}
 #add for display list info
 @app.route("/get_list_by_id",methods=["POST"])
