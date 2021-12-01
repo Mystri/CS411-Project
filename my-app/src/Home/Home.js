@@ -66,14 +66,17 @@ const ListCard = ({info}) => {
         <Card style={{ width: '15rem', minHeight: '18rem'}} >
         <Card.Body>
             
-                <Card.Title style={{height:'2.2rem'}}>
-                    <Link style={{ textDecoration:'none'}} to={'/list/'.concat(info.list_id)}>
-                        {info.list_name}
-                    </Link>
-                    <Button variant='outline-primary' style={{ float: 'right' }} width='180' disabled={disable} onClick={handleFav}>+</Button>
-                </Card.Title>
+            <Card.Title>
+                <Link style={{ textDecoration:'none', color: 'black'}} to={'/list/'.concat(info.list_id)}>
+                    {info.list_name}
+                </Link>
+                <Button variant='outline-primary' style={{ float: 'right' }} width='180' disabled={disable} onClick={handleFav}>+</Button>
+            </Card.Title>
+
             
-            <Link style={{ textDecoration:'none'}} to={'/list/'.concat(info.list_id)}>
+            
+            <Link style={{ textDecoration:'none', color: 'black'}} to={'/list/'.concat(info.list_id)}>
+                Creator level:{info.level}
                 <Card.Img src={info.cover === "none" 
                     ? "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"    
                     : info.cover

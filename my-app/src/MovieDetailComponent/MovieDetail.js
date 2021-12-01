@@ -51,11 +51,11 @@ const ListCard = (item) => {
     
     <Card style={{ width: '15rem' }}>
     <Card.Body>
-        <script src="holder.js"></script>
-        <Card.Title style={{height:'2.2rem'}}>
+        <Card.Title>
             {item.valueProps.list_name}
             <Button variant='outline-primary' width='180' style={{ float: 'right' }} disabled={disable} onClick={handleFav}>+</Button>
         </Card.Title>
+        Creator level:{item.valueProps.level}
         <Card.Img variant="top" width='180' height='300' src={item.valueProps.cover} />
 
     </Card.Body>
