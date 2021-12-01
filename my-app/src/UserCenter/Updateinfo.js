@@ -8,17 +8,25 @@ import {
     Route,
     Link
 } from "react-router-dom";
-
+const user_info = JSON.parse(window.localStorage.getItem('login'))
 class Updateinfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             // var/objs to use
+<<<<<<< HEAD
             new_username:JSON.parse(window.localStorage.getItem('username')),
             new_password:JSON.parse(window.localStorage.getItem('password')),
             new_birthday: JSON.parse(window.localStorage.getItem('birthday')),
             // new_birthday: x[0],
             new_gender: JSON.parse(window.localStorage.getItem('gender')),
+=======
+            new_username: user_info.username,
+            new_password: user_info.password,
+            new_birthday: user_info.birthday,
+            // new_birthday: x[0],
+            new_gender: user_info.gender,
+>>>>>>> 1fcf813b2fc4e98a86b8da58203962f3eaa76322
             status: 0,
             delete: 0
         };
@@ -73,8 +81,9 @@ class Updateinfo extends React.Component {
 
     }
     handleSubmit(e) {
+        // alert('Your personal information has been successfully updated.')
         // alert(x[3])
-        alert('Username' + this.state.new_username + ',Birthday: ' + this.state.new_birthday + "; " + "Gender: " + this.state.new_gender + ',password:' + this.state.new_password);
+        // alert('Username' + this.state.new_username + ',Birthday: ' + this.state.new_birthday + "; " + "Gender: " + this.state.new_gender + ',password:' + this.state.new_password);
         // e.preventDefault();
         const request = {
             method: 'POST',
@@ -109,11 +118,19 @@ class Updateinfo extends React.Component {
             });
         // try to clear the input box after inputs
         // document.getElementById('update').reset();
+<<<<<<< HEAD
         window.localStorage.setItem('username',JSON.stringify(this.state.new_username));
         window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
         window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
         window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
+=======
+        var x = { 'username': this.state.new_username, 'password': this.state.new_password, 'gender': this.state.new_gender, 'birthday': this.state.new_birthday, 'email': JSON.parse(window.localStorage.getItem('login')).email }
+        window.localStorage.setItem('login', JSON.stringify(x));
+        // window.localStorage.setItem('login'.password, JSON.stringify(this.state.new_password));
+        // window.localStorage.setItem('login'.gender, JSON.stringify(this.state.new_gender));
+        // window.localStorage.setItem('login'.birthday, JSON.stringify(this.state.new_birthday));
+>>>>>>> 1fcf813b2fc4e98a86b8da58203962f3eaa76322
 
 
 
@@ -156,6 +173,7 @@ class Updateinfo extends React.Component {
                 console.log('parsed json', response.rec);
                 if (this.state.delete === 1) {
                     alert('Your account has been deleted.')
+                    window.localStorage.setItem('login', '0');
                     this.props.history.push("/home");
                 } else {
                     alert('something is wrong')
