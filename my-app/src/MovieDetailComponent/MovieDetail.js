@@ -53,11 +53,15 @@ const ListCard = (item) => {
     <Card.Body>
         <script src="holder.js"></script>
         <Card.Title style={{height:'2.2rem'}}>
+        <Link style={{ textDecoration:'none',color: 'black'}} to={'/list/'.concat(item.valueProps.list_id)}>
             {item.valueProps.list_name}
+        </Link>
             <Button variant='outline-primary' width='180' style={{ float: 'right' }} disabled={disable} onClick={handleFav}>+</Button>
+        
         </Card.Title>
+        <Link style={{ textDecoration:'none',color: 'black'}} to={'/list/'.concat(item.valueProps.list_id)}>
         <Card.Img variant="top" width='180' height='300' src={item.valueProps.cover} />
-
+        </Link>
     </Card.Body>
     </Card>
 )}
