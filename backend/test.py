@@ -100,6 +100,7 @@ def search_movie():
     # result_type = set([i for i in result_type])
 
     lan_sql_sent = ""
+    
     for lan_key, lan_value in lan.items():
         if lan_value:
             if lan_sql_sent:
@@ -110,9 +111,10 @@ def search_movie():
                 lan_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.language = '{}'".format(lan_key)
     if not lan_sql_sent:
         lan_sql_sent = key_sql
-
+    mutex.acquire()
     cursor.execute(lan_sql_sent)
     result_lang = cursor.fetchall()
+    mutex.release()
     res_lang = []
     for i in result_lang:
         ret_lang = {}
