@@ -63,8 +63,6 @@ function Mytab(myl) {
         <>
                 <ListGroup.Item id={myl.valueProps.listid} style={{ height: '4em' }}
                     action href={"/list/" + myl.valueProps.listid}>{myl.valueProps.list_name}</ListGroup.Item>
-
-            
         </>
 
     )

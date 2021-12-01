@@ -51,13 +51,21 @@ const ListCard = (item) => {
     
     <Card style={{ width: '15rem' }}>
     <Card.Body>
-        <Card.Title>
+        <script src="holder.js"></script>
+        <Card.Title style={{height:'2.2rem'}}>
+        <Link style={{ textDecoration:'none',color: 'black'}} to={'/list/'.concat(item.valueProps.list_id)}>
             {item.valueProps.list_name}
+        </Link>
             <Button variant='outline-primary' width='180' style={{ float: 'right' }} disabled={disable} onClick={handleFav}>+</Button>
+        
         </Card.Title>
-        Creator level:{item.valueProps.level}
+        <Link style={{ textDecoration:'none',color: 'black'}} to={'/list/'.concat(item.valueProps.list_id)}>
         <Card.Img variant="top" width='180' height='300' src={item.valueProps.cover} />
+        <div style={{float:'right'}}>
+            Created by {item.valueProps.level} member
+        </div>
 
+        </Link>
     </Card.Body>
     </Card>
 )}
@@ -299,7 +307,7 @@ class MovieDetail extends React.Component {
 
                 </Card.Body>
                 <Card.Body>
-                <b>The list you may interested</b> 
+                <b>Lists you may interested</b> 
                 <Stack direction="horizontal" gap={3}>
                     {this.state.list.map((item,index)=>{
                         if (JSON.parse(window.localStorage.getItem('login')).email){

@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const MovieCard = ({info}) => (
-    <Card style={{ width: '15rem', minHeight: '18rem' }}>
+    <Card style={{ width: '16rem', minHeight: '18rem' }}>
     <Card.Body>
 
         <Link style={{ textDecoration:'none', color: 'black'}} to={'/movie/'.concat(info.movie_id)}>
@@ -63,10 +63,10 @@ const ListCard = ({info}) => {
     
 
     return (
-        <Card style={{ width: '15rem', minHeight: '18rem'}} >
+        <Card style={{ width: '16rem', minHeight: '18rem'}} >
         <Card.Body>
             
-            <Card.Title>
+            <Card.Title style={{height:'2.2rem'}}>
                 <Link style={{ textDecoration:'none', color: 'black'}} to={'/list/'.concat(info.list_id)}>
                     {info.list_name}
                 </Link>
@@ -76,12 +76,15 @@ const ListCard = ({info}) => {
             
             
             <Link style={{ textDecoration:'none', color: 'black'}} to={'/list/'.concat(info.list_id)}>
-                Creator level:{info.level}
                 <Card.Img src={info.cover === "none" 
                     ? "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"    
                     : info.cover
                 } 
                 />
+                <div style={{float:'right'}}>
+                    Created by {info.level} member
+                </div>
+
             </Link>
 
         </Card.Body>
