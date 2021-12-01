@@ -19,8 +19,9 @@ conn = connector.connect(
     "pymysql",
     user="root",
     password='Xu440987',
-    db="cs411",
+    db="411newnew",
 )
+
 cursor = conn.cursor()
 
 
@@ -76,7 +77,7 @@ def search_movie():
                 typ_sql_sent += "SELECT DISTINCT movie.movie_id, movie.title, movie.release_year, movie.runtime, movie.type, movie.description, movie.cover, movie.production, movie.language from movie where movie.type = '{}'".format(typ_key)
     if not typ_sql_sent:
         typ_sql_sent = key_sql
-
+    
     cursor.execute(typ_sql_sent)
     result_type = cursor.fetchall()
     res_typ = []
@@ -164,10 +165,20 @@ def get_all_movies():
 
     m_id = data["movie_id"]
     mutex.acquire()
-    cursor.execute("SELECT movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie LEFT JOIN mp on movie.movie_id=mp.tconst LEFT JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
+    cursor.execute("SELECT movie.movie_id, title, release_year, runtime, type, description, cover, production, language, peopleid, category from movie LEFT JOIN mp on movie.movie_id=mp.tconst LEFT JOIN People ON People.peopleid=mp.nconst where movie.movie_id='{}'".format(m_id))
     result = cursor.fetchall()
     mutex.release()
+
+    mutex.acquire()
+    cursor.execute("SELECT AVG(rating) FROM rating GROUP BY movie_id".format(m_id))
+    rating_result = cursor.fetchall()
+    mutex.release()
+
     ret = {}
+    if rating_result:
+        ret["rating"] = rating_result[0]
+    else:
+        ret["rating"] = 5
     for i in result:
         i = list(i)
         ret["movie_id"] = i[0]
@@ -431,7 +442,7 @@ def add_fav_list():
     listid = data["list_id"]
     userid = data["user_id"]
     try:
-        cursor.execute("INSERT INTO user_fav_list(list_id, user_id) VALUES ({},'{}')".format(listid,userid))
+        cursor.execute("INSERT INTO fav_list(list_id, user) VALUES ({},'{}')".format(listid,userid))
         conn.commit()
         return {"rec":1}
     except Exception as e:
@@ -445,7 +456,7 @@ def get_fav_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
     mutex.acquire()
-    cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
+    cursor.execute("select * from List inner join (select * from fav_list where user='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
  
     result = cursor.fetchall()
     mutex.release()
@@ -477,7 +488,7 @@ def randomly_generate_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
     mutex.acquire()
-    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from user_fav_list where user_id='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
+    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from fav_list where user='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
     result = cursor.fetchall()
     mutex.release()
     res = {}
@@ -498,7 +509,7 @@ def randomly_generate_list():
 @app.route("/randomly_generate_movie", methods=["get"])
 def randomly_generate_movie():
     mutex.acquire()
-    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie order by Rand() limit 5")
+    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,movie.description, movie.cover, movie.production, movie.language,movie.type from movie order by Rand() limit 5")
     result = cursor.fetchall()
     mutex.release()
     res = []
@@ -510,9 +521,33 @@ def randomly_generate_movie():
         "description":i[4],
         "cover":i[5],
         "production":i[6],
-        "language":i[7]})
+        "language":i[7],
+        "type":i[8]})
     return {"rec":res}
 #add for display list info
+
+@app.route("/rating_post",methods=["POST"])
+def rating_post():
+    data = request.get_json(force=True)
+    movie_i = data["movieid"]
+    user_i = data["userid"]
+    rating_num = data["rating"]
+    mutex.acquire()
+    cursor.execute("INSERT INTO rating (rating, whether_lucky, movie_id, user) VALUES ({},{},'{}','{}')".format(rating_num, 0, movie_i, user_i))
+    conn.commit()
+    cursor.execute("select * from rating where (movie_id, user)=('{}','{}');".format(movie_i, user_i))
+    result = cursor.fetchall()
+
+    mutex.release()
+    ret = {}
+    result = list(result[0])
+    ret["rating"] = result[0]
+    ret["whether_lucky"] = result[1]
+    ret["movie_id"] = result[2]
+    ret["user_id"] = result[3]
+    return {"rec":ret}
+
+
 @app.route("/get_list_by_id",methods=["POST"])
 def get_list_by_id():
     data = request.get_json(force=True)

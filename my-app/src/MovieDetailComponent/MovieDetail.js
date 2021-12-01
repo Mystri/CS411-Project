@@ -163,11 +163,11 @@ class MovieDetail extends React.Component {
             )
     }).then(
         ()=>{
-            const request ={
-                    method: 'POST',
-                    body:JSON.stringify({'user_id':''})};
+            if (JSON.parse(window.localStorage.getItem('login')).email){
             console.log("hgfdg",request)
-            fetch('http://localhost:8000/randomly_generate_list', request)
+            fetch('http://localhost:8000/randomly_generate_list', {
+                method: 'POST',
+                body:JSON.stringify({'user_id':JSON.parse(window.localStorage.getItem('login')).email})})
                             .then(response => response.json())
                             .then(response => {
                                 // this.setState({ movie_id: response.rec.movie_id })
@@ -176,7 +176,21 @@ class MovieDetail extends React.Component {
                                 })
                                 console.log(response+ "hhhhhhh");
                                 console.log(this.state)
-                            })
+                            })}else{
+                                console.log("hgfdg",request)
+                                fetch('http://localhost:8000/randomly_generate_list', {
+                                    method: 'POST',
+                                    body:JSON.stringify({'user_id':""})})
+                                                .then(response => response.json())
+                                                .then(response => {
+                                                    // this.setState({ movie_id: response.rec.movie_id })
+                                                    this.setState({ 
+                                                    list:response.rec  
+                                                    })
+                                                    console.log(response+ "hhhhhhh");
+                                                    console.log(this.state)
+                                })
+            }
         }
     );
     // componentDidMount(e) {
