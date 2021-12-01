@@ -489,10 +489,21 @@ def randomly_generate_list():
     cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from fav_list where user='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
     result = cursor.fetchall()
     mutex.release()
+
+    mutex.acquire()
+    cursor.execute("call Result();")
+    p_result = cursor.fetchall()
+    mutex.release()
+    p_res = {}
+    for i in p_result:
+        p_res[i[0]] = i[2]
+
     res = {}
     for i in result:
         if i[0] not in res:
             res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3]}
+            if str(i[0]) in p_res.keys():
+                res[i[0]]["level"] = p_res[str(i[0])]
         else:
             res[i[0]]["movie"].append(i[2])
     resc = []
@@ -564,6 +575,93 @@ def edit_rating_post():
     ret["movie_id"] = result[2]
     ret["user_id"] = result[3]
     return {"rec":ret}
+
+@app.route("/pro", methods=["POST", "GET"])
+def pro():
+    PROCEDURE = """
+DROP PROCEDURE IF EXISTS Result;//
+DELIMITER //
+
+CREATE PROCEDURE Result()
+BEGIN
+    DECLARE userName_cursor VARCHAR(255);
+    DECLARE ucount_cursor INT;
+    DECLARE a INT;
+    
+    DECLARE level_1 CURSOR FOR
+    SELECT DISTINCT list_id, ctemp FROM List LEFT JOIN
+    (SELECT creator, COUNT(list_id) as ctemp FROM List GROUP BY creator) as tmp on List.creator = tmp.creator;
+
+    DECLARE level_2 CURSOR FOR
+    SELECT DISTINCT list_id, ctemp FROM List LEFT JOIN
+    (SELECT user, COUNT(list_id) as ctemp FROM fav_list GROUP BY user) as tmp on List.creator = tmp.user;
+
+    DECLARE level_3 CURSOR FOR
+    SELECT DISTINCT list_id, ctemp FROM List LEFT JOIN
+    (SELECT creator, COUNT(list_id) as ctemp FROM List GROUP BY creator) as tmp on List.creator = tmp.creator;
+    
+    DROP TABLE IF EXISTS level_Table;
+    
+    CREATE TABLE level_Table(
+        username VARCHAR(255),
+        levelStatus INT,
+        level VARCHAR(255)
+    );
+    
+    OPEN level_1;
+    BEGIN
+        DECLARE done INT DEFAULT 0;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        REPEAT
+            FETCH level_1 INTO userName_cursor, ucount_cursor;
+            INSERT IGNORE INTO level_Table VALUES(userName_cursor, ucount_cursor, "");
+        UNTIL done
+        END REPEAT;
+    CLOSE level_1;
+    END;
+
+    OPEN level_2;
+    BEGIN
+        DECLARE done INT DEFAULT 0;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        REPEAT
+            FETCH level_2 INTO userName_cursor, ucount_cursor;
+            UPDATE level_Table SET levelStatus = levelStatus + ucount_cursor WHERE level_Table.username = userName_cursor;
+        UNTIL done
+        END REPEAT;
+    CLOSE level_2;
+    END;
+
+    OPEN level_3;
+    BEGIN
+        DECLARE done INT DEFAULT 0;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+        REPEAT
+            FETCH level_3 INTO userName_cursor, ucount_cursor;
+            UPDATE level_Table SET levelStatus = levelStatus + ucount_cursor WHERE level_Table.username = userName_cursor;
+            SET a = (SELECT MAX(levelStatus) FROM level_Table WHERE username = userName_cursor);
+            IF a <= 1 THEN
+            UPDATE level_Table SET level = "platinum" WHERE username = userName_cursor;
+            ELSEIF a > 10 THEN
+            UPDATE level_Table SET level = "pro" WHERE username = userName_cursor;
+            ELSE UPDATE level_Table SET level = "gold" WHERE username = userName_cursor;
+            END IF;
+        UNTIL done
+        END REPEAT;
+    CLOSE level_3;
+    END;
+    
+    SELECT DISTINCT * FROM level_Table ORDER BY username ASC;
+END;
+//
+    """
+
+    mutex.acquire()
+    cursor.execute("call Result();")
+    mutex.release()
+    result = cursor.fetchall()
+    return {"rec":result}
+
 
 @app.route("/get_list_by_id",methods=["POST"])
 def get_list_by_id():
