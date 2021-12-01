@@ -545,6 +545,25 @@ def rating_post():
     ret["user_id"] = result[3]
     return {"rec":ret}
 
+@app.route("/edit_rating_post",methods=["POST"])
+def edit_rating_post():
+    data = request.get_json(force=True)
+    movie_i = data["movieid"]
+    user_i = data["userid"]
+    rating_num = data["rating"]
+    mutex.acquire()
+    cursor.execute("UPDATE rating SET rating.rating = {} where (movie_id, user)=('{}','{}');".format(rating_num, movie_i, user_i))
+    conn.commit()
+    cursor.execute("select * from rating where (movie_id, user)=('{}','{}');".format(movie_i, user_i))
+    result = cursor.fetchall()
+    mutex.release()
+    ret = {}
+    result = list(result[0])
+    ret["rating"] = result[0]
+    ret["whether_lucky"] = result[1]
+    ret["movie_id"] = result[2]
+    ret["user_id"] = result[3]
+    return {"rec":ret}
 
 @app.route("/get_list_by_id",methods=["POST"])
 def get_list_by_id():
