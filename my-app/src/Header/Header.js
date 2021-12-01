@@ -9,11 +9,52 @@ export default () => {
     const [searchMethod, setSearchMethod] = useState("Movie"); 
     const [keyword, setKeyword] = useState("");
 
+    const language = new Map([
+        ['English', false],
+        ['Spanish', false],
+        ['French', false],
+        ['Chinese', false],
+        ['Japanese', false],
+        ['Korean', false]
+    ])
+
+    const type = new Map([
+        ['Documentary', false],
+        ['Comedy', false],
+        ['Drama', false],
+        ['Horror', false],
+        ['Thriller', false],
+        ['Action', false],
+    ])
+
+    const mapToObj = m => {
+        return Array.from(m).reduce((obj, [key, value]) => {
+            obj[key] = value;
+            return obj;
+        }, {});
+    };
+
+    const handleSearch = () => {
+
+        const searchJSON = JSON.stringify({
+            "language": mapToObj(language),
+            "type": mapToObj(type),
+            "keyword": keyword,
+            "isActor": searchMethod === "Actor"
+        })
+
+        console.log(searchJSON);
+    
+        window.localStorage.setItem('searchJSON', searchJSON);
+        
+
+    };
+
 
     return (
         <Navbar bg="light" expand="lg">
         <Container fluid>
-            <Navbar.Brand href="/home">MATRIX</Navbar.Brand>
+            <Navbar.Brand href="/home" style={{fontSize: 40}}><strong>MATRIX</strong></Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
             <Nav
@@ -44,7 +85,7 @@ export default () => {
                     onChange={ (e) => setKeyword(e.target.value) }
                     value={keyword}
                     />
-                    <Button variant="outline-success" className="me-2" href={"/advanced_search#".concat(searchMethod).concat("#").concat(keyword)} >Search</Button>
+                    <Button variant="outline-success" className="me-2" href={"/advanced_search"} onClick={handleSearch}>Search</Button>
                     <LoginIndicator/>
                 </Form>
             </Navbar.Collapse>

@@ -8,7 +8,7 @@ export default () => {
     const [login, setLogin] = useState(0);
 
     useEffect(() => {
-      setLogin(JSON.parse(window.localStorage.getItem('login')));
+        setLogin(JSON.parse(window.localStorage.getItem('login')));
     }, []);
 
     useEffect(() => {
@@ -22,6 +22,7 @@ export default () => {
 
     const onLogout = () => {
         setLogin(0);
+        
     }
 
 
