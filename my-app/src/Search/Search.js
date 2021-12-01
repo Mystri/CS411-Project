@@ -204,23 +204,10 @@ function ResultCardMovie(item) {
 
 export default () => {
 
-    const [method, setMethod] = useState("");
+
     const [keyword, setKeyword] = useState("");
     const [banners, setBanners] = useState([]);
-    const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-
-        const link = window.location.href.split("#");
-        if (link.length == 3) {
-            console.log("length", link.length);
-            setMethod(link[1]);
-            setKeyword(link[2]);
-        }
-
-    }, []);
-
-
+    
     const [language, setLanguage] = useState(
         new Map([
             ['English', false],
@@ -242,6 +229,8 @@ export default () => {
         ])
     );
 
+    const [method, setMethod] = useState("Movie");
+
     const mapToObj = m => {
         return Array.from(m).reduce((obj, [key, value]) => {
             obj[key] = value;
@@ -249,11 +238,82 @@ export default () => {
         }, {});
     };
 
-    const handleChangeLanguage = (languageName) => {
+    console.log("start0");
 
+    const [searchJSON, setSearchJSON] = useState("");
+    
+    useEffect(() => {
+        console.log("start1");
+
+
+        const search = JSON.parse(window.localStorage.getItem('searchJSON'));
+
+
+
+        setMethod((search.isActor) ? "Actor" : "Movie");
+        
+        const updated_language = new Map([
+            ['English', search.language.English],
+            ['Spanish', search.language.Spanish],
+            ['French', search.language.French],
+            ['Chinese', search.language.Chinese],
+            ['Japanese', search.language.Japanese],
+            ['Korean', search.language.Korean]
+        ])
+        setLanguage(updated_language);
+
+        const updated_type = new Map([
+            ['Documentary', search.type.Documentary],
+            ['Comedy', search.type.Comedy],
+            ['Drama', search.type.Drama],
+            ['Horror', search.type.Horror],
+            ['Thriller', search.type.Thriller],
+            ['Action', search.type.Action]
+        ])
+        setType(updated_type);
+
+        setKeyword(search.keyword);
+
+        if (search.keyword !== '') {
+            console.log('start oncreate search');
+            handleSearch();
+        }
+
+        
+    }, []);
+    
+    useEffect(() => {
+        window.localStorage.setItem('searchJSON', searchJSON);
+        
+    }, [searchJSON]);
+
+
+
+    const updateSearchJSON = () => {
+        console.log("updating searchJSON");
+        console.log("-language:", language);
+        console.log("-type:", type);
+        setSearchJSON(JSON.stringify({
+            "language": mapToObj(language),
+            "type": mapToObj(type),
+            "keyword": keyword,
+            "isActor": method === "Actor"
+        }));
+    }
+
+    useEffect(() => {
+        updateSearchJSON();
+    }, [language, type, method, keyword]);
+
+
+
+    const handleChangeLanguage = (languageName) => {
+        console.log("ready to update searchJSON:", searchJSON, );
+        console.log("language:", language);
         const updated = new Map(language);
         updated.set(languageName, !updated.get(languageName));
         setLanguage(updated);
+        updateSearchJSON();
     }
 
     const handleChangeType = (typeName) => {
@@ -269,8 +329,7 @@ export default () => {
 
 
 
-    const handleSearch = (event) => {
-        event.preventDefault();
+    const handleSearch = () => {
 
         if (method === "List") {
 
@@ -305,32 +364,13 @@ export default () => {
 
         } else {
 
-            var bodyObject;
-            if (method === "Actor") {
-                bodyObject = {
-                    "language": mapToObj(language),
-                    "type": mapToObj(type),
-                    "keyword": keyword,
-                    "isActor": true
-                };
-
-            } 
-            if (method === "Movie") {
-                bodyObject = {
-                    "language": mapToObj(language),
-                    "type": mapToObj(type),
-                    "keyword": keyword,
-                    "isActor": false
-                };
- 
-            }
-
+            
             const request = {
                 method: 'POST',
                 mode: 'cors',
                 credentials: 'omit',
                 headers: { 'Content-type': 'text/plain' },
-                body: JSON.stringify(bodyObject)
+                body: window.localStorage.getItem("searchJSON")
             };
 
 
@@ -408,7 +448,7 @@ export default () => {
                                             label= {l[0]}
                                             inline
                                             type="checkbox"
-                                            value={language[l[0]]}
+                                            checked={language.get(l[0])}
                                             onChange={() => handleChangeLanguage(l[0])}
                                         />
                                         )
@@ -425,7 +465,7 @@ export default () => {
                                             label= {t[0]}
                                             inline
                                             type="checkbox"
-                                            value={type[t[0]]}
+                                            checked={type.get(t[0])}
                                             onChange={() => handleChangeType(t[0])}
                                         />
                                         )
