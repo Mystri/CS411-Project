@@ -22,6 +22,7 @@ export default () => {
 
     const onLogout = () => {
         setLogin(0);
+        
     }
 
 

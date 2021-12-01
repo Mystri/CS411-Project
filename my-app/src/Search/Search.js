@@ -228,6 +228,7 @@ export default () => {
             ['Action', false],
         ])
     );
+
     const [method, setMethod] = useState("Movie");
 
     const mapToObj = m => {
@@ -243,7 +244,10 @@ export default () => {
     
     useEffect(() => {
         console.log("start1");
+
+
         const search = JSON.parse(window.localStorage.getItem('searchJSON'));
+
 
 
         setMethod((search.isActor) ? "Actor" : "Movie");
@@ -269,7 +273,11 @@ export default () => {
         setType(updated_type);
 
         setKeyword(search.keyword);
-        
+
+        if (search.keyword !== '') {
+            console.log('start oncreate search');
+            handleSearch();
+        }
 
         
     }, []);
@@ -283,6 +291,8 @@ export default () => {
 
     const updateSearchJSON = () => {
         console.log("updating searchJSON");
+        console.log("-language:", language);
+        console.log("-type:", type);
         setSearchJSON(JSON.stringify({
             "language": mapToObj(language),
             "type": mapToObj(type),
@@ -319,8 +329,7 @@ export default () => {
 
 
 
-    const handleSearch = (event) => {
-        event.preventDefault();
+    const handleSearch = () => {
 
         if (method === "List") {
 
@@ -355,32 +364,13 @@ export default () => {
 
         } else {
 
-            var bodyObject;
-            if (method === "Actor") {
-                bodyObject = {
-                    "language": mapToObj(language),
-                    "type": mapToObj(type),
-                    "keyword": keyword,
-                    "isActor": true
-                };
-
-            } 
-            if (method === "Movie") {
-                bodyObject = {
-                    "language": mapToObj(language),
-                    "type": mapToObj(type),
-                    "keyword": keyword,
-                    "isActor": false
-                };
- 
-            }
-
+            
             const request = {
                 method: 'POST',
                 mode: 'cors',
                 credentials: 'omit',
                 headers: { 'Content-type': 'text/plain' },
-                body: searchJSON
+                body: window.localStorage.getItem("searchJSON")
             };
 
 
