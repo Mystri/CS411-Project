@@ -534,8 +534,14 @@ def rating_post():
     user_i = data["userid"]
     rating_num = data["rating"]
     mutex.acquire()
-    cursor.execute("INSERT INTO rating (rating, whether_lucky, movie_id, user) VALUES ({},{},'{}','{}')".format(rating_num, 0, movie_i, user_i))
-    conn.commit()
+    cursor.execute("select count(*) from rating where (movie_id, user)=('{}','{}');".format(movie_i, user_i))
+    count = cursor.fetchall()[0][0]
+    if count > 0:
+        cursor.execute("UPDATE rating SET rating.rating = {} where (movie_id, user)=('{}','{}');".format(rating_num, movie_i, user_i))
+        conn.commit()
+    else:
+        cursor.execute("INSERT INTO rating (rating, whether_lucky, movie_id, user) VALUES ({},{},'{}','{}')".format(rating_num, 0, movie_i, user_i))
+        conn.commit()
     cursor.execute("select * from rating where (movie_id, user)=('{}','{}');".format(movie_i, user_i))
     result = cursor.fetchall()
 
@@ -555,8 +561,7 @@ def edit_rating_post():
     user_i = data["userid"]
     rating_num = data["rating"]
     mutex.acquire()
-    cursor.execute("UPDATE rating SET rating.rating = {} where (movie_id, user)=('{}','{}');".format(rating_num, movie_i, user_i))
-    conn.commit()
+    
     cursor.execute("select * from rating where (movie_id, user)=('{}','{}');".format(movie_i, user_i))
     result = cursor.fetchall()
     mutex.release()
