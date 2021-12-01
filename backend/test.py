@@ -475,13 +475,17 @@ def randomly_generate_list():
     data = request.get_json(force=True)
     userid = data["user_id"]
     mutex.acquire()
+<<<<<<< HEAD
     cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover from list2movie INNER JOIN (select * from List where list_id not in (select list_id from fav_list where user='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
+=======
+    cursor.execute("select tmp.list_id, tmp.name, movie.title, movie.cover, tmp.creator from list2movie INNER JOIN (select * from List where list_id not in (select list_id from user_fav_list where user_id='{}') order by Rand() limit 5) as tmp on list2movie.list_id=tmp.list_id INNER JOIN movie on movie.movie_id=list2movie.movie_id".format(userid))
+>>>>>>> 12038367fd388626a11aaaa77ebac8350b16dee1
     result = cursor.fetchall()
     mutex.release()
     res = {}
     for i in result:
         if i[0] not in res:
-            res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3]}
+            res[i[0]] = {"list_id":i[0], "list_name":i[1],"movie":[i[2]],"cover":i[3],"creator":i[4]}
         else:
             res[i[0]]["movie"].append(i[2])
     resc = []
@@ -496,7 +500,7 @@ def randomly_generate_list():
 @app.route("/randomly_generate_movie", methods=["get"])
 def randomly_generate_movie():
     mutex.acquire()
-    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,type,movie.description, movie.cover, movie.production, movie.language from movie order by Rand() limit 5")
+    cursor.execute("select movie.movie_id, movie.title, movie.release_year, movie.runtime,movie.description, movie.cover, movie.production, movie.language,movie.type from movie order by Rand() limit 5")
     result = cursor.fetchall()
     mutex.release()
     res = []
@@ -508,7 +512,8 @@ def randomly_generate_movie():
         "description":i[4],
         "cover":i[5],
         "production":i[6],
-        "language":i[7]})
+        "language":i[7],
+        "type":i[8]})
     return {"rec":res}
 #add for display list info
 @app.route("/get_list_by_id",methods=["POST"])
