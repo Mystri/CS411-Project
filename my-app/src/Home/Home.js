@@ -10,13 +10,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const MovieCard = ({info}) => (
     <Card style={{ width: '15rem', minHeight: '18rem' }}>
     <Card.Body>
-<<<<<<< HEAD
-        <Card.Title>{info.title}</Card.Title>
-        <Link style={{ textDecoration:'none'}} to={'/movie/'.concat(info.movie_id)}>
-=======
+
         <Link style={{ textDecoration:'none', color: 'black'}} to={'/movie/'.concat(info.movie_id)}>
             <Card.Title>{info.title}</Card.Title>
->>>>>>> 1fcf813b2fc4e98a86b8da58203962f3eaa76322
             <Card.Img src={info.cover === "none" 
                         ? "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"    
                         : info.cover
