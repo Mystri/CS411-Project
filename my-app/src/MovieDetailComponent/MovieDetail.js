@@ -81,6 +81,7 @@ class MovieDetail extends React.Component {
             clickIndex: 0,
             hoverIndex: 0,
             rating:0,
+            avg_rating:0,
             list:[]
         };
         this.changeRating = this.changeRating.bind(this)
@@ -109,7 +110,8 @@ class MovieDetail extends React.Component {
                 release_year:response.rec.release_year,
                 runtime:response.rec.runtime,
                 title:response.rec.title,
-                type:response.rec.type         
+                type:response.rec.type,
+                avg_rating: response.rec.rating       
                 })
                 if (this.state.cover=='none'){
                     this.state.cover = "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"
@@ -199,6 +201,31 @@ class MovieDetail extends React.Component {
         this.setState({
           rating: newRating
         });
+        if (JSON.parse(window.localStorage.getItem('login')).email){
+            const request = {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-type': 'text/plain' },
+                body: JSON.stringify({"movieid":this.state.movie_id, "userid":JSON.parse(window.localStorage.getItem('login')).email,"rating":newRating})
+            };
+            console.log(request)
+            fetch('http://localhost:8000/rating_post', request)
+                    .then(data => {
+                        console.log('parsed json', data);
+                        return data.json()
+                    })
+                    .then(data => {
+                        console.log('parsed json', data.rec);
+                        if (data.rec.whether_lucky){
+                            alert("You are the lucky people! Your rating will be doubled.")
+                        }
+                    }, (ex) => {
+                        console.log('parsing failed', ex)
+                    });
+            }else{
+                alert('Please login first!')
+            }
       }
       goBack(){
         this.props.history.goBack();
@@ -249,7 +276,7 @@ class MovieDetail extends React.Component {
                             <b>Language:</b>  {this.state.language}
                             </div>
                             <div>
-                            Rating:
+                            <b>Rating:</b> {this.state.avg_rating}
                             </div>
                         </Col>
                     </Row>

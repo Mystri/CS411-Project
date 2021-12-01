@@ -14,11 +14,11 @@ class Updateinfo extends React.Component {
         super(props);
         this.state = {
             // var/objs to use
-            new_username: JSON.parse(window.localStorage.getItem('login')).username,
-            new_password: JSON.parse(window.localStorage.getItem('login')).password,
-            new_birthday: JSON.parse(window.localStorage.getItem('login')).birthday,
+            new_username:JSON.parse(window.localStorage.getItem('username')),
+            new_password:JSON.parse(window.localStorage.getItem('password')),
+            new_birthday: JSON.parse(window.localStorage.getItem('birthday')),
             // new_birthday: x[0],
-            new_gender: JSON.parse(window.localStorage.getItem('login')).gender,
+            new_gender: JSON.parse(window.localStorage.getItem('gender')),
             status: 0,
             delete: 0
         };
@@ -29,6 +29,7 @@ class Updateinfo extends React.Component {
         this.handleGender = this.handleGender.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.DeleteUser = this.DeleteUser.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this)
 
     }
     handleUsername(e) {
@@ -105,15 +106,33 @@ class Updateinfo extends React.Component {
             })
             .catch((error) => {
                 console.error('Error:', error);
-              });
+            });
         // try to clear the input box after inputs
-            // document.getElementById('update').reset();
-            window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
-            window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
-            window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
-            window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
-           
+        // document.getElementById('update').reset();
+        window.localStorage.setItem('username',JSON.stringify(this.state.new_username));
+        window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+        window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+        window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
+
+
+
+    }
+    componentDidMount(e) {
+        window.localStorage.setItem('username',JSON.stringify(this.state.new_username));
+        window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+        window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+        window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
+
+        // this.setState({new_username:JSON.parse(window.localStorage.getItem('login')).username})
+        // this.setState({new_password: JSON.parse(window.localStorage.getItem('login')).password})
+        // this.setState({new_birthday: JSON.parse(window.localStorage.getItem('login')).birthday})
+        // // new_birthday: x[0],
+        // this.setState({new_gender: JSON.parse(window.localStorage.getItem('login')).gender})
+        // window.localStorage.setItem('username', JSON.stringify(this.state.new_username));
+        // window.localStorage.setItem('password', JSON.stringify(this.state.new_password));
+        // window.localStorage.setItem('gender', JSON.stringify(this.state.new_gender));
+        // window.localStorage.setItem('birthday', JSON.stringify(this.state.new_birthday));
 
 
     }
@@ -178,12 +197,12 @@ class Updateinfo extends React.Component {
                             Gender
                         </Form.Label>
                         <Col sm={3}>
-                        <Form.Select value = {this.state.new_gender} onChange={this.handleGender}>
-                            <option value="" disabled selected>Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Non-binary">Non-Binary</option>
-                        </Form.Select>
+                            <Form.Select value={this.state.new_gender} onChange={this.handleGender}>
+                                <option value="" disabled selected>Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-binary">Non-Binary</option>
+                            </Form.Select>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3">
@@ -191,7 +210,7 @@ class Updateinfo extends React.Component {
                             Birthday
                         </Form.Label>
                         <Col sm={3}>
-                            <Form.Control type="date" value={this.state.new_birthday} onChange={this.handleBirthday}/>
+                            <Form.Control type="date" value={this.state.new_birthday} onChange={this.handleBirthday} />
                         </Col>
                     </Form.Group>
                     <div className="mb-2">

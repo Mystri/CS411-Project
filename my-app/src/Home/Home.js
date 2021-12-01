@@ -12,9 +12,9 @@ const MovieCard = ({info}) => (
     <Card.Body>
         <Card.Title>{info.title}</Card.Title>
         <Link style={{ textDecoration:'none'}} to={'/movie/'.concat(info.movie_id)}>
-            <Card.Img src={info.production === "none" 
+            <Card.Img src={info.cover === "none" 
                         ? "//st.depositphotos.com/1987177/3470/v/450/depositphotos_34700099-stock-illustration-no-photo-available-or-missing.jpg"    
-                        : info.production
+                        : info.cover
                         } />
         </Link>
 

@@ -168,13 +168,14 @@ def get_all_movies():
     mutex.release()
 
     mutex.acquire()
-    cursor.execute("SELECT AVG(rating) FROM rating GROUP BY movie_id".format(m_id))
+    cursor.execute("SELECT AVG(rating) FROM rating  where movie_id='{}' GROUP BY movie_id".format(m_id))
     rating_result = cursor.fetchall()
     mutex.release()
 
+
     ret = {}
     if rating_result:
-        ret["rating"] = rating_result[0]
+        ret["rating"] = int(rating_result[0][0])
     else:
         ret["rating"] = 5
     for i in result:
@@ -539,10 +540,10 @@ def rating_post():
     mutex.release()
     ret = {}
     result = list(result[0])
-    ret["rating"] = result[0]
-    ret["whether_lucky"] = result[1]
-    ret["movie_id"] = result[2]
-    ret["user_id"] = result[3]
+    ret["rating"] = result[2]
+    ret["whether_lucky"] = result[3]
+    ret["movie_id"] = result[0]
+    ret["user_id"] = result[1]
     return {"rec":ret}
 
 
