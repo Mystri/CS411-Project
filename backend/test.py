@@ -304,12 +304,13 @@ def update_user():
         "UPDATE user SET username='{}', password='{}', gender='{}', birthday='{}' where email='{}'".format(
             data['username'], data['password'], data['gender'], data['birthday'], email))
     
-    mutex.release()
+    
     conn.commit()
     
     cursor.execute("SELECT count(*) from user where email='{}'".format(email))
     
     count = cursor.fetchall()[0][0]
+    mutex.release()
     if count > 0:
         return {"rec": 0}
     else:
@@ -443,8 +444,9 @@ def get_fav_list():
     userid = data["user_id"]
     mutex.acquire()
     cursor.execute("select * from List inner join (select * from user_fav_list where user_id='{}') as tmp on List.list_id=tmp.list_id;".format(userid))
-    mutex.release()
+ 
     result = cursor.fetchall()
+    mutex.release()
     res = []
     for i in result:
         res.append({
@@ -458,8 +460,9 @@ def get_owned_list():
     userid = data["user_id"]
     mutex.acquire()
     cursor.execute("select * from List where creator='{}';".format(userid))
-    mutex.release()
+    
     result = cursor.fetchall()
+    mutex.release()
     res = []
     for i in result:
         res.append({
