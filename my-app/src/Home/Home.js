@@ -86,6 +86,7 @@ const ListCard = ({info}) => {
                 </div>
 
             </Link>
+            <div style={{ float: 'right' }}>Create by <small>{info.level}</small> user</div>
 
         </Card.Body>
         </Card>

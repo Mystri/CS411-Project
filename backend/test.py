@@ -662,6 +662,19 @@ END;
 //
     """
 
+    TRIGGER = """
+/*!50003 CREATE*/ /*!50003 TRIGGER date_overlap_insert_start_date
+BEFORE INSERT ON rating
+        FOR EACH ROW
+    BEGIN
+        SET @discount = (SELECT COUNT(*)
+                         FROM rating
+        );
+        IF MOD(@discount, 3) = 0 THEN SET new.whether_lucky = 1, new.rating = new.rating * 2;
+        END IF;
+    END; */
+    """
+
     mutex.acquire()
     cursor.execute("call Result();")
     mutex.release()

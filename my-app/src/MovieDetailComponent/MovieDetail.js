@@ -66,6 +66,7 @@ const ListCard = (item) => {
         </div>
 
         </Link>
+        <div style={{ float: 'right' }}>Create by <small>{item.valueProps.level}</small> user</div>
     </Card.Body>
     </Card>
 )}
